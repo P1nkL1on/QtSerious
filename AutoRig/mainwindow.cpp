@@ -54,11 +54,11 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *m)
 QVector3D camCenter; int iteration = 0;
 void MainWindow::keyPressEvent(QKeyEvent *e)
 {
-    if (e->key() == Qt::Key_R){
-        iteration = 0;
-        tar.ResetTransofrms();
-        this->repaint();
-    }
+//    if (e->key() == Qt::Key_R){
+//        iteration = 0;
+//        tar.ResetTransofrms();
+//        this->repaint();
+//    }
     if (e->key() == Qt::Key_Up){
         iteration = 0;
         tar.ChangeTargetMeshInd(1);
@@ -77,14 +77,14 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
         tv.SwapCurrentModelPrev();
         this->repaint();
     }
-    if (e->key() == Qt::Key_E){
-        tar.ApplyRotations();
-        this->repaint();
-    }
-    if (e->key() == Qt::Key_J){
-        qDebug() << "Distance is " << tar.JacobianStep() << " on iteration " << ++iteration;
-        this->repaint();
-    }
+//    if (e->key() == Qt::Key_E){
+//        tar.ApplyRotations();
+//        this->repaint();
+//    }
+//    if (e->key() == Qt::Key_J){
+//        qDebug() << "Distance is " << tar.JacobianStep() << " on iteration " << ++iteration;
+//        this->repaint();
+//    }
     if (e->key() == Qt::Key_O){
         tar.Uber();
         this->repaint();

@@ -36,6 +36,7 @@ include (StructFBX/StructFBX.pri)
 include (TestAutoRig/TestAutoRig.pri)
 include (MeshComparer/MeshComparer.pri)
 include (GaussNewton/GaussNewton.pri)
+include (JacobianCalculator/JacobianCalculator.pri)
 
 SOURCES += \
         main.cpp \
