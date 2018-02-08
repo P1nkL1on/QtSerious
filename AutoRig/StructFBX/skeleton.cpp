@@ -91,8 +91,8 @@ void RecursiveGlobalCalculateCall (Joint* joint){
 bool Skeleton::CalculateGlobalCoordForEachJointMatrix()
 {
     transformesApplied = 0;
-    if (EqualSkeletonRotations(getJointsLocalRotations(), localRotations))
-        return false;
+    //if (EqualSkeletonRotations(getJointsLocalRotations(), localRotations))
+    //    return false;
     //
     QVector<int> rootInds = {};
 
@@ -103,9 +103,6 @@ bool Skeleton::CalculateGlobalCoordForEachJointMatrix()
         if (joints[curJoint]->pater == NULL){
             rootInds << curJoint;
             joints[curJoint]->localTranslation = rootTransate;
-            for (int i = 0; i < 3; i++)
-                if (rootTransate(0,i).getProiz() != 0)
-                    qDebug() << "WOWOWOWOOW" << i;
         }
     }
     for (int jointInd = 0; jointInd < joints.length(); jointInd++)

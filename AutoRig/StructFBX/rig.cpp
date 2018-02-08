@@ -48,7 +48,6 @@ void Rig::BendSkinToSkeleton()
         // we have 0.3 && QVec3D && from joint a place and rotation
         for (int jointInd = 0; jointInd < skin->vertAttends[currentVertexInd].jointIndexs.length(); jointInd++){
             int jointBendInd = skin->vertAttends[currentVertexInd].jointIndexs[jointInd];
-            Matrix<Derivable,1,3> originalOffset = skin->vertAttends[currentVertexInd].localJointCoords[jointInd];
             Matrix<Derivable,1,3> jointBendTranslation, jointBendRotation;
             skeleton->getJointTranslationAndRotation(jointBendInd, jointBendTranslation, jointBendRotation);
 
@@ -290,10 +289,6 @@ QVector<Derivable> Rig::CompareWithMeshOnRotatesCoord(const Matrix<Derivable,1,3
     skeleton->SetRootTranslation(rootTrans);
     skeleton->SetRotations(newRotations);
     skeleton->SetScales(newScales);
-
-    if (newRotations[0](0,1).getProiz() != 0)qDebug() << "WOW ROTATE 0 IS X";
-    for (int i = 0; i < 3; i++)
-    if (rootTrans(0,i).getProiz() != 0)qDebug() << "WOW ASS.X is X" << i;
 
     BendSkinToSkeleton();
     return bendedMesh->CompareWithAnotherMeshCoords(with);

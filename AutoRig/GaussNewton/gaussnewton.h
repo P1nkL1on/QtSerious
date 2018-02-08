@@ -11,8 +11,8 @@
 using Eigen::Matrix;
 
 namespace OptimiseMethods {
-    template <typename Function>
-    QVector<float> GaussNewtonMethod (Function& func, const QVector<float> params,
+    template <typename Function>//, typename CallBack>
+    QVector<float> GaussNewtonMethod (Function& func, /*CallBack& callback,*/ const QVector<float> params,
                                      const float epsilon, const int maxIterationCount){
         QTime t , ttotal;
         t.start(); ttotal.start();
@@ -37,12 +37,14 @@ namespace OptimiseMethods {
 
             float stepLength = 0;
             for (int i = 0; i < jacobMatrix.cols(); i++){
+                if (i < 3){ qDebug() << "ass " << res[i] << " - " << step(i,0);}
+
                 res[i] = res[i] + step(i, 0);
                 stepLength += step(i,0) * step(i,0);
-                if (i < 3){ qDebug() << "ass " << res[i] << " + " << step(i,0);}
             }
 
             currentDistance = func(res);
+            //qDebug() << ">> Callback call !"; callback (res);
             qDebug() << "Current distance is now " << currentDistance << "      Iteration time is: " << t.elapsed() << " ms"; t.restart();
             if (iterationNumber > maxIterationCount){ qDebug() << "@ Finish by too mych iteration count!"; break; }
             if (stepLength < 1){ qDebug() << "@ Finish cause steps become too liitle!"; break; }
@@ -52,5 +54,7 @@ namespace OptimiseMethods {
         return res;
     }
 }
+
+
 
 #endif // GAUSSNEWTON_H

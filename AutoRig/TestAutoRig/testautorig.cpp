@@ -27,14 +27,14 @@ bool TestAutoRig::Uber()
     QVector<float> resAngles = OptimiseMethods::GaussNewtonMethod(loss, firstAngles, .01, 20);
     qDebug() << "Uber << Qasi Newtone EXIT";
 }
-int was = 0;
+int was = 0, zad = 0;
 float TestAutoRig::testBend()
 {
     qDebug() << "Test bend called";
     //  ASS TRANSLATE           JOINT ROTATES       JOINT SCALES
     QVector<Matrix<Derivable,1,3>> newRotations = QVector<Matrix<Derivable,1,3>>(bendingRig->skeleton->joints.length());
     QVector<Derivable> newScales = QVector<Derivable>(); for (int i = 0; i < newRotations.length(); i++)newScales << Derivable(1);
-    Matrix<Derivable,1,3> assTranslate = Matrix<Derivable,1,3>(0,5,0);
+    Matrix<Derivable,1,3> assTranslate = Matrix<Derivable,1,3>(++zad,5,0);
 
     newRotations[20] = Matrix<Derivable,1,3>(0, 90,was); was += 30;
     float res = bendingRig->CompareWithMeshOnRotates(assTranslate, newRotations, newScales, targetMeshes[targMeshInd]->bindMesh).getValue();
@@ -68,6 +68,7 @@ TestAutoRig::TestAutoRig()
 //    angleAdds = QVector<QVector3D>();
 //    step = 2; prevdist = -1;
     targMeshInd = 0;
+    //callback = CallBackDrawer(this);
 }
 
 TestAutoRig::TestAutoRig(Rig *rig, QVector<Rig *> mesh)
@@ -79,7 +80,9 @@ TestAutoRig::TestAutoRig(Rig *rig, QVector<Rig *> mesh)
 //    angleAdds = QVector<QVector3D>();
 //    step = 2; prevdist = -1;
     targMeshInd = 0;
+    //callback = CallBackDrawer(this);
 }
+
 
 
 QString TestAutoRig::ApplyDrawToCanvas(QPainter *painter, const QMatrix4x4 view, const QMatrix4x4 perspective, const int width, const int hei)
@@ -89,8 +92,33 @@ QString TestAutoRig::ApplyDrawToCanvas(QPainter *painter, const QMatrix4x4 view,
 
     painter->setPen(Qt::darkGray);
     painter->drawText(30, 30, 400, 400, 0, "LMK + Shift -- scale;\nLMK + Cntrl -- move;\nLMK + Alt -- rotate;\n\nMethods:\nO -- use GaussNewtone to shape;\nT -- test a bending instrument;\n\n");
+
+
+    //{ callback.qp = painter; callback.vm = view; callback.pm = perspective; callback.wid = width; callback.he = hei; }
     return QString();
 }
+
+//CallBackDrawer::CallBackDrawer()
+//{
+//    from = NULL;
+//    qp = NULL;
+//    vm = QMatrix4x4(); pm = QMatrix4x4();
+//    wid = he = 10;
+//}
+
+//CallBackDrawer::CallBackDrawer(TestAutoRig *tar)
+//{
+//    from = tar;
+//    qp = NULL;
+//    vm = QMatrix4x4(); pm = QMatrix4x4();
+//    wid = he = 10;
+//}
+
+//CallBackDrawer::operator ()(QVector<float> params)
+//{
+//    qDebug() << "Callback answer" << from << qp << vm << pm << wid  << he;
+//    from->ApplyDrawToCanvas(qp, vm, pm, wid, he);
+//}
 
 
 //float TestAutoRig::ApplyRotations()
@@ -187,5 +215,7 @@ QString TestAutoRig::ApplyDrawToCanvas(QPainter *painter, const QMatrix4x4 view,
 //    _timecheck("Total", t);
 //    return res.getValue();
 //}
+
+
 
 
