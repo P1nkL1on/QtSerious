@@ -8,6 +8,7 @@
 #include "Eigen/Core"
 #include "Derivable/dermatops.h"
 #include "Eigen/Dense"
+#include "QTime"
 
 using Eigen::Matrix;
 using namespace  DerOperations;
@@ -69,12 +70,13 @@ bool CalculateJacobian (QVector<float> currentParams, Matrix<float, -1, -1>& res
         }
         derCurParams[curParam].setPrValue(0);
     }
-    qDebug() << "Jacobian << calculated";
 }
 
 template <typename Function>
 QVector<float> QasiNewtone (Function& func, const QVector<float> params,
                                  const float epsilon, const int maxIterationCount){
+    QTime t , ttotal;
+    t.start(); ttotal.start();
     QVector<float> res = params;
     Matrix<float,-1,-1>
             jacobMatrix, F;
@@ -90,18 +92,20 @@ QVector<float> QasiNewtone (Function& func, const QVector<float> params,
         qDebug() << "Iteration " << ++iterationNumber;
 
         CalculateJacobian(res, jacobMatrix, F, func );
+        qDebug() << "Jacobian culculated in: " << t.elapsed() << " ms"; t.restart();
         jacobTrans = jacobMatrix.transpose();
         step = (jacobTrans * jacobMatrix).colPivHouseholderQr().solve(-jacobTrans * F);
 
-        for (int i = 0; i < jacobMatrix.cols() / 3; i++)
-            res[i] = res[i] + step(i, 0);//+ SetDerive3DVector(.5 * QVector3D(step(i * 3, 0),step(i * 3 + 1, 0),step(i * 3 + 2, 0)));
+        for (int i = 0; i < jacobMatrix.cols(); i++)
+            res[i] = res[i] + step(i, 0);
+
 
         currentDistance = func(res);
-        qDebug() << "Current distance is now " << currentDistance;
+        qDebug() << "Current distance is now " << currentDistance << "      Iteration time is: " << t.elapsed() << " ms"; t.restart();
         if (iterationNumber > maxIterationCount){ qDebug() << "@ Finish by too mych iteration count!";break;}
 
     } while (currentDistance > epsilon);
-    qDebug() << "@ Done!";
+    qDebug() << "@ Done in " << ttotal.elapsed() << " ms";
     return res;
 }
 

@@ -25,21 +25,24 @@ DEFINES += QT_DEPRECATED_WARNINGS
 include (../modules/ModelLoader/ModelLoader.pri)
 include (../modules/Stereometry/Stereometry.pri)
 include (../modules/TestViewer/TestViewer.pri)
-
 include (../modules/SceneTools/SceneTools.pri)
-include (LoaderFBXlight/LoaderFBX.pri)
-include (StructFBX/StructFBX.pri)
+
 include(../modules/Eigen/Eigen.pri)
 include(../modules/Derivable/Derivable.pri)
 
+include (LoaderFBXlight/LoaderFBX.pri)
+include (StructFBX/StructFBX.pri)
+
+include (TestAutoRig/TestAutoRig.pri)
+include (MeshComparer/MeshComparer.pri)
+include (GaussNewton/GaussNewton.pri)
+
 SOURCES += \
         main.cpp \
-        mainwindow.cpp \
-    testautorig.cpp
+        mainwindow.cpp
 
 HEADERS += \
-        mainwindow.h \
-    testautorig.h
+        mainwindow.h
 
 FORMS += \
         mainwindow.ui

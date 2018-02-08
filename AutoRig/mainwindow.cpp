@@ -3,6 +3,7 @@
 
 #include "LoaderFBXlight/loaderfbx.h"
 #include "testviewer.h"
+#include "testautorig.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -125,7 +126,7 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
             }
         }
         // also load a OBJ poses
-        QVector<QString> meshNames = {"handforwardy90","head-left","fabulos", "fabulos-zad","liying", "bind"};
+        QVector<QString> meshNames = {"head-left","fabulos", "fabulos-zad","liying", "bind", "handforwardy90"};
         for (int i = 0; i < meshNames.length(); i++){
             Mesh* loadMesh = new Mesh();
             QString errMes = loaderFBX::loadMeshOBJAdress(modelsAdress + "GuardPosesOBJ/" + meshNames[i]+".OBJ", *loadMesh);

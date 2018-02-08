@@ -157,6 +157,6 @@ bool TestAutoRig::Uber()
     firstAngles[0] = .1;
     qDebug() << "Uber << created angles";
 
-    QVector<float> resAngles = QasiNewtone(loss, firstAngles, 1, 20);
+    QVector<float> resAngles = QasiNewtone(loss, firstAngles, .01, 20);
     qDebug() << "Uber << Qasi Newtone EXIT";
 }
