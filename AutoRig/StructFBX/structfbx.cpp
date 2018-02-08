@@ -37,11 +37,6 @@ void Joint::RecaulculateLocalTransformMatrix()
     localTransformMatrix = SetDeriveMatrix();
 
     Matrix<Derivable,1,3> currentRotation2 = (pater != NULL)?pater->currentRotation : Matrix<Derivable,1,3>(0,0,0);
-
-//    localTransformMatrix.rotate(currentRotation2.x(), 1.0, 0, 0);
-//    localTransformMatrix.rotate(currentRotation2.y(), 0, 1.0, 0);
-//    localTransformMatrix.rotate(currentRotation2.z(), 0, 0, 1.0);
-//    localTransformMatrix.translate(localTranslation);
     TranslateDeriveMatrix(localTransformMatrix, localTranslation);
     RotateDeriveMatrix(localTransformMatrix, currentRotation2);
     ResetGlobalTransformMatrix();

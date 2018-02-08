@@ -38,6 +38,7 @@ public:
 //    float ApplyRotations();
 //    float JacobianStep ();
     bool Uber ();
+    float testBend ();
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 

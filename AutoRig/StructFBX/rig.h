@@ -25,8 +25,8 @@ public:
     // drawing to canvas
     QString ApplyDrawToCanvas(QPainter* painter,const QMatrix4x4 view, const QMatrix4x4 perspective,
                            const int width, const int hei) override;
-    DerOperations::Derivable CompareWithMeshOnRotates(const QVector<Eigen::Matrix<DerOperations::Derivable, 1, 3> > newRotations, const Mesh* with);
-    QVector<DerOperations::Derivable> CompareWithMeshOnRotatesCoord (const QVector<Eigen::Matrix<DerOperations::Derivable, 1, 3> > newRotations, const Mesh* with);
+    DerOperations::Derivable CompareWithMeshOnRotates(const Eigen::Matrix<DerOperations::Derivable, 1, 3> rootTrans, const QVector<Eigen::Matrix<DerOperations::Derivable, 1, 3> > newRotations, const QVector<DerOperations::Derivable> newScales, const Mesh* with);
+    QVector<DerOperations::Derivable> CompareWithMeshOnRotatesCoord (const Eigen::Matrix<DerOperations::Derivable, 1, 3> rootTrans, const QVector<Eigen::Matrix<DerOperations::Derivable, 1, 3> > newRotations, const QVector<DerOperations::Derivable> newScales, const Mesh* with);
 };
 
 #endif // RIG_H

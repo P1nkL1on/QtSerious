@@ -15,8 +15,11 @@ Skeleton::Skeleton(QVector<Joint *> j)
 {
     joints = j;
     localRotations = {};
-    for (int lclId = 0; lclId < j.length(); lclId++)
+    for (int lclId = 0; lclId < j.length(); lclId++){
         localRotations << Matrix<Derivable,1,3>();
+        if (joints[lclId]->pater == NULL)
+            rootTransate = joints[lclId]->localTranslation;
+    }
 }
 
 void Skeleton::SetNullRotations()
@@ -83,6 +86,8 @@ void RecursiveGlobalCalculateCall (Joint* joint){
         RecursiveGlobalCalculateCall(joint->kids[childId]);
 }
 
+// MAIN METHOD  OF GETTING SKELETON SEEMS <CHOOL'>
+
 bool Skeleton::CalculateGlobalCoordForEachJointMatrix()
 {
     transformesApplied = 0;
@@ -93,9 +98,15 @@ bool Skeleton::CalculateGlobalCoordForEachJointMatrix()
 
     for (int curJoint = 0; curJoint < joints.length(); curJoint++){
         joints[curJoint]->currentTranslation = Matrix<Derivable,1,3>();              // reset XYZ to calculate them further
-        joints[curJoint]->currentRotation = localRotations[curJoint];    // now each joint have info about it need angles
+        joints[curJoint]->currentRotation = localRotations[curJoint];               // now each joint have info about it need angles
         //qDebug() << curJoint << joints[curJoint]->currentRotation;
-        if (joints[curJoint]->pater == NULL) rootInds << curJoint;
+        if (joints[curJoint]->pater == NULL){
+            rootInds << curJoint;
+            joints[curJoint]->localTranslation = rootTransate;
+            for (int i = 0; i < 3; i++)
+                if (rootTransate(0,i).getProiz() != 0)
+                    qDebug() << "WOWOWOWOOW" << i;
+        }
     }
     for (int jointInd = 0; jointInd < joints.length(); jointInd++)
         joints[jointInd]->RecaulculateLocalTransformMatrix();
@@ -139,6 +150,18 @@ void Skeleton::SetRotations(const QVector<Matrix<Derivable, 1, 3> > newRotations
     Q_ASSERT(newRotations.length() == localRotations.length());
     for (int curJ = 0; curJ < localRotations.length(); curJ++)
         SetRotation(newRotations[curJ], curJ);
+}
+
+void Skeleton::SetRootTranslation(const Eigen::Matrix<Derivable, 1, 3> assTranslate)
+{
+    rootTransate = assTranslate;
+}
+
+void Skeleton::SetScales(const QVector<Derivable> newScales)
+{
+    Q_ASSERT(newScales.length() == localScales.length());
+    for (int curJ = 0; curJ < localScales.length(); curJ++)
+        localScales[curJ] = newScales[curJ];
 }
 
 bool Skeleton::getJointTranslationAndRotation(const int jointIndex, Matrix<Derivable,1,3> &translation, Matrix<Derivable,1,3> &rotation) const

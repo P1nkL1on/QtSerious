@@ -14,12 +14,32 @@ bool TestAutoRig::Uber()
     qDebug() << "Uber << request to constructor";
     MeshComparer loss(bendingRig, targetMeshes[targMeshInd]->bindMesh);
 
-    QVector<float> firstAngles = QVector<float>(bendingRig->skeleton->joints.length() * 3);
-    firstAngles[0] = .1;
+    //  ASS TRANSLATE           JOINT ROTATES  cx3     JOINT SCALES sx1
+    QVector<float> firstAngles = QVector<float>(3 + bendingRig->skeleton->joints.length() * 4);
+
+    for (int c = 0; c < 3; c++)firstAngles[c] = bendingRig->skeleton->rootTransate(0,c).getValue();    // set an ass translations
+    firstAngles[4] = .1;    // set X angle of ass to .1 to prevent clever system of nothing doing
+    for (int c = 3 + bendingRig->skeleton->joints.length() * 3; c < firstAngles.length(); c++)
+        firstAngles[c] = 1;
+
     qDebug() << "Uber << created angles";
 
     QVector<float> resAngles = OptimiseMethods::GaussNewtonMethod(loss, firstAngles, .01, 20);
     qDebug() << "Uber << Qasi Newtone EXIT";
+}
+int was = 0;
+float TestAutoRig::testBend()
+{
+    qDebug() << "Test bend called";
+    //  ASS TRANSLATE           JOINT ROTATES       JOINT SCALES
+    QVector<Matrix<Derivable,1,3>> newRotations = QVector<Matrix<Derivable,1,3>>(bendingRig->skeleton->joints.length());
+    QVector<Derivable> newScales = QVector<Derivable>(); for (int i = 0; i < newRotations.length(); i++)newScales << Derivable(1);
+    Matrix<Derivable,1,3> assTranslate = Matrix<Derivable,1,3>(0,5,0);
+
+    newRotations[20] = Matrix<Derivable,1,3>(0, 90,was); was += 30;
+    float res = bendingRig->CompareWithMeshOnRotates(assTranslate, newRotations, newScales, targetMeshes[targMeshInd]->bindMesh).getValue();
+    qDebug() << "Test bend success";
+    return res;
 }
 
 void TestAutoRig::ChangeTargetMeshInd(int count)
@@ -68,7 +88,7 @@ QString TestAutoRig::ApplyDrawToCanvas(QPainter *painter, const QMatrix4x4 view,
     targetMeshes[targMeshInd]->ApplyDrawToCanvas(painter, view, perspective, width, hei);
 
     painter->setPen(Qt::darkGray);
-    painter->drawText(30, 30, 400, 400, 0, "LMK + Shift -- scale;\nLMK + Cntrl -- move;\nLMK + Alt -- rotate;\n\nMethods:\nO -- use GaussNewtone to shape;");
+    painter->drawText(30, 30, 400, 400, 0, "LMK + Shift -- scale;\nLMK + Cntrl -- move;\nLMK + Alt -- rotate;\n\nMethods:\nO -- use GaussNewtone to shape;\nT -- test a bending instrument;\n\n");
     return QString();
 }
 

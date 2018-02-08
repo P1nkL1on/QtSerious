@@ -276,18 +276,25 @@ QString Rig::ApplyDrawToCanvas(QPainter *painter, const QMatrix4x4 view, const Q
     return QString();
 }
 
-Derivable Rig::CompareWithMeshOnRotates(const QVector<Matrix<Derivable,1,3>> newRotations, const Mesh *with)
+Derivable Rig::CompareWithMeshOnRotates(const Matrix<Derivable,1,3> rootTrans, const QVector<Matrix<Derivable,1,3>> newRotations, const QVector<Derivable> newScales, const Mesh *with)
 {
-    Q_ASSERT(newRotations.length() == skeleton->joints.length());
+    skeleton->SetRootTranslation(rootTrans);
     skeleton->SetRotations(newRotations);
+    skeleton->SetScales(newScales);
     BendSkinToSkeleton();
     return bendedMesh->CompareWithAnotherMesh(with);
 }
 //CompareWithMeshOnRotatesCoord
-QVector<Derivable> Rig::CompareWithMeshOnRotatesCoord(const QVector<Matrix<Derivable,1,3>> newRotations, const Mesh *with)
+QVector<Derivable> Rig::CompareWithMeshOnRotatesCoord(const Matrix<Derivable,1,3> rootTrans, const QVector<Matrix<Derivable,1,3>> newRotations, const QVector<Derivable> newScales, const Mesh *with)
 {
-    Q_ASSERT(newRotations.length() == skeleton->joints.length());
+    skeleton->SetRootTranslation(rootTrans);
     skeleton->SetRotations(newRotations);
+    skeleton->SetScales(newScales);
+
+    if (newRotations[0](0,1).getProiz() != 0)qDebug() << "WOW ROTATE 0 IS X";
+    for (int i = 0; i < 3; i++)
+    if (rootTrans(0,i).getProiz() != 0)qDebug() << "WOW ASS.X is X" << i;
+
     BendSkinToSkeleton();
     return bendedMesh->CompareWithAnotherMeshCoords(with);
 }

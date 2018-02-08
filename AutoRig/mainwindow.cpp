@@ -89,6 +89,10 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
         tar.Uber();
         this->repaint();
     }
+    if (e->key() == Qt::Key_T){
+        tar.testBend();
+        this->repaint();
+    }
 
 
     if (tv.ModelCount() == 0 && e->key() == Qt::Key_Space){

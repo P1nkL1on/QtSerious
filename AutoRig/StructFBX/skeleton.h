@@ -4,10 +4,13 @@
 
 class Skeleton
 {  
+
+    QVector<DerOperations::Derivable> localScales;
     QVector<Eigen::Matrix<DerOperations::Derivable,1,3>> localRotations;
     void RecursiveApplyLocalRotations(Joint* joint, Eigen::Matrix<DerOperations::Derivable,1,3> currentRotation);
     int transformesApplied;
 public:
+    Eigen::Matrix<DerOperations::Derivable,1,3> rootTransate;
     QVector<Joint*> joints;
     Skeleton();
     Skeleton(QVector<Joint*> j);
@@ -25,6 +28,9 @@ public:
     // local!
     void SetRotation (const Eigen::Matrix<DerOperations::Derivable,1,3> newRotation, int jointInd);
     void SetRotations (const QVector<Eigen::Matrix<DerOperations::Derivable,1,3>> newRotations);
+
+    void SetRootTranslation (const Eigen::Matrix<DerOperations::Derivable,1,3> assTranslate);
+    void SetScales (const QVector<DerOperations::Derivable> newScales);
 
     // return local!
     bool getJointTranslationAndRotation (const int jointIndex, Eigen::Matrix<DerOperations::Derivable,1,3>& translation, Eigen::Matrix<DerOperations::Derivable,1,3>& rotation) const;

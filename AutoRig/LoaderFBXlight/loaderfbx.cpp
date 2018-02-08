@@ -417,7 +417,7 @@ QString loaderFBX::loadMeshOBJ(QTextStream &textStream, Mesh &loadedMesh)
     }
     QVector<Matrix<Derivable,1,3>> loadedDerV3s = QVector<Matrix<Derivable,1,3>>();
     for (int i = 0; i < loadedVertexes.length(); i++)
-        loadedDerV3s << Matrix<Derivable,1,3>(Derivable(loadedVertexes[i].x()),Derivable(loadedVertexes[i].y()),Derivable(loadedVertexes[i].z()));
+        loadedDerV3s << Matrix<Derivable,1,3>(Derivable(loadedVertexes[i].x()) + Derivable(20),Derivable(loadedVertexes[i].y()),Derivable(loadedVertexes[i].z()));
     loadedMesh.vertexes = loadedDerV3s;
     loadedMesh.polygonIndexes = loadedPolygonIndexes;
     loadedMesh.polygonStartIndexes = loadedPolygonStartIndexes;
