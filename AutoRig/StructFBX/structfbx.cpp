@@ -16,6 +16,7 @@ Joint::Joint()
     currentRotation = Matrix<Derivable,1,3>();
     bindMatrix = SetDeriveMatrix();
     bindTransform = Matrix<Derivable,1,3>();
+    localScale = 1;
 }
 
 Joint::Joint(QString ID0, QString name0)
@@ -29,6 +30,7 @@ Joint::Joint(QString ID0, QString name0)
     currentRotation = Matrix<Derivable,1,3>();
     bindMatrix = SetDeriveMatrix();
     bindTransform = Matrix<Derivable,1,3>();
+    localScale = 1;
 }
 
 void Joint::RecaulculateLocalTransformMatrix()
@@ -37,12 +39,10 @@ void Joint::RecaulculateLocalTransformMatrix()
     localTransformMatrix = SetDeriveMatrix();
 
     Matrix<Derivable,1,3> currentRotation2 = (pater != NULL)?pater->currentRotation : Matrix<Derivable,1,3>(0,0,0);
-
-    if (kids.length() == 2)
-        ScaleDeriveMatrix(localTransformMatrix, Derivable(2));
+    if (pater != NULL)
+        TranslateDeriveMatrix(localTransformMatrix, localTranslation * (pater->localScale - 1));
     TranslateDeriveMatrix(localTransformMatrix, localTranslation);
     RotateDeriveMatrix(localTransformMatrix, currentRotation2);
-
 
     ResetGlobalTransformMatrix();
 }

@@ -34,13 +34,16 @@ float TestAutoRig::testBend()
     //  ASS TRANSLATE           JOINT ROTATES       JOINT SCALES
     QVector<Matrix<Derivable,1,3>> newRotations = QVector<Matrix<Derivable,1,3>>(bendingRig->skeleton->joints.length());
     QVector<Derivable> newScales = QVector<Derivable>(); for (int i = 0; i < newRotations.length(); i++)newScales << Derivable(1);
-    Matrix<Derivable,1,3> assTranslate = Matrix<Derivable,1,3>(0,0,++zad * 5);
+    Matrix<Derivable,1,3> assTranslate = Matrix<Derivable,1,3>(0,0,++zad * .5);
 
-    was += 2;
-    newRotations[20] = Matrix<Derivable,1,3>(0, 90,was * 5 + 90);
-    newRotations[8] = Matrix<Derivable,1,3>(0, 90,was * 5 + 90);
-    newRotations[31] = Matrix<Derivable,1,3>(was * 30,0,0);
-    newRotations[36] = Matrix<Derivable,1,3>(180 + was * 30,0,0);
+    was += 1;
+//    newRotations[20] = Matrix<Derivable,1,3>(0, 90,was * 5 + 90);
+//    newRotations[8] = Matrix<Derivable,1,3>(0, 90,was * 5 + 90);
+//    newRotations[31] = Matrix<Derivable,1,3>(was * 30,0,0);
+//    newRotations[36] = Matrix<Derivable,1,3>(180 + was * 30,0,0);
+
+    for (int i = 0; i < bendingRig->skeleton->joints.length(); i++)
+        bendingRig->skeleton->joints[i]->localScale = ++zad*.001 + 1;
 
     float res = bendingRig->CompareWithMeshOnRotates(assTranslate, newRotations, newScales, targetMeshes[targMeshInd]->bindMesh).getValue();
     qDebug() << "Test bend success";

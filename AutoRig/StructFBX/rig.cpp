@@ -259,7 +259,6 @@ QString Rig::ApplyDrawToCanvas(QPainter *painter, const QMatrix4x4 view, const Q
         ApplyScreen(xp,yp,Vertexes2D[curPoint * 2 + 1], width, hei);
         painter->drawLine(xc,yc,xp,yp);
         painter->drawText(xc, yc,300,150,0, QString::number(curPoint));//+" " +skeleton->joints[curPoint]->name);// +", "+ QString::number(skeleton->joints[curPoint]->currentRotation.y()) +", "+ QString::number(skeleton->joints[curPoint]->currentRotation.z()));
-
         //painter->drawText(xc, yc,300,150,0, QString::number(Joints3D[curPoint*2].x()) +"\n"+ QString::number(Joints3D[curPoint*2].y()) +"\n"+ QString::number(Joints3D[curPoint*2].z()));
     }
 
@@ -268,8 +267,8 @@ QString Rig::ApplyDrawToCanvas(QPainter *painter, const QMatrix4x4 view, const Q
     QVector<Matrix<Derivable,1,3>> jointLocalRots = skeleton->getJointsLocalRotations();
     for (int curJointInd = 0; curJointInd < skeleton->joints.length(); curJointInd++)
         logs += ("#" + QString::number(curJointInd) + " : ")
-                 + ToString(jointLocalRots[curJointInd]) + "\n";
-    painter->drawText(width, 40, 200, hei - 40,0, logs);//+" " +skeleton->joints[curPoint]->name);// +", "+ QString::number(skeleton->joints[curPoint]->currentRotation.y()) +", "+ QString::number(skeleton->joints[curPoint]->currentRotation.z()));
+                 + ToString(jointLocalRots[curJointInd]) + "      sc: "+QString::number(skeleton->joints[curJointInd]->localScale.getValue())+"\n";
+    painter->drawText(width, 40, 400, hei - 40,0, logs);//+" " +skeleton->joints[curPoint]->name);// +", "+ QString::number(skeleton->joints[curPoint]->currentRotation.y()) +", "+ QString::number(skeleton->joints[curPoint]->currentRotation.z()));
 
     //painter->end();
     return QString();

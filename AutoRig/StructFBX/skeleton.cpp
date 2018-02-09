@@ -61,7 +61,6 @@ void Skeleton::RecursiveApplyLocalRotations(Joint *joint, Matrix<Derivable,1,3> 
 
     for (int childId = 0; childId < joint->kids.length(); childId++)
         RecursiveApplyLocalRotations(joint->kids[childId], newRotation);
-
 }
 
 bool EqualSkeletonRotations (QVector<Matrix<Derivable,1,3>> a, QVector<Matrix<Derivable,1,3>> b){
@@ -155,8 +154,10 @@ void Skeleton::SetRootTranslation(const Eigen::Matrix<Derivable, 1, 3> assTransl
 void Skeleton::SetScales(const QVector<Derivable> newScales)
 {
     Q_ASSERT(newScales.length() == localScales.length());
-    for (int curJ = 0; curJ < localScales.length(); curJ++)
-        localScales[curJ] = newScales[curJ];
+    //for (int curJ = 0; curJ < localScales.length(); curJ++)
+        //localScales[curJ] = newScales[curJ];
+    for (int cJ = 0; cJ < joints.length(); cJ++)
+        joints[cJ]->localScale = newScales[cJ];
 }
 
 bool Skeleton::getJointTranslationAndRotation(const int jointIndex, Matrix<Derivable,1,3> &translation, Matrix<Derivable,1,3> &rotation) const
