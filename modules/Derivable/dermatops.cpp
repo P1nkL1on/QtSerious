@@ -207,7 +207,7 @@ Matrix<Derivable, 1, 3> DerivableVectorMatrixes::SetDerive3DVector(const QVector
 Eigen::Matrix<Derivable, 4, 4> DerivableVectorMatrixes::MakeDeriveScaleMatrix(const Derivable scale)
 {
     Matrix<Derivable, 4, 4> M = SetDeriveMatrix();
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 3; i++)
         M(i,i) = scale;
     return M;
 }

@@ -39,8 +39,9 @@ void Joint::RecaulculateLocalTransformMatrix()
     localTransformMatrix = SetDeriveMatrix();
 
     Matrix<Derivable,1,3> currentRotation2 = (pater != NULL)?pater->currentRotation : Matrix<Derivable,1,3>(0,0,0);
-    if (pater != NULL)
-        TranslateDeriveMatrix(localTransformMatrix, localTranslation * (pater->localScale - 1));
+    if (pater != NULL)        //TranslateDeriveMatrix(localTransformMatrix, localTranslation * (pater->localScale - 1));
+        ScaleDeriveMatrix(localTransformMatrix, Derivable(1) / pater->localScale);  // descale pater
+    ScaleDeriveMatrix(localTransformMatrix, localScale);    // scale self
     TranslateDeriveMatrix(localTransformMatrix, localTranslation);
     RotateDeriveMatrix(localTransformMatrix, currentRotation2);
 

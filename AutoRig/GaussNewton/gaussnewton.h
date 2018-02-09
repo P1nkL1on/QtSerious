@@ -46,8 +46,8 @@ namespace OptimiseMethods {
             currentDistance = func(res);
             //qDebug() << ">> Callback call !"; callback (res);
             qDebug() << "Current distance is now " << currentDistance << "      Iteration time is: " << t.elapsed() << " ms"; t.restart();
-            if (iterationNumber > maxIterationCount){ qDebug() << "@ Finish by too mych iteration count!"; break; }
-            if (stepLength < 1){ qDebug() << "@ Finish cause steps become too liitle!"; break; }
+            if (iterationNumber > maxIterationCount){ qDebug() << "@ Finish by too much iteration count!"; break; }
+            //if (stepLength < 1){ qDebug() << "@ Finish cause steps become too liitle!"; break; }
 
         } while (currentDistance > epsilon);
         qDebug() << "@ Done in " << ttotal.elapsed() << " ms";
