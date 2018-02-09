@@ -4,7 +4,6 @@
 using namespace DerOperations;
 using Eigen::Matrix;
 
-
 Skeleton::Skeleton()
 {
     localRotations = {};
@@ -58,7 +57,6 @@ void Skeleton::RecursiveApplyLocalRotations(Joint *joint, Matrix<Derivable,1,3> 
     //qDebug() << joint->name << wasRotation << currentRotation << " ----  " << newRotation<< " ----  " << joint->localTranslation;
     joint->currentTranslation =
             CommonFuncs::AddDirectWtParent(cTranslation, joint->localTranslation, wasRotation, currentRotation);
-            //CommonFuncs::AddDirect(cTranslation, joint->localTranslation, newRotation);
     joint->currentRotation = newRotation;
 
     for (int childId = 0; childId < joint->kids.length(); childId++)

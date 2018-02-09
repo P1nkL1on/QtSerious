@@ -37,8 +37,13 @@ void Joint::RecaulculateLocalTransformMatrix()
     localTransformMatrix = SetDeriveMatrix();
 
     Matrix<Derivable,1,3> currentRotation2 = (pater != NULL)?pater->currentRotation : Matrix<Derivable,1,3>(0,0,0);
+
+    if (kids.length() == 2)
+        ScaleDeriveMatrix(localTransformMatrix, Derivable(2));
     TranslateDeriveMatrix(localTransformMatrix, localTranslation);
     RotateDeriveMatrix(localTransformMatrix, currentRotation2);
+
+
     ResetGlobalTransformMatrix();
 }
 
@@ -87,13 +92,7 @@ Matrix<Derivable,1,3> CommonFuncs::AddDirect(const Matrix<Derivable,1,3> to, con
 Matrix<Derivable,1,3> CommonFuncs::AddDirectWtParent(const Matrix<Derivable,1,3> to, const Matrix<Derivable,1,3> Transform, const Matrix<Derivable,1,3> wasRotation, const Matrix<Derivable,1,3> addRotation)
 {
     Matrix<Derivable,4,4> wasRotateMatrix = SetDeriveMatrix(), addRotateMatrix = SetDeriveMatrix();
-//    wasRotateMatrix.rotate(wasRotation.x(), 1.0, 0, 0);
-//    wasRotateMatrix.rotate(wasRotation.y(), 0, 1.0, 0);
-//    wasRotateMatrix.rotate(wasRotation.z(), 0, 0, 1.0);
 
-//    addRotateMatrix.rotate(addRotation.x(), 1.0, 0, 0);
-//    addRotateMatrix.rotate(addRotation.y(), 0, 1.0, 0);
-//    addRotateMatrix.rotate(addRotation.z(), 0, 0, 1.0);
     RotateDeriveMatrix(wasRotateMatrix, wasRotation);
     RotateDeriveMatrix(addRotateMatrix, addRotation);
 
