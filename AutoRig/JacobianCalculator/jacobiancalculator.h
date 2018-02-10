@@ -4,7 +4,7 @@
 #include "Eigen/Core"
 #include "QVector"
 #include "Derivable/derivable.h"
-
+#include "qdebug.h"
 
 using namespace DerOperations;
 using Eigen::Matrix;
