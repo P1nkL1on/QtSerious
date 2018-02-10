@@ -35,7 +35,7 @@ float TestAutoRig::testBend()
     QVector<Matrix<Derivable,1,3>> newRotations = QVector<Matrix<Derivable,1,3>>(bendingRig->skeleton->joints.length());
     QVector<Derivable> newScales = QVector<Derivable>();
     for (int i = 0; i < newRotations.length(); i++)
-        newScales << ((i != 20)? Derivable(1) : Derivable(1 + zad * .02));  // test an arm shit
+        newScales << ((i % 5 != 0)? Derivable(1) : Derivable(1 + zad * .02));  // test an arm shit
     Matrix<Derivable,1,3> assTranslate = Matrix<Derivable,1,3>(0,0,++zad * .5);
 
     was += 1;

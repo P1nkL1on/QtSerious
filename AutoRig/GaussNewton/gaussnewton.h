@@ -28,24 +28,28 @@ namespace OptimiseMethods {
         float currentDistance = func(res); // set proto distance here
 
         do{
-            qDebug() << "Iteration " << ++iterationNumber;
-
             JacobianCalculator::CalculateForFunction(res, jacobMatrix, F, func );
-            qDebug() << "Jacobian culculated in: " << t.elapsed() << " ms"; t.restart();
             jacobTrans = jacobMatrix.transpose();
             step = (jacobTrans * jacobMatrix).colPivHouseholderQr().solve(-jacobTrans * F);
 
-            float stepLength = 0;
-            for (int i = 0; i < jacobMatrix.cols(); i++){
-                if (i < 3){ qDebug() << "ass " << res[i] << " - " << step(i,0);}
+            float stepMult = 2, prevDistance = currentDistance;
+            int trys = 0;
+            QVector<float> appRes;
+            do{
+                appRes = res;
+                for (int i = 0; i < jacobMatrix.cols(); i++){
+                    if (i < (jacobMatrix.cols() - 3) / 4 * 3 + 3)   // do not apply scale
+                        appRes[i] = res[i] + step(i, 0) * stepMult;
+                }
+                currentDistance = func(appRes);
+                if (currentDistance > prevDistance){
+                    stepMult -= .1;qDebug() << "Step is now " << stepMult << "   casue fail in distance of " << currentDistance << " > " << prevDistance;
+                }
+            }while ((currentDistance > prevDistance && trys < 10));
+            res = appRes;   // apply a success step
 
-                res[i] = res[i] + step(i, 0);
-                stepLength += step(i,0) * step(i,0);
-            }
-
-            currentDistance = func(res);
             //qDebug() << ">> Callback call !"; callback (res);
-            qDebug() << "Current distance is now " << currentDistance << "      Iteration time is: " << t.elapsed() << " ms"; t.restart();
+            qDebug() << "Iteration " << ++iterationNumber << "Current distance is now " << currentDistance << "      Iteration time is: " << t.elapsed() << " ms"; t.restart();
             if (iterationNumber > maxIterationCount){ qDebug() << "@ Finish by too much iteration count!"; break; }
             //if (stepLength < 1){ qDebug() << "@ Finish cause steps become too liitle!"; break; }
 
@@ -55,6 +59,10 @@ namespace OptimiseMethods {
     }
 }
 
+//                if (i >= (jacobMatrix.cols() - 3) / 4 * 3 + 6 || i < (jacobMatrix.cols() - 3) / 4 * 3 + 3)
+//                    //qDebug() << "scale " << res[i] << " - " << step(i,0);
+//                    res[i] = res[i] + step(i, 0) * .0;
+//                else
 
 
 #endif // GAUSSNEWTON_H
