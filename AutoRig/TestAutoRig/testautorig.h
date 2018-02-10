@@ -10,50 +10,31 @@
 #include "Eigen/Dense"
 #include "QTime"
 #include "mainwindow.h"
-
+#include "gaussnewton.h"
 using Eigen::Matrix;
 using namespace  DerOperations;
 
-class TestAutoRig;
 
-//class CallBackDrawer{
-//    public:
-//        TestAutoRig* from;
-//        QPainter* qp;
-//        QMatrix4x4 vm, pm;
-//        int wid, he;
-//        CallBackDrawer();
-//        CallBackDrawer(TestAutoRig*  tar);
-//        operator ()(QVector<float> params);
-//};
 
 class TestAutoRig : public GraphicsObjectStruct::GraphicsObject
 {
 private:
     QVector<Rig*> targetMeshes;
     Rig* bendingRig;
-    //CallBackDrawer callback;
-//    QVector<Matrix<Derivable,1,3>> nowRotations;
-//    Matrix<Derivable,1,3> nowRootPose;
-//    QVector<QVector3D> angleAdds;
-//    float step, prevdist;
     int targMeshInd;
+    QVector<GraphicMotion> gt;
 
 public:
+    QVector3D* camCenter;
     void ChangeTargetMeshInd (int count);
-//    void ResetTransofrms ();
-
-    // drawing to canvas
     QString ApplyDrawToCanvas(QPainter* painter,const QMatrix4x4 view, const QMatrix4x4 perspective,
                            const int width, const int hei) override;
-
     TestAutoRig();
     TestAutoRig(Rig* rig, QVector<Rig*> mesh);
 
-//    float ApplyRotations();
-//    float JacobianStep ();
+    bool Modeling ();
     bool Uber ();
-    float testBend ();
+    float TestBend ();
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 

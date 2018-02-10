@@ -54,11 +54,11 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *m)
 QVector3D camCenter; int iteration = 0;
 void MainWindow::keyPressEvent(QKeyEvent *e)
 {
-//    if (e->key() == Qt::Key_R){
-//        iteration = 0;
-//        tar.ResetTransofrms();
-//        this->repaint();
-//    }
+    if (e->key() == Qt::Key_R){
+        iteration = 0;
+        tar.Modeling();
+        this->repaint();
+    }
     if (e->key() == Qt::Key_Up){
         iteration = 0;
         tar.ChangeTargetMeshInd(1);
@@ -77,10 +77,14 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
         tv.SwapCurrentModelPrev();
         this->repaint();
     }
-//    if (e->key() == Qt::Key_E){
-//        tar.ApplyRotations();
-//        this->repaint();
-//    }
+    if (e->key() == Qt::Key_E){
+        for (int i = 0; i < 1000; i++){
+            tar.Modeling();
+            this->repaint();
+            tar.Uber();
+            this->repaint();
+        }
+    }
 //    if (e->key() == Qt::Key_J){
 //        qDebug() << "Distance is " << tar.JacobianStep() << " on iteration " << ++iteration;
 //        this->repaint();
@@ -90,20 +94,13 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
         this->repaint();
     }
     if (e->key() == Qt::Key_T){
-        tar.testBend();
+        tar.TestBend();
         this->repaint();
     }
 
 
     if (tv.ModelCount() == 0 && e->key() == Qt::Key_Space){
         qDebug() << "Autorug stanalobe (ha-ha) activated;";
-        //        names   //<< "!bboy 2 exported"
-        //<< "joints_only2"
-        //<< "joints_only2t"
-        //<< "!pucn export"
-        //<< "!Samba exported";
-        //<< "!bboy exported"
-        //                << "!guard yelling exported";
         names = {
             //"!bboy 2 exported",
             //"joints_only2,"
@@ -111,7 +108,8 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
             //"!pucn export",
 //            "!Samba exported",
 //            "!bboy exported",
-            "!guard yelling exported",
+           "!guard yelling exported"
+//            "plane"
         };
 
         int loadedModel = 0;
@@ -130,7 +128,7 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
             }
         }
         // also load a OBJ poses
-        QVector<QString> meshNames = {"head-left","fabulos", "fabulos-zad","liying", "bind", "handforwardy90"};
+        QVector<QString> meshNames = {"plane2", "head-left","fabulos", "fabulos-zad","liying", "bind", "handforwardy90"};
         for (int i = 0; i < meshNames.length(); i++){
             Mesh* loadMesh = new Mesh();
             QString errMes = loaderFBX::loadMeshOBJAdress(modelsAdress + "GuardPosesOBJ/" + meshNames[i]+".OBJ", *loadMesh);
@@ -145,6 +143,7 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
                 qDebug() << errMes;
         }
         tar = TestAutoRig((rgs[0]), rgs);
+        tar.camCenter = &camCenter;
         tv.addGraphicsObject(&tar);
     }
 }

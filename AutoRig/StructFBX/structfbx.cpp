@@ -33,6 +33,19 @@ Joint::Joint(QString ID0, QString name0)
     localScale = 1;
 }
 
+Joint::Joint(Eigen::Matrix<Derivable, 1, 3> trans, Eigen::Matrix<Derivable, 1, 3> rotat)
+{
+    this->ID = "noneID";
+    name = "bone";
+    pater = NULL;
+    kids = {};
+    localTranslation = currentTranslation = trans;
+    currentRotation = rotat;
+    bindMatrix = SetDeriveMatrix();
+    bindTransform = localTranslation;
+    localScale = 1;
+}
+
 void Joint::RecaulculateLocalTransformMatrix()
 {
     bool isChecked = ((pater != NULL) && (pater->currentRotation(0,1).getValue() != 0 || pater->currentRotation(0,2).getValue() != 0 | pater->currentRotation(0,0).getValue() != 0));

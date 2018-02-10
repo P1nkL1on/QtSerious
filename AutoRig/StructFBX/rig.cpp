@@ -251,9 +251,18 @@ QString Rig::ApplyDrawToCanvas(QPainter *painter, const QMatrix4x4 view, const Q
     }
 
     Vertexes2D = From3DTo2D(Joints3D, view,perspective);
-    painter->setPen(ChangeQPainter(QColor(255,130,0), 1));
+
     for (int curPoint = 0; curPoint < Vertexes2D.length() / 2; curPoint++)
     {
+
+        int startGreen = 0;
+        if (curPoint > 0 && curPoint < skeleton->joints.length()){
+            Joint* j = skeleton->joints[curPoint];
+            while ( j->pater != NULL ){ startGreen += 30; j = j->pater;}
+            if (startGreen > 255)startGreen = 255;
+        }
+        painter->setPen(ChangeQPainter(QColor(255,startGreen,0), 1));
+
         int xc,yc,xp,yp;
         ApplyScreen(xc,yc,Vertexes2D[curPoint * 2], width, hei);
         ApplyScreen(xp,yp,Vertexes2D[curPoint * 2 + 1], width, hei);

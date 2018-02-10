@@ -25,6 +25,8 @@ public:
 
     Joint();
     Joint(QString ID0, QString name0);
+    Joint(Eigen::Matrix<DerOperations::Derivable,1,3> trans,
+          Eigen::Matrix<DerOperations::Derivable,1,3> rotat);
 
     void RecaulculateLocalTransformMatrix ();
     void ResetGlobalTransformMatrix();
