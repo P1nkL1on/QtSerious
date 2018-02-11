@@ -17,11 +17,12 @@ class GraphicMotion
 private:
     QColor clr;
     int hei, widperstep, top, left, steps;
+    float MAX;
 public:
     QVector<float> values;
     GraphicMotion();
     GraphicMotion(QColor clr0);
-    GraphicMotion(QColor clr0, int hei0, int width, int top0, int left0);
+    GraphicMotion(QColor clr0, int hei0, int width, int top0, int left0, int MAX0);
     void DrawOn (QPainter* painter);
 };
 
@@ -47,18 +48,18 @@ namespace OptimiseMethods {
         float currentDistance = func(res); // set proto distance here
 
         mts.clear(); int wid = 150, hei = 10;
-        mts << GraphicMotion(Qt::black, hei,  (wid + 10) * 4, 25, 10);
+        mts << GraphicMotion(Qt::black, hei,  (wid + 10) * 4, 25, 10, 0);
         for (int i = 0; i < params.length(); i++){
             if (i < 3){
                 // root
-                mts << GraphicMotion(Qt::red, hei,  wid, 55, (wid + 10) * (i % 3));
+                mts << GraphicMotion(Qt::red, hei,  wid, 55, (wid + 10) * (i % 3), 0);
             }else{
                 if (i < (jacobMatrix.cols() - 3) / 4 * 3 + 3){
                     // angles
-                     mts << GraphicMotion(QColor(255, 200,0), hei,  wid, 60 + (i / 3) * (hei + 4), (wid + 10) * (i % 3));
+                     mts << GraphicMotion(QColor(255, 200,0), hei,  wid, 60 + (i / 3) * (hei + 4), (wid + 10) * (i % 3), 180);
                 }else{
                     // scales
-                    mts << GraphicMotion(Qt::green, hei,  wid, 60 + (i - (jacobMatrix.cols() - 3) / 4 * 3 - 2) * (hei + 4), (wid + 10) * 3);
+                    mts << GraphicMotion(Qt::green, hei,  wid, 60 + (i - (jacobMatrix.cols() - 3) / 4 * 3 - 2) * (hei + 4), (wid + 10) * 3, 2);
                     //qDebug() << 20 + (i - (jacobMatrix.cols() - 3) / 4 * 3) * (hei + 4);
                 }
             }
@@ -69,14 +70,15 @@ namespace OptimiseMethods {
             jacobTrans = jacobMatrix.transpose();
             step = (jacobTrans * jacobMatrix).colPivHouseholderQr().solve(-jacobTrans * F);
 
+
             for (int i = 0; i < jacobMatrix.cols(); i++)
             //if (i < (jacobMatrix.cols() - 3) / 4 * 3 + 3)   // do not apply scale
             {
                     res[i] = res[i] + step(i, 0) * h(i, 0);
-                    mts[i].values << res[i];
+                    mts[i + 1].values << res[i];
             }
 
-            currentDistance = func(res);
+            currentDistance = func(res); mts[0].values << currentDistance;
 
             //qDebug() << ">> Callback call !"; callback (res);
             //if (t.elapsed() > 100)
