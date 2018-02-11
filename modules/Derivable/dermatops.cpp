@@ -209,7 +209,7 @@ Eigen::Matrix<Derivable, 4, 4> DerivableVectorMatrixes::MakeDeriveScaleMatrix(co
     Matrix<Derivable, 4, 4> M = SetDeriveMatrix();
     for (int i = 0; i < 3; i++)
         M(i,i) = scale;
-    M(3,3) = Derivable(1);
+    M(3,3) = Derivable(1, /*scale.getProiz()*/0);
     return M;
 }
 Eigen::Matrix<Derivable, 3, 3> DerivableVectorMatrixes::MakeDeriveScale3Matrix(const Derivable scale)

@@ -44,6 +44,8 @@ public:
         return Derivable(value * a.value, a.value * pr_value + value * a.pr_value);
     }
     Derivable operator/ (const Derivable a) const{
+        //Derivable a = b;
+        //if (a.value <= 1e-5 && a.value <= 1e-5) a.value = 1e-5;
         return Derivable(value / a.value, (pr_value * a.value + a.pr_value * value)/ (a.value * a.value));
     }
 

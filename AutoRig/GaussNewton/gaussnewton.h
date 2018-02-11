@@ -26,7 +26,21 @@ public:
     void DrawOn (QPainter* painter);
 };
 
+
+
 namespace OptimiseMethods {
+    inline void TraceJacobianM (Matrix<float,-1,-1> mat)
+    {
+        for (int i = 0; i < mat.cols(); i++)
+            //if (i > mat.cols() - 5)
+        {
+            QString s = "";
+            for (int j = 0; j < mat.rows(); j++)
+                s += QString::number(((int)(mat(j,i) * 1000)) / 1000.0).leftJustified(15, ' ');
+            qDebug() << s;
+        }
+    }
+
     template <typename Function>//, typename CallBack>
     QVector<float> GaussNewtonMethod (Function& func, /*CallBack& callback,*/ const QVector<float> params,
                                      const float epsilon, const int maxIterationCount, QVector<GraphicMotion>&mts, bool isNumerical){
@@ -69,13 +83,13 @@ namespace OptimiseMethods {
             if (isNumerical)
                 JacobianCalculator::CalculateNumerical(res, jacobMatrix, F, func );
             else
-                JacobianCalculator::CalculateForFunction(res, jacobMatrix, F, func );
+                JacobianCalculator::CalculateMixed(res, jacobMatrix, F, func );
+            //TraceJacobianM(jacobMatrix);
             jacobTrans = jacobMatrix.transpose();
             Eigen::MatrixXf jTj = jacobTrans * jacobMatrix;
             Eigen::MatrixXf jF = jacobTrans * F;
             // trace a jF
-            for (int i = 0; i < jF.rows(); i++){
-
+            for (int i = 0; i < jF.rows() * 0; i++){
                 qDebug() << ((i < (jacobMatrix.cols() - 3) / 4 * 3 + 3)?((i < 3)? "ASS" : "JOINT") : "SCALE")
                          << jF(i,0) << "   val:" << res[i];
             }

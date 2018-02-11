@@ -25,7 +25,7 @@ bool TestAutoRig::Uber()
     qDebug() << "Uber << created angles";
 
     for (int i = 0; i < 2; i++)
-        QVector<float> resAngles = OptimiseMethods::GaussNewtonMethod(loss, firstAngles, 1e-5, 2, gt, (i == 0));
+        QVector<float> resAngles = OptimiseMethods::GaussNewtonMethod(loss, firstAngles, 1e-5, 20, gt, i == 0);
     qDebug() << "Uber << Qasi Newtone EXIT SUCCESS";
 }
 
@@ -63,9 +63,9 @@ bool TestAutoRig::Modeling()
 {
     // model bending to
     Mesh* ms = new Mesh();
-    Derivable scale = Derivable(1.29);//0.5 + qrand() % 100 / 100.0;
-    Matrix<Derivable,1,3> trans = Matrix<Derivable,1,3>(2.7, 6.9, 9.5);//Matrix<Derivable,1,3>(qrand() % 200 - 100,qrand() % 200 - 100,qrand() % 200 - 100);
-    Matrix<Derivable,1,3> rotat = Matrix<Derivable,1,3>(102, 350, 162);//Matrix<Derivable,1,3>(qrand() % 360,qrand() % 360,qrand() % 360);
+    Derivable scale = /*Derivable(1.29);*/0.5 + qrand() % 100 / 100.0;
+    Matrix<Derivable,1,3> trans = /*Matrix<Derivable,1,3>(2.7, 6.9, 9.5);*/Matrix<Derivable,1,3>(qrand() % 200 - 100,qrand() % 200 - 100,qrand() % 200 - 100);
+    Matrix<Derivable,1,3> rotat = /*Matrix<Derivable,1,3>(102, 350, 162);*/Matrix<Derivable,1,3>(qrand() % 360,qrand() % 360,qrand() % 360);
 
     TraceVector(trans);
     TraceVector(rotat);
@@ -96,15 +96,21 @@ bool TestAutoRig::Modeling()
 
     QVector<Joint*> joints = {};
     joints << new Joint(Matrix<Derivable,1,3>(0, 00, 0),Matrix<Derivable,1,3>(0,0,0));
-    joints << new Joint(Matrix<Derivable,1,3>(0, 40, 0),Matrix<Derivable,1,3>(0,0,0));
+    joints << new Joint(Matrix<Derivable,1,3>(0, 30, 0),Matrix<Derivable,1,3>(0,0,0));
+    joints << new Joint(Matrix<Derivable,1,3>(0, 30, 0),Matrix<Derivable,1,3>(0,0,0));
+    joints << new Joint(Matrix<Derivable,1,3>(0, 30, 0),Matrix<Derivable,1,3>(0,0,0));
     joints[0]->kids << joints[1]; joints[1]->pater = joints[0];
+    joints[1]->kids << joints[2]; joints[2]->pater = joints[1];
+    joints[2]->kids << joints[3]; joints[3]->pater = joints[2];
     Skeleton* boner = new Skeleton(joints);
 //    boner->localRotations = QVector<Matrix<Derivable,1,3>>(2);
 //    boner->localScales = QVector<Derivable>(2);
 
     Skin* sk = new Skin();
-    sk->addInfo(1, {1,2,3}, {1,1,1});
+    sk->addInfo(2, {2}, {1,1,1});
     sk->addInfo(0, {0}, {1,1,1});
+    sk->addInfo(1, {1}, {1,1,1});
+    sk->addInfo(3, {3}, {1,1,1});
 
     boner->CalculateGlobalCoordForEachJointMatrix();
     sk->GenerateAttends(ms2->vertexes, boner->getJointsGlobalTranslationsForSkin());
@@ -166,8 +172,8 @@ float TestAutoRig::TestBend()
     Matrix<Derivable,1,3> assTranslate;// = Matrix<Derivable,1,3>(0,0,++was * .5);
 
     was += 1;
-    newRotations[0] = Matrix<Derivable,1,3>(was, 0, 0);
-    newRotations[1] = Matrix<Derivable,1,3>(was * 3, 0, 0);
+    for (int i = 0; i < newRotations.length(); i++)
+        newRotations[i] = Matrix<Derivable,1,3>(was * (i + 1) , 0, 0);
 //    newRotations[8] = Matrix<Derivable,1,3>(0, 90,was * 5 + 90);
 //    newRotations[31] = Matrix<Derivable,1,3>(was * 30,0,0);
 //    newRotations[36] = Matrix<Derivable,1,3>(180 + was * 30,0,0);
