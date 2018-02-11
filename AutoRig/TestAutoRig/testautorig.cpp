@@ -24,7 +24,7 @@ bool TestAutoRig::Uber()
 
     qDebug() << "Uber << created angles";
 
-    QVector<float> resAngles = OptimiseMethods::GaussNewtonMethod(loss, firstAngles, 1e-4, 100, gt);
+    QVector<float> resAngles = OptimiseMethods::GaussNewtonMethod(loss, firstAngles, 1e-5, 200, gt);
     float finDist = resAngles[resAngles.length() - 1];
     qDebug() << "Uber << Qasi Newtone EXIT SUCCESS";
 }
@@ -64,10 +64,13 @@ bool TestAutoRig::Modeling()
 {
     // model bending to
     Mesh* ms = new Mesh();
-    Derivable scale = 0.5 + qrand() % 200 / 100.0;
-    Matrix<Derivable,1,3> trans = Matrix<Derivable,1,3>(qrand() % 200 - 100,qrand() % 200 - 100,qrand() % 200 - 100);
-    Matrix<Derivable,1,3> rotat = Matrix<Derivable,1,3>(qrand() % 360,qrand() % 360,qrand() % 360);
+    Derivable scale = Derivable(1.29);//0.5 + qrand() % 100 / 100.0;
+    Matrix<Derivable,1,3> trans = Matrix<Derivable,1,3>(2.7, 6.9, 9.5);//Matrix<Derivable,1,3>(qrand() % 200 - 100,qrand() % 200 - 100,qrand() % 200 - 100);
+    Matrix<Derivable,1,3> rotat = Matrix<Derivable,1,3>(102, 350, 162);//Matrix<Derivable,1,3>(qrand() % 360,qrand() % 360,qrand() % 360);
 
+    TraceVector(trans);
+    TraceVector(rotat);
+    qDebug() << "scale: " << scale.getValue();
 
     ms->vertexes
              << Matrix<Derivable,1,3>(0,0,0) * scale + trans
@@ -97,6 +100,8 @@ bool TestAutoRig::Modeling()
     joints << new Joint(Matrix<Derivable,1,3>(0, 40, 0),Matrix<Derivable,1,3>(0,0,0));
     joints[0]->kids << joints[1]; joints[1]->pater = joints[0];
     Skeleton* boner = new Skeleton(joints);
+//    boner->localRotations = QVector<Matrix<Derivable,1,3>>(2);
+//    boner->localScales = QVector<Derivable>(2);
 
     Skin* sk = new Skin();
     sk->addInfo(1, {1,2,3}, {1,1,1});

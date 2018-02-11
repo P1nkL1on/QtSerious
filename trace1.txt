@@ -1,0 +1,78 @@
+scale:  1.29
+QVector(0x1a39b130)
+Uber << request to constructor
+Distance calculkator aka LossFunction contructed!
+Uber << created angles
+ASS 102.643    val: 0
+ASS 14.0795    val: 0
+ASS 290.616    val: 0
+JOINT 274.077    val: 0
+JOINT 1.33045    val: 0.1
+JOINT -93.13    val: 0
+JOINT 77.9962    val: 0
+JOINT 1.33045    val: 0
+JOINT -26.3067    val: 0
+SCALE 185.38    val: 1
+SCALE 2897.86    val: 1
+Iteration  1 Current distance is now  0.410564       Iteration time is:  40  ms
+ASS -70.6511    val: -6.23795
+ASS -317.409    val: -7.15599
+ASS 115.496    val: -7.3682
+JOINT -377.988    val: -122.855
+JOINT -262.815    val: 0.1
+JOINT 37.6831    val: 32.5706
+JOINT -16.621    val: 109.007
+JOINT 15.8775    val: -28.571
+JOINT 32.763    val: -21.5437
+SCALE 4101.3    val: 1.8854
+SCALE -4575.21    val: -1.23153
+Iteration  2 Current distance is now  0.162744       Iteration time is:  12  ms
+ASS 34.9828    val: -6.23357
+ASS -115.789    val: -7.14378
+ASS 179.373    val: -7.4264
+JOINT 18.1544    val: -62.5298
+JOINT -0.371088    val: 63.9096
+JOINT 26.9293    val: 33.9118
+JOINT -28.6125    val: 76.3055
+JOINT -28.9773    val: -4.15368
+JOINT -23.6233    val: 42.7377
+SCALE -7863.8    val: 0.927061
+SCALE 536.019    val: -1.0942
+Iteration  3 Current distance is now  0.155503       Iteration time is:  9  ms
+ASS 187.58    val: -6.24552
+ASS -93.9568    val: -7.1934
+ASS -38.6388    val: -7.45236
+JOINT -179.137    val: -49.6314
+JOINT -78.7676    val: 35.1672
+JOINT -379.317    val: -27.917
+JOINT 15.8144    val: 75.0336
+JOINT 0.972636    val: 18.5704
+JOINT 55.0092    val: 21.531
+SCALE 2818.92    val: 2.79452
+SCALE -357.281    val: -1.177
+Iteration  4 Current distance is now  0.0186756       Iteration time is:  7  ms
+ASS 20.3909    val: -6.30275
+ASS -56.2481    val: -7.14862
+ASS 44.5791    val: -7.38022
+JOINT -39.1217    val: -58.2457
+JOINT -12.1483    val: 33.8165
+JOINT -27.2645    val: 13.059
+JOINT -16.4462    val: 66.8421
+JOINT -6.50519    val: -4.9589
+JOINT 3.97755    val: 21.531
+SCALE -2902.51    val: 2.26215
+SCALE -474.145    val: -1.22593
+Iteration  5 Current distance is now  8.60161e-05       Iteration time is:  6  ms
+ASS -0.129582    val: -6.27785
+ASS 3.47328    val: -7.16177
+ASS 3.69428    val: -7.37811
+JOINT 9.0994    val: -56.3413
+JOINT 2.22314    val: 38.2759
+JOINT 6.23193    val: 14.3917
+JOINT -0.619632    val: 64.3575
+JOINT -0.238772    val: -9.89729
+JOINT -0.546974    val: 19.3146
+SCALE -13.2068    val: 2.88115
+SCALE 59.0896    val: -1.28626
+Iteration  6 Current distance is now  4.69358e-09       Iteration time is:  6  ms
+@ Done in  81  ms;

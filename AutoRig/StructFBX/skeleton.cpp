@@ -8,6 +8,7 @@ Skeleton::Skeleton()
 {
     localRotations = {};
     joints = {};
+    localScales = QVector<Derivable>(0);
 }
 
 Skeleton::Skeleton(QVector<Joint *> j)
@@ -19,6 +20,7 @@ Skeleton::Skeleton(QVector<Joint *> j)
         if (joints[lclId]->pater == NULL)
             rootTransate = joints[lclId]->localTranslation;
     }
+    localScales = QVector<Derivable>(joints.length());
 }
 
 void Skeleton::SetNullRotations()

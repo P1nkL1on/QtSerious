@@ -20,8 +20,8 @@ public:
 
 private:
     Ui::MainWindow *ui;
-
-    QString modelsAdress = "D:/QT-projects/QT-projects/Prohor/Models/";
+    // D:/QT-projects/QT-projects/Prohor/Models/
+    QString modelsAdress = "C:/Users/Prohor/Models/";
 
     void keyPressEvent(QKeyEvent *e);
 

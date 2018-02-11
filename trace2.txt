@@ -1,0 +1,153 @@
+"Derivable3D (            2.7 (0)             6.9 (0)             9.5 (0) )"
+"Derivable3D (            102 (0)             350 (0)             162 (0) )"
+scale:  1.29
+QVector(0x1be9b1f0)
+Uber << request to constructor
+Distance calculkator aka LossFunction contructed!
+Uber << created angles
+ASS 50.7055    val: 0
+ASS 5.88379    val: 0
+ASS 146.471    val: 0
+JOINT 135.365    val: 0
+JOINT 0.754167    val: 0.1
+JOINT -46.3446    val: 0
+JOINT 35.7083    val: 0
+JOINT 0.754166    val: 0
+JOINT -13.3111    val: 0
+SCALE 92.1116    val: 1
+SCALE 1447.68    val: 1
+Iteration  1 Current distance is now  0.105575       Iteration time is:  39  ms
+ASS 20.2131    val: -3.13916
+ASS -42.523    val: -3.58081
+ASS 67.095    val: -3.68914
+JOINT -8.14695    val: -60.3946
+JOINT -2.43035    val: 0.1
+JOINT 4.48333    val: 16.2235
+JOINT -2.20119    val: 52.8165
+JOINT 0.283698    val: -12.3789
+JOINT 0.74982    val: -10.1574
+SCALE -3228.19    val: 1.44322
+SCALE 5.14004    val: -0.118663
+Iteration  2 Current distance is now  0.0326887       Iteration time is:  12  ms
+ASS 12.29    val: -4.70913
+ASS -3.33474    val: -5.3715
+ASS 29.7995    val: -5.5337
+JOINT 29.7983    val: -47.987
+JOINT 3.73858    val: 0.1
+JOINT -10.1938    val: 11.7261
+JOINT 5.87148    val: 158.796
+JOINT 1.93695    val: 78.2295
+JOINT 6.08262    val: -29.6719
+SCALE -1044.49    val: 2.12871
+SCALE 245.474    val: -0.663051
+Iteration  3 Current distance is now  0.029723       Iteration time is:  11  ms
+ASS 19.203    val: -5.4937
+ASS 15.6485    val: -6.26669
+ASS 19.8606    val: -6.45598
+JOINT 47.2922    val: -35.1838
+JOINT 1.36034    val: -65.7555
+JOINT -57.7153    val: 11.5257
+JOINT -0.183341    val: 158.796
+JOINT -5.75855    val: -34.1602
+JOINT 3.39964    val: -77.886
+SCALE -192.281    val: 2.49487
+SCALE 407.606    val: -0.544998
+Iteration  4 Current distance is now  0.0218053       Iteration time is:  6  ms
+ASS 4.56575    val: -5.88625
+ASS 15.2006    val: -6.71438
+ASS 16.5839    val: -6.91712
+JOINT 39.6581    val: -27.2261
+JOINT 10.1715    val: -65.7555
+JOINT -42.1032    val: 21.6052
+JOINT -2.25633    val: 90.3351
+JOINT -1.57237    val: 3.37795
+JOINT -8.429    val: -137.491
+SCALE -96.6973    val: 2.64771
+SCALE 242.857    val: -0.560666
+Iteration  5 Current distance is now  0.100704       Iteration time is:  7  ms
+ASS 80.1934    val: -6.0823
+ASS 15.4935    val: -6.93823
+ASS 17.7008    val: -7.14773
+JOINT 42.286    val: 17.6271
+JOINT -137.447    val: -109.417
+JOINT -21.9359    val: 63.4847
+JOINT 1.57169    val: 113.76
+JOINT 0.815938    val: 19.6885
+JOINT 3.51083    val: -137.491
+SCALE 901.376    val: 2.76467
+SCALE 1182.74    val: -0.634883
+Iteration  6 Current distance is now  0.0299913       Iteration time is:  6  ms
+ASS 43.209    val: -6.18024
+ASS 6.5727    val: -7.04998
+ASS 13.3241    val: -7.26298
+JOINT 24.8592    val: 17.6271
+JOINT -71.9276    val: -93.3812
+JOINT -23.2254    val: 63.1257
+JOINT 3.78992    val: 114.231
+JOINT 3.3218    val: 19.8599
+JOINT 7.29967    val: -111.071
+SCALE -104.289    val: 2.64698
+SCALE 500.476    val: -0.886232
+Iteration  7 Current distance is now  0.00744222       Iteration time is:  6  ms
+ASS 20.9012    val: -6.22928
+ASS 2.60721    val: -7.10599
+ASS 8.67243    val: -7.3206
+JOINT 13.1573    val: 17.6271
+JOINT -33.7098    val: -84.7346
+JOINT -14.2999    val: 64.3464
+JOINT 2.68329    val: 104.716
+JOINT 3.00611    val: 25.6656
+JOINT 4.14376    val: -107.342
+SCALE -248.919    val: 2.71996
+SCALE 238.663    val: -1.0842
+Iteration  8 Current distance is now  0.0018252       Iteration time is:  6  ms
+ASS 10.1878    val: -6.25379
+ASS 1.1137    val: -7.13397
+ASS 4.69877    val: -7.34943
+JOINT 6.62823    val: 17.6271
+JOINT -16.203    val: -80.9719
+JOINT -7.54175    val: 65.2688
+JOINT 1.42493    val: 100.057
+JOINT 1.7887    val: 26.146
+JOINT 2.19557    val: -105.302
+SCALE -164.974    val: 2.79256
+SCALE 116.255    val: -1.18692
+Iteration  9 Current distance is now  0.000451022       Iteration time is:  6  ms
+ASS 5.02482    val: -6.26609
+ASS 0.508659    val: -7.148
+ASS 2.42408    val: -7.36383
+JOINT 3.31208    val: 17.6271
+JOINT -7.93993    val: -79.2852
+JOINT -3.83493    val: 65.7604
+JOINT 0.725795    val: 97.9721
+JOINT 0.960944    val: 26.0893
+JOINT 1.12642    val: -104.431
+SCALE -91.2663    val: 2.83641
+SCALE 57.4117    val: -1.23844
+Iteration  10 Current distance is now  0.00011207       Iteration time is:  6  ms
+ASS 2.49512    val: -6.27221
+ASS 0.242344    val: -7.155
+ASS 1.22895    val: -7.37103
+JOINT 1.65408    val: 17.6271
+JOINT -3.93034    val: -78.4912
+JOINT -1.92985    val: 66.0084
+JOINT 0.365617    val: 96.998
+JOINT 0.496618    val: 26.0127
+JOINT 0.570068    val: -104.039
+SCALE -47.6618    val: 2.85997
+SCALE 28.5337    val: -1.26422
+Iteration  11 Current distance is now  2.79305e-05       Iteration time is:  6  ms
+ASS 1.24325    val: -6.27527
+ASS 0.118182    val: -7.1585
+ASS 0.618487    val: -7.37464
+JOINT 0.826369    val: 17.6271
+JOINT -1.95538    val: -78.1064
+JOINT -0.967583    val: 66.1323
+JOINT 0.183428    val: 96.528
+JOINT 0.252289    val: 25.9649
+JOINT 0.286713    val: -103.854
+SCALE -24.3179    val: 2.87213
+SCALE 14.2245    val: -1.27711
+Iteration  12 Current distance is now  6.97156e-06       Iteration time is:  6  ms
+@ Done in  118  ms;
+Uber << Qasi Newtone EXIT SUCCESS

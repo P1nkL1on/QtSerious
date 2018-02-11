@@ -3,6 +3,7 @@
 #include "QVector3D"
 #include "iostream"
 #include "stereometry.h"
+#include "cmath"
 
 using namespace Stereometry;
 
