@@ -29,7 +29,7 @@ public:
 namespace OptimiseMethods {
     template <typename Function>//, typename CallBack>
     QVector<float> GaussNewtonMethod (Function& func, /*CallBack& callback,*/ const QVector<float> params,
-                                     const float epsilon, const int maxIterationCount, QVector<GraphicMotion>&mts){
+                                     const float epsilon, const int maxIterationCount, QVector<GraphicMotion>&mts, bool isNumerical){
 
         QTime t , ttotal;
         t.start(); ttotal.start();
@@ -47,7 +47,7 @@ namespace OptimiseMethods {
         int iterationNumber = 0;
         float currentDistance = func(res), firstDist = currentDistance; // set proto distance here
 
-        mts.clear(); int wid = 320, hei = 10;
+        mts.clear(); int wid = 150, hei = 10;
         mts << GraphicMotion(Qt::black, hei,  (wid + 10) * 4, 25, 10, 0);
         for (int i = 0; i < params.length(); i++){
             if (i < 3){
@@ -66,7 +66,10 @@ namespace OptimiseMethods {
         }
 
         do{
-            JacobianCalculator::CalculateForFunction(res, jacobMatrix, F, func );
+            if (isNumerical)
+                JacobianCalculator::CalculateNumerical(res, jacobMatrix, F, func );
+            else
+                JacobianCalculator::CalculateForFunction(res, jacobMatrix, F, func );
             jacobTrans = jacobMatrix.transpose();
             Eigen::MatrixXf jTj = jacobTrans * jacobMatrix;
             Eigen::MatrixXf jF = jacobTrans * F;

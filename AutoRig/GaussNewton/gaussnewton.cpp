@@ -33,6 +33,7 @@ void GraphicMotion::DrawOn(QPainter *painter)
     QPen pen = QPen(Qt::gray);
     painter->setPen(pen);
     int WID = widperstep / values.length();
+    if (WID == 0) WID = 1;
     for (int i = 0; i < values.length(); i++)
         painter->drawLine(left + WID * i, top, left + WID * i, top + hei);
 

@@ -1,0 +1,45 @@
+"Derivable3D (            2.7 (0)             6.9 (0)             9.5 (0) )"
+"Derivable3D (            102 (0)             350 (0)             162 (0) )"
+scale:  1.29
+QVector(0xc5e020)
+Uber << request to constructor
+Distance calculkator aka LossFunction contructed!
+Uber << created angles
+ASS 50.7055    val: 0
+ASS 5.88379    val: 0
+ASS 146.471    val: 0
+JOINT 135.365    val: 0
+JOINT 0.754167    val: 0.1
+JOINT -46.3446    val: 0
+JOINT 35.7083    val: 0
+JOINT 0.754167    val: 0
+JOINT -13.3111    val: 0
+SCALE 2987.47    val: 1
+SCALE 1447.68    val: 1
+Iteration  1 Current distance is now  0.119538       Iteration time is:  2  ms
+ASS 20.0531    val: -3.13894
+ASS -60.1348    val: -3.58101
+ASS 69.1272    val: -3.6891
+JOINT -37.6526    val: -60.3946
+JOINT -11.4486    val: 0.1
+JOINT 10.5343    val: 16.2238
+JOINT -18.6446    val: 52.8165
+JOINT 2.40311    val: -12.3789
+JOINT 6.35106    val: -10.1578
+SCALE -2524.63    val: 1.44322
+SCALE -792.664    val: -1.00511
+Iteration  2 Current distance is now  0.0424075       Iteration time is:  0  ms
+ASS 15.0368    val: -4.70911
+ASS -4.13065    val: -5.37157
+ASS 42.2754    val: -5.53368
+JOINT 33.1669    val: -47.987
+JOINT 6.79306    val: 0.1
+JOINT -9.8828    val: 11.7261
+JOINT -1.74749    val: 54.8105
+JOINT 0.354275    val: 3.3108
+JOINT 0.261878    val: -12.5126
+SCALE -1551.43    val: 2.12871
+SCALE 708.377    val: -0.151477
+Iteration  3 Current distance is now  0.0108378       Iteration time is:  1  ms
+@ Finish by too much iteration count!
+@ Done in  3  ms;

@@ -24,8 +24,8 @@ bool TestAutoRig::Uber()
 
     qDebug() << "Uber << created angles";
 
-    QVector<float> resAngles = OptimiseMethods::GaussNewtonMethod(loss, firstAngles, 1e-5, 200, gt);
-    float finDist = resAngles[resAngles.length() - 1];
+    for (int i = 0; i < 2; i++)
+        QVector<float> resAngles = OptimiseMethods::GaussNewtonMethod(loss, firstAngles, 1e-5, 2, gt, (i == 0));
     qDebug() << "Uber << Qasi Newtone EXIT SUCCESS";
 }
 
@@ -52,7 +52,6 @@ TestAutoRig::TestAutoRig(Rig *rig, QVector<Rig *> mesh)
     bendingRig = rig;
     targMeshInd = 0;
     gt = {};
-    Modeling();
 }
 void RotateSome (QVector<Matrix<Derivable,1,3>>& verts, const Matrix<Derivable,1,3> rot) {
     Matrix<Derivable,4,4> rotMa = MakeDeriveRotationMatrix(rot);
