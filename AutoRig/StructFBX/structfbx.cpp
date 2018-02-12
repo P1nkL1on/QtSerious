@@ -68,6 +68,7 @@ void Joint::ResetGlobalTransformMatrix()
 
 void Joint::CalculateGlobalTransformMatrix()
 {
+    ResetGlobalTransformMatrix();
     Joint* now = this;
     do{
         globalTransformMatrix = globalTransformMatrix * now->localTransformMatrix;

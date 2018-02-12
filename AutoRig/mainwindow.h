@@ -21,7 +21,7 @@ public:
 private:
     Ui::MainWindow *ui;
     // D:/QT-projects/QT-projects/Prohor/Models/
-    QString modelsAdress ="D:/QT-projects/QT-projects/Prohor/Models/";// "C:/Users/Prohor/Models/";
+    QString modelsAdress ="C:/Users/Prohor/Models/";// "D:/QT-projects/QT-projects/Prohor/Models/";
 
     void keyPressEvent(QKeyEvent *e);
 

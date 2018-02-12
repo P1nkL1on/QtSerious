@@ -4,6 +4,9 @@
 using namespace DerOperations;
 using Eigen::Matrix;
 
+#include "dermatops.h"
+using namespace DerivableVectorMatrixes;
+
 Skeleton::Skeleton()
 {
     localRotations = {};
@@ -104,8 +107,11 @@ bool Skeleton::CalculateGlobalCoordForEachJointMatrix()
             joints[curJoint]->localTranslation = rootTransate;
         }
     }
-    for (int jointInd = 0; jointInd < joints.length(); jointInd++)
+    for (int jointInd = 0; jointInd < joints.length(); jointInd++){
         joints[jointInd]->RecaulculateLocalTransformMatrix();
+//        qDebug() << "!!!!!!!!!!!!!!!!!!!!" << jointInd;
+//        TraceMatrix(joints[jointInd]->localTransformMatrix);
+    }
 
     // apply for roots and go further
     Q_ASSERT(rootInds.length() > 0);
@@ -114,6 +120,11 @@ bool Skeleton::CalculateGlobalCoordForEachJointMatrix()
         Joint* root = (joints[rootInds[curRootInd]]);
         RecursiveGlobalCalculateCall(root);
     }
+//    for (int jointInd = 0; jointInd < joints.length(); jointInd++){
+//        qDebug() << "!g!g!g!g!g!g!g!g!!g!g!g!g!g!g!g!g!g!!" << jointInd;
+//        TraceMatrix(joints[jointInd]->globalTransformMatrix);
+//        TraceVector(joints[jointInd]->currentTranslation);
+//    }
     return true;
 }
 

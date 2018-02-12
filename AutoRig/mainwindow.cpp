@@ -59,6 +59,12 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
         tar.Modeling();
         this->repaint();
     }
+
+    if (e->key() == Qt::Key_H){
+        iteration = 0;
+        tar.UberBugHunt();
+        this->repaint();
+    }
     if (e->key() == Qt::Key_Up){
         iteration = 0;
         tar.ChangeTargetMeshInd(1);

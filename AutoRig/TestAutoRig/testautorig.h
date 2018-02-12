@@ -34,6 +34,7 @@ public:
 
     bool Modeling ();
     bool Uber ();
+    bool UberBugHunt ();
     float TestBend ();
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };

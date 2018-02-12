@@ -36,7 +36,7 @@ namespace OptimiseMethods {
         {
             QString s = "";
             for (int j = 0; j < mat.rows(); j++)
-                s += QString::number(((int)(mat(j,i) * 1000)) / 1000.0).leftJustified(15, ' ');
+                s += QString::number(((int)(mat(j,i))) / 1000.0).leftJustified(15, ' ');
             qDebug() << s;
         }
     }
@@ -61,7 +61,7 @@ namespace OptimiseMethods {
         int iterationNumber = 0;
         float currentDistance = func(res), firstDist = currentDistance; // set proto distance here
 
-        mts.clear(); int wid = 150, hei = 10;
+        mts.clear(); int wid = 50, hei = 10;
         mts << GraphicMotion(Qt::black, hei,  (wid + 10) * 4, 25, 10, 0);
         for (int i = 0; i < params.length(); i++){
             if (i < 3){
@@ -83,8 +83,9 @@ namespace OptimiseMethods {
             if (isNumerical)
                 JacobianCalculator::CalculateNumerical(res, jacobMatrix, F, func );
             else
-                JacobianCalculator::CalculateMixed(res, jacobMatrix, F, func );
-            //TraceJacobianM(jacobMatrix);
+                JacobianCalculator::CalculateForFunction(res, jacobMatrix, F, func);
+                //JacobianCalculator::CalculateMixed(res, jacobMatrix, F, func );
+            TraceJacobianM(jacobMatrix.transpose() * F);
             jacobTrans = jacobMatrix.transpose();
             Eigen::MatrixXf jTj = jacobTrans * jacobMatrix;
             Eigen::MatrixXf jF = jacobTrans * F;

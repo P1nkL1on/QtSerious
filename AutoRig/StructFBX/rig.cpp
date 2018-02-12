@@ -48,12 +48,7 @@ void Rig::BendSkinToSkeleton()
         // we have 0.3 && QVec3D && from joint a place and rotation
         for (int jointInd = 0; jointInd < skin->vertAttends[currentVertexInd].jointIndexs.length(); jointInd++){
             int jointBendInd = skin->vertAttends[currentVertexInd].jointIndexs[jointInd];
-            Matrix<Derivable,1,3> jointBendTranslation, jointBendRotation;
-            skeleton->getJointTranslationAndRotation(jointBendInd, jointBendTranslation, jointBendRotation);
 
-            //qDebug() << currentVertexInd<< jointBendInd<< originalOffset << jointBendTranslation << jointBendRotation;
-            ///bendedVariants <<
-            ///CommonFuncs::AddDirect(jointBendTranslation, -originalOffset, jointBendRotation);
             Matrix<Derivable,4,4> localAttendTransformMatrix = SetDeriveMatrix(),//QMatrix4x4(),
                        localRotateMatrix = CommonFuncs::GetNormalRotateMatrix(skeleton->joints[jointBendInd]->currentRotation);
 
@@ -62,7 +57,6 @@ void Rig::BendSkinToSkeleton()
 
             bendedVariants <<
             CommonFuncs::AddDirectMatrx(Matrix<Derivable,1,3>(1,1,1),
-
                                          localAttendTransformMatrix
                                         * localRotateMatrix
                                         * skeleton->joints[jointBendInd]->globalTransformMatrix
@@ -95,6 +89,9 @@ void Rig::BendSkinToSkeleton()
     //qDebug() << QString::number(vertexesTransformed) + " / " + QString::number(skin->vertAttends.length()) + " / " + QString::number(bindMesh->vertexes.length()) +" vertexes transformed ( "+QString::number(failedIndexes.length())+" failed)";
     //
     bendedMesh = newMesh;
+//    qDebug() << "MMMMMMMMMMMMMMMMMMMM";
+//    for (int i = 0; i < newMesh->vertexes.length(); i++)
+//        TraceVector(newMesh->vertexes[i]);
     return;
 }
 

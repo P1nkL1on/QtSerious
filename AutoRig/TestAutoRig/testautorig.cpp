@@ -24,9 +24,152 @@ bool TestAutoRig::Uber()
 
     qDebug() << "Uber << created angles";
 
-    for (int i = 0; i < 2; i++)
-        QVector<float> resAngles = OptimiseMethods::GaussNewtonMethod(loss, firstAngles, 1e-5, 20, gt, i == 0);
+    for (int i = 0; i < 4; i++)
+        QVector<float> resAngles = OptimiseMethods::GaussNewtonMethod(loss, firstAngles, 1e-5, 0, gt, i < 2);
     qDebug() << "Uber << Qasi Newtone EXIT SUCCESS";
+}
+
+bool TestAutoRig::UberBugHunt()
+{
+    bool trace = false;
+    if (trace)
+        qDebug() << "I wish you a good hunt";
+    Modeling();
+
+//    bendingRig->skeleton->SetRootTranslation(rootTrans);
+//    bendingRig->skeleton->SetRotations(newRotations);
+//    bendingRig->skeleton->SetScales(newScales);
+
+//    bendingRig->BendSkinToSkeleton();
+//    return bendingRig->bendedMesh->CompareWithAnotherMeshCoords(with);
+
+    QVector<Derivable> values = QVector<Derivable>();
+    values << 0<<0<<0<<  0<<0<<0<<0<<0<<0<< 1<<1;
+    Matrix<float,-1,-1> resJacobian = Matrix<float,-1,-1>(12, values.length());
+    Eigen::VectorXf resF = Eigen::VectorXf(12);
+
+
+    for (int PARAMWITH1 = 0; PARAMWITH1 < values.length(); PARAMWITH1++){
+        values[PARAMWITH1].setPrValue(1);
+        Matrix<Derivable,1,3> root = Matrix<Derivable,1,3>(values[0], values[1], values[2]),
+                              rot0 = Matrix<Derivable,1,3>(values[3], values[4], values[5]),
+                              rot1 = Matrix<Derivable,1,3>(values[6], values[7], values[8]);
+        Derivable sc0 = values[9], sc1 = values[10];
+        values[PARAMWITH1].setPrValue(0);
+
+        // goto bending
+
+        // go to recalculate all
+            // go to recalculate all local recursive
+    //    localTransformMatrix = SetDeriveMatrix();
+
+    //    Matrix<Derivable,1,3> currentRotation2 = (pater != NULL)?pater->currentRotation : Matrix<Derivable,1,3>(0,0,0);
+    //    if (pater != NULL)
+    //         ScaleDeriveMatrix(localTransformMatrix, Derivable(1) / pater->localScale);
+    //    ScaleDeriveMatrix(localTransformMatrix, localScale);    // scale self
+    //    TranslateDeriveMatrix(localTransformMatrix, localTranslation);
+    //    RotateDeriveMatrix(localTransformMatrix, currentRotation2);
+        Matrix<Derivable,4,4> localTransform0 = SetDeriveMatrix(), localTransform1 = SetDeriveMatrix(), globalTransform0 = SetDeriveMatrix(), globalTransform1 = SetDeriveMatrix();
+
+        ScaleDeriveMatrix(localTransform0, sc0);    // scale self
+        TranslateDeriveMatrix(localTransform0, root);
+        RotateDeriveMatrix(localTransform0, rot0);
+
+        ScaleDeriveMatrix(localTransform1, Derivable(1) / sc0);
+        ScaleDeriveMatrix(localTransform1, sc1);    // scale self
+        TranslateDeriveMatrix(localTransform1, Matrix<Derivable,1,3> (0,40,0));
+        RotateDeriveMatrix(localTransform1, rot1);
+
+        int X = 10;
+         if (trace){
+            qDebug() << "@@@@@@@@@@@ 0";
+            TraceMatrix(localTransform0);
+
+            qDebug() << "@@@@@@@@@@@ 1";
+            TraceMatrix(localTransform1);
+        }
+
+        // local a normal
+        Matrix<Derivable,1,4> tmp;
+        globalTransform0 = globalTransform0 * localTransform0;
+
+        tmp = Matrix<Derivable,1,4>(1,1,1,1) * globalTransform0;
+        Matrix<Derivable,1,3> trans0 = Matrix<Derivable,1,3>(tmp(0,0), tmp(0,1), tmp(0,2));
+
+        globalTransform1 = globalTransform1 * localTransform1;
+        globalTransform1 = globalTransform1 * localTransform0;
+
+        tmp = Matrix<Derivable,1,4>(1,1,1,1) * globalTransform1;
+        Matrix<Derivable,1,3> trans1 = Matrix<Derivable,1,3>(tmp(0,0), tmp(0,1), tmp(0,2));
+        if (trace){
+            qDebug() << "@g@g@g@g@g@g@g@g@g@g@ 0";
+            TraceMatrix(globalTransform0);
+            TraceVector(trans0);
+
+            qDebug() << "@G@GGG@G@G@GGG@ 1";
+            TraceMatrix(globalTransform1);
+            TraceVector(trans1);
+        }
+
+        Mesh* newMesh = new Mesh();
+        for (int currentVertexInd = 0; currentVertexInd < bendingRig->skin->vertAttends.length(); currentVertexInd ++){
+            QVector<Matrix<Derivable,1,3>> bendedVariants;
+            QVector<float> weightes;
+
+            // we have 0.3 && QVec3D && from joint a place and rotation
+            for (int jointInd = 0; jointInd < bendingRig->skin->vertAttends[currentVertexInd].jointIndexs.length(); jointInd++){
+                int jointBendInd = bendingRig->skin->vertAttends[currentVertexInd].jointIndexs[jointInd];
+
+                Matrix<Derivable,4,4>
+                       localAttendTransformMatrix = SetDeriveMatrix(),
+                       localRotateMatrix = MakeDeriveRotationMatrix((jointBendInd == 0)? rot0 : rot1);
+
+                TranslateDeriveMatrix(localAttendTransformMatrix, - bendingRig->skin->vertAttends[currentVertexInd].localJointCoords[jointInd]);
+
+                tmp =  Matrix<Derivable,1,4>(1,1,1,1) * (localAttendTransformMatrix * localRotateMatrix * ((jointBendInd == 0)? globalTransform0 : globalTransform1));
+                bendedVariants << Matrix<Derivable,1,3>(tmp(0,0), tmp(0,1), tmp(0,2));
+                weightes << bendingRig->skin->vertAttends[currentVertexInd].weights[jointInd];
+            }
+
+            Matrix<Derivable,1,3> result = Matrix<Derivable,1,3>();
+            float bendedSumm = 0;
+            for (int curPoint = 0; curPoint < weightes.length(); curPoint++)
+                bendedSumm += weightes[curPoint];
+
+            // select the middle, based on wighthres
+            for (int curPoint = 0; curPoint < bendedVariants.length(); curPoint++)
+                result = result +  Derivable(weightes[curPoint]/ bendedSumm) * bendedVariants[curPoint] ;
+            //result = bendedVariants[0];
+
+            newMesh->vertexes << result;
+
+        }
+         if (trace){
+            qDebug() << ">>>>>>>>>>> VERTEXES <<<<<<<<<<";
+            for (int i = 0; i < newMesh->vertexes.length(); i++)
+                TraceVector(newMesh->vertexes[i]);
+            //targetMeshes[targMeshInd]->bindMesh
+        }
+        QVector<Derivable> res = QVector<Derivable>();
+        for (int vInd = 0; vInd < newMesh->vertexes.length(); vInd++){
+            Matrix<Derivable,1,3> dist = newMesh->vertexes[vInd] - targetMeshes[targMeshInd]->bindMesh->vertexes[vInd];
+            res << dist(0,0) << dist(0,1) << dist(0,2);
+        }
+//        QString s = "";
+//        for (int i = 0; i < res.length(); i++)
+//            s +=  QString::number(res[i].getProiz()).leftJustified(14, ' ');
+//        qDebug() << s;
+        Eigen::VectorXf rescol = Eigen::VectorXf(res.length());
+        for (int i = 0; i < res.length(); i++){
+            rescol[i] = res[i].getProiz();
+            resF[i] = res[i].getValue();
+        }
+
+        resJacobian.col(PARAMWITH1) = rescol;
+    }
+    qDebug() << ">>Handmade shit";
+    OptimiseMethods::TraceJacobianM(resJacobian.transpose() * resF * .5);
+    return true;
 }
 
 void TestAutoRig::ChangeTargetMeshInd(int count)
@@ -63,9 +206,9 @@ bool TestAutoRig::Modeling()
 {
     // model bending to
     Mesh* ms = new Mesh();
-    Derivable scale = /*Derivable(1.29);*/0.5 + qrand() % 100 / 100.0;
-    Matrix<Derivable,1,3> trans = /*Matrix<Derivable,1,3>(2.7, 6.9, 9.5);*/Matrix<Derivable,1,3>(qrand() % 200 - 100,qrand() % 200 - 100,qrand() % 200 - 100);
-    Matrix<Derivable,1,3> rotat = /*Matrix<Derivable,1,3>(102, 350, 162);*/Matrix<Derivable,1,3>(qrand() % 360,qrand() % 360,qrand() % 360);
+    Derivable scale = Derivable(1.29);//0.5 + qrand() % 100 / 100.0;
+    Matrix<Derivable,1,3> trans = Matrix<Derivable,1,3>(2.7, 6.9, 9.5);//Matrix<Derivable,1,3>(qrand() % 200 - 100,qrand() % 200 - 100,qrand() % 200 - 100);
+    Matrix<Derivable,1,3> rotat = Matrix<Derivable,1,3>(102, 350, 162);//Matrix<Derivable,1,3>(qrand() % 360,qrand() % 360,qrand() % 360);
 
     TraceVector(trans);
     TraceVector(rotat);
@@ -96,21 +239,21 @@ bool TestAutoRig::Modeling()
 
     QVector<Joint*> joints = {};
     joints << new Joint(Matrix<Derivable,1,3>(0, 00, 0),Matrix<Derivable,1,3>(0,0,0));
-    joints << new Joint(Matrix<Derivable,1,3>(0, 30, 0),Matrix<Derivable,1,3>(0,0,0));
-    joints << new Joint(Matrix<Derivable,1,3>(0, 30, 0),Matrix<Derivable,1,3>(0,0,0));
-    joints << new Joint(Matrix<Derivable,1,3>(0, 30, 0),Matrix<Derivable,1,3>(0,0,0));
+    joints << new Joint(Matrix<Derivable,1,3>(0, 40, 0),Matrix<Derivable,1,3>(0,0,0));
+    //joints << new Joint(Matrix<Derivable,1,3>(0, 30, 0),Matrix<Derivable,1,3>(0,0,0));
+    //joints << new Joint(Matrix<Derivable,1,3>(0, 30, 0),Matrix<Derivable,1,3>(0,0,0));
     joints[0]->kids << joints[1]; joints[1]->pater = joints[0];
-    joints[1]->kids << joints[2]; joints[2]->pater = joints[1];
-    joints[2]->kids << joints[3]; joints[3]->pater = joints[2];
+    //joints[1]->kids << joints[2]; joints[2]->pater = joints[1];
+    //joints[2]->kids << joints[3]; joints[3]->pater = joints[2];
     Skeleton* boner = new Skeleton(joints);
 //    boner->localRotations = QVector<Matrix<Derivable,1,3>>(2);
 //    boner->localScales = QVector<Derivable>(2);
 
     Skin* sk = new Skin();
-    sk->addInfo(2, {2}, {1,1,1});
+    sk->addInfo(1, {1,3,2}, {1,1,1});
     sk->addInfo(0, {0}, {1,1,1});
-    sk->addInfo(1, {1}, {1,1,1});
-    sk->addInfo(3, {3}, {1,1,1});
+//    sk->addInfo(1, {1}, {1,1,1});
+//    sk->addInfo(3, {3}, {1,1,1});
 
     boner->CalculateGlobalCoordForEachJointMatrix();
     sk->GenerateAttends(ms2->vertexes, boner->getJointsGlobalTranslationsForSkin());
