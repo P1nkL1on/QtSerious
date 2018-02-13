@@ -86,6 +86,7 @@ namespace OptimiseMethods {
                 JacobianCalculator::CalculateForFunction(res, jacobMatrix, F, func);
                 //JacobianCalculator::CalculateMixed(res, jacobMatrix, F, func );
             TraceJacobianM(jacobMatrix.transpose() * F);
+            TraceJacobianM(F);
             jacobTrans = jacobMatrix.transpose();
             Eigen::MatrixXf jTj = jacobTrans * jacobMatrix;
             Eigen::MatrixXf jF = jacobTrans * F;
@@ -113,7 +114,7 @@ namespace OptimiseMethods {
             iterationNumber ++;
             //qDebug() << ">> Callback call !"; callback (res);
             //if (t.elapsed() > 100)
-            qDebug() << "Iteration " << iterationNumber << "Current distance is now " << currentDistance << "      Iteration time is: " << t.elapsed() << " ms"; t.restart();
+            qDebug() << "Iteration " << iterationNumber << "Current distance is now " << currentDistance << "      Iteration time is: " << t.elapsed() << " ms " << ((isNumerical)? "numerical" : "autodiff"); t.restart();
             if (iterationNumber > maxIterationCount){
                 qDebug() << ((currentDistance < firstDist * .5)? "@ Finish by too much iteration count!" : "@ !!!!!!!AAAAAAAAAAAA!!!!!!!!!");
                 break;

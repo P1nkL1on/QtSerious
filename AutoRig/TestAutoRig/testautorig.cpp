@@ -45,17 +45,24 @@ bool TestAutoRig::UberBugHunt()
 
     QVector<Derivable> values = QVector<Derivable>();
     values << 0<<0<<0<<  0<<0<<0<<0<<0<<0<< 1<<1;
-    Matrix<float,-1,-1> resJacobian = Matrix<float,-1,-1>(12, values.length());
-    Eigen::VectorXf resF = Eigen::VectorXf(12);
+    Matrix<float,-1,-1> resJacobian = Matrix<float,-1,-1>(12, values.length()), resJacobianNum = Matrix<float,-1,-1>(12, values.length());
+    Eigen::VectorXf resF = Eigen::VectorXf(12),  resFNum = Eigen::VectorXf(12);
 
+    Derivable dx = 1e-4;
 
-    for (int PARAMWITH1 = 0; PARAMWITH1 < values.length(); PARAMWITH1++){
-        values[PARAMWITH1].setPrValue(1);
+    for (int PARAMWITH1 = 0; PARAMWITH1 < values.length() * 2; PARAMWITH1++){
+        if ( PARAMWITH1 < values.length())
+            values[PARAMWITH1].setPrValue(1);
+        else
+            values[PARAMWITH1 - values.length()] = values[PARAMWITH1 - values.length()] + dx;
         Matrix<Derivable,1,3> root = Matrix<Derivable,1,3>(values[0], values[1], values[2]),
                               rot0 = Matrix<Derivable,1,3>(values[3], values[4], values[5]),
                               rot1 = Matrix<Derivable,1,3>(values[6], values[7], values[8]);
         Derivable sc0 = values[9], sc1 = values[10];
-        values[PARAMWITH1].setPrValue(0);
+        if ( PARAMWITH1 < values.length())
+            values[PARAMWITH1].setPrValue(0);
+        else
+            values[PARAMWITH1 - values.length()] = values[PARAMWITH1 - values.length()] - dx;
 
         // goto bending
 
@@ -162,13 +169,23 @@ bool TestAutoRig::UberBugHunt()
         Eigen::VectorXf rescol = Eigen::VectorXf(res.length());
         for (int i = 0; i < res.length(); i++){
             rescol[i] = res[i].getProiz();
-            resF[i] = res[i].getValue();
+            if ( PARAMWITH1 < values.length())
+                resF[i] = res[i].getValue();
+            else
+                resFNum[i] = res[i].getValue();
         }
+        if ( PARAMWITH1 < values.length())
+            resJacobian.col(PARAMWITH1) = rescol;
+        else
+            resJacobianNum.col(PARAMWITH1 - values.length()) = ((resFNum - resF) / (dx.getValue())).cast<float>();
 
-        resJacobian.col(PARAMWITH1) = rescol;
     }
-    qDebug() << ">>Handmade shit";
+    qDebug() << ">>Handmade shit AUTODIFF";
     OptimiseMethods::TraceJacobianM(resJacobian.transpose() * resF * .5);
+    OptimiseMethods::TraceJacobianM(resF * .5);
+    qDebug() << ">>Handmade shit NUMERICAL";
+    OptimiseMethods::TraceJacobianM(resJacobianNum.transpose() * resFNum * .5);
+    OptimiseMethods::TraceJacobianM(resFNum * .5);
     return true;
 }
 
@@ -207,8 +224,8 @@ bool TestAutoRig::Modeling()
     // model bending to
     Mesh* ms = new Mesh();
     Derivable scale = Derivable(1.29);//0.5 + qrand() % 100 / 100.0;
-    Matrix<Derivable,1,3> trans = Matrix<Derivable,1,3>(2.7, 6.9, 9.5);//Matrix<Derivable,1,3>(qrand() % 200 - 100,qrand() % 200 - 100,qrand() % 200 - 100);
-    Matrix<Derivable,1,3> rotat = Matrix<Derivable,1,3>(102, 350, 162);//Matrix<Derivable,1,3>(qrand() % 360,qrand() % 360,qrand() % 360);
+    Matrix<Derivable,1,3> trans = Matrix<Derivable,1,3>(0,0,0);//(2.7, 6.9, 9.5);//Matrix<Derivable,1,3>(qrand() % 200 - 100,qrand() % 200 - 100,qrand() % 200 - 100);
+    Matrix<Derivable,1,3> rotat = Matrix<Derivable,1,3>(0,0,0);//(102, 350, 162);//Matrix<Derivable,1,3>(qrand() % 360,qrand() % 360,qrand() % 360);
 
     TraceVector(trans);
     TraceVector(rotat);
@@ -216,8 +233,8 @@ bool TestAutoRig::Modeling()
 
     ms->vertexes
              << Matrix<Derivable,1,3>(0,0,0) * scale + trans
-             << Matrix<Derivable,1,3>(10,80,-40) * scale + trans
-             << Matrix<Derivable,1,3>(-10,80,-40) * scale + trans
+             << Matrix<Derivable,1,3>(10,40,0) * scale + trans
+             << Matrix<Derivable,1,3>(-10,40,0) * scale + trans
              << Matrix<Derivable,1,3>(0,80,0) * scale + trans;
     RotateSome(ms->vertexes, rotat);
     ms->polygonIndexes << 0 << 1 << 2 << 1 << 2 << 3;
