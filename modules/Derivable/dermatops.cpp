@@ -43,7 +43,7 @@ void DerivableVectorMatrixes::TraceMatrix (const Matrix<Derivable, 4, 4> Mat){
     for (int i = 0; i < 4; i++){
         QString lin = "";
         for (int j = 0; j < 4; j++)
-            lin += (QString::number( Mat(j,i).getValue())).rightJustified(12, ' ');// + " (" + QString::number( Mat(i,j).getProiz()) + ")").rightJustified(19, ' ') + " ";
+            lin +=( (QString::number( Mat(j,i).getValue()))+ " (" + QString::number( Mat(i,j).getProiz()) + ")").rightJustified(24, ' ') + " ";
         qDebug() << lin;
     }
     qDebug() << ")";
@@ -87,9 +87,9 @@ Matrix<Derivable, 4, 4> DerivableVectorMatrixes::SetDeriveMatrix (const QMatrix4
 Matrix<Derivable, 4, 4> DerivableVectorMatrixes::MakeDeriveTranslationMatrix (const Matrix<Derivable,1,3> vec, const bool Reverse){
     Matrix<Derivable, 4, 4> M = SetDeriveMatrix();
         if (!Reverse){
-            M(0,3) = vec.x();
-            M(1,3) = vec.y();
-            M(2,3) = vec.z();
+            M(0,3) = vec(0,0);
+            M(1,3) = vec(0,1);
+            M(2,3) = vec(0,2);
         }else{
             M(3, 0) = vec(0,0);
             M(3, 1) = vec(0,1);

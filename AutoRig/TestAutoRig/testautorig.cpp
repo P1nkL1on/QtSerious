@@ -24,14 +24,14 @@ bool TestAutoRig::Uber()
 
     qDebug() << "Uber << created angles";
 
-    for (int i = 0; i < 4; i++)
-        QVector<float> resAngles = OptimiseMethods::GaussNewtonMethod(loss, firstAngles, 1e-5, 0, gt, i < 2);
+    for (int i = 0; i < 2; i++)
+        QVector<float> resAngles = OptimiseMethods::GaussNewtonMethod(loss, firstAngles, 1e-5, 0, gt, i == 0);
     qDebug() << "Uber << Qasi Newtone EXIT SUCCESS";
 }
 
 bool TestAutoRig::UberBugHunt()
 {
-    bool trace = false;
+    bool trace = true;
     if (trace)
         qDebug() << "I wish you a good hunt";
     Modeling();
@@ -51,6 +51,11 @@ bool TestAutoRig::UberBugHunt()
     Derivable dx = 1e-4;
 
     for (int PARAMWITH1 = 0; PARAMWITH1 < values.length() * 2; PARAMWITH1++){
+        //if (PARAMWITH1 == 9 || PARAMWITH1 == 20)
+        {
+            //int x = 10;
+            trace = (PARAMWITH1 == 9);
+        }
         if ( PARAMWITH1 < values.length())
             values[PARAMWITH1].setPrValue(1);
         else
@@ -87,12 +92,14 @@ bool TestAutoRig::UberBugHunt()
         TranslateDeriveMatrix(localTransform1, Matrix<Derivable,1,3> (0,40,0));
         RotateDeriveMatrix(localTransform1, rot1);
 
+
+
         int X = 10;
          if (trace){
-            qDebug() << "@@@@@@@@@@@ 0";
+            qDebug() << "local transform 0";
             TraceMatrix(localTransform0);
 
-            qDebug() << "@@@@@@@@@@@ 1";
+            qDebug() << "local transform 1";
             TraceMatrix(localTransform1);
         }
 
@@ -103,17 +110,21 @@ bool TestAutoRig::UberBugHunt()
         tmp = Matrix<Derivable,1,4>(1,1,1,1) * globalTransform0;
         Matrix<Derivable,1,3> trans0 = Matrix<Derivable,1,3>(tmp(0,0), tmp(0,1), tmp(0,2));
 
-        globalTransform1 = globalTransform1 * localTransform1;
         globalTransform1 = globalTransform1 * localTransform0;
+        globalTransform1 = globalTransform1 * localTransform1;
 
         tmp = Matrix<Derivable,1,4>(1,1,1,1) * globalTransform1;
         Matrix<Derivable,1,3> trans1 = Matrix<Derivable,1,3>(tmp(0,0), tmp(0,1), tmp(0,2));
+
+        // globalTransform1(1,3).setPrValue(40);
+        // globalTransform1(3,1).setPrValue(0);
+
         if (trace){
-            qDebug() << "@g@g@g@g@g@g@g@g@g@g@ 0";
+            qDebug() << "global transform 0";
             TraceMatrix(globalTransform0);
             TraceVector(trans0);
 
-            qDebug() << "@G@GGG@G@G@GGG@ 1";
+            qDebug() << "global transform 1";
             TraceMatrix(globalTransform1);
             TraceVector(trans1);
         }
@@ -152,10 +163,17 @@ bool TestAutoRig::UberBugHunt()
 
         }
          if (trace){
+             //targetMeshes[targMeshInd]->bindMesh
+             if (PARAMWITH1 == 9){
+//                 newMesh->vertexes[2](0,0).setPrValue(0);
+//                 newMesh->vertexes[1](0,0).setPrValue(0);
+//                 newMesh->vertexes[3](0,1).setPrValue(40);
+             }
+
             qDebug() << ">>>>>>>>>>> VERTEXES <<<<<<<<<<";
             for (int i = 0; i < newMesh->vertexes.length(); i++)
                 TraceVector(newMesh->vertexes[i]);
-            //targetMeshes[targMeshInd]->bindMesh
+
         }
         QVector<Derivable> res = QVector<Derivable>();
         for (int vInd = 0; vInd < newMesh->vertexes.length(); vInd++){
@@ -178,7 +196,6 @@ bool TestAutoRig::UberBugHunt()
             resJacobian.col(PARAMWITH1) = rescol;
         else
             resJacobianNum.col(PARAMWITH1 - values.length()) = ((resFNum - resF) / (dx.getValue())).cast<float>();
-
     }
     qDebug() << ">>Handmade shit AUTODIFF";
     OptimiseMethods::TraceJacobianM(resJacobian.transpose() * resF * .5);
@@ -224,8 +241,8 @@ bool TestAutoRig::Modeling()
     // model bending to
     Mesh* ms = new Mesh();
     Derivable scale = Derivable(1.29);//0.5 + qrand() % 100 / 100.0;
-    Matrix<Derivable,1,3> trans = Matrix<Derivable,1,3>(0,0,0);//(2.7, 6.9, 9.5);//Matrix<Derivable,1,3>(qrand() % 200 - 100,qrand() % 200 - 100,qrand() % 200 - 100);
-    Matrix<Derivable,1,3> rotat = Matrix<Derivable,1,3>(0,0,0);//(102, 350, 162);//Matrix<Derivable,1,3>(qrand() % 360,qrand() % 360,qrand() % 360);
+    Matrix<Derivable,1,3> trans = Matrix<Derivable,1,3>(2.7, 6.9, 9.5);//Matrix<Derivable,1,3>(qrand() % 200 - 100,qrand() % 200 - 100,qrand() % 200 - 100);
+    Matrix<Derivable,1,3> rotat = Matrix<Derivable,1,3>(102, 350, 162);//Matrix<Derivable,1,3>(qrand() % 360,qrand() % 360,qrand() % 360);
 
     TraceVector(trans);
     TraceVector(rotat);
@@ -328,12 +345,12 @@ float TestAutoRig::TestBend()
     QVector<Matrix<Derivable,1,3>> newRotations = QVector<Matrix<Derivable,1,3>>(bendingRig->skeleton->joints.length());
     QVector<Derivable> newScales = QVector<Derivable>();
     for (int i = 0; i < newRotations.length(); i++)
-        newScales << ((i % 5 != 0)? Derivable(1) : Derivable(1 + zad * .02));  // test an arm shit
+        newScales << ((i % 5 != 0)? Derivable(1) : Derivable(2));  // test an arm shit
     Matrix<Derivable,1,3> assTranslate;// = Matrix<Derivable,1,3>(0,0,++was * .5);
 
-    was += 1;
-    for (int i = 0; i < newRotations.length(); i++)
-        newRotations[i] = Matrix<Derivable,1,3>(was * (i + 1) , 0, 0);
+///   was += 1;
+///    for (int i = 0; i < newRotations.length(); i++)
+///        newRotations[i] = Matrix<Derivable,1,3>(was * (i + 1) , 0, 0);
 //    newRotations[8] = Matrix<Derivable,1,3>(0, 90,was * 5 + 90);
 //    newRotations[31] = Matrix<Derivable,1,3>(was * 30,0,0);
 //    newRotations[36] = Matrix<Derivable,1,3>(180 + was * 30,0,0);

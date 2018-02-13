@@ -36,6 +36,8 @@ void Rig::BendSkinToSkeleton()
     if (!skeleton->CalculateGlobalCoordForEachJointMatrix())
         return;
 
+    //skin->GenerateProizAttends(bindMesh->vertexes, skeleton->getJointsGlobalTranslationsForSkin());
+
     Mesh* newMesh = new Mesh();
     newMesh->polygonIndexes = bindMesh->polygonIndexes;
     newMesh->polygonStartIndexes = bindMesh->polygonStartIndexes;
