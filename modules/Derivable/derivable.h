@@ -46,7 +46,7 @@ public:
     Derivable operator/ (const Derivable a) const{
         //Derivable a = b;
         //if (a.value <= 1e-5 && a.value <= 1e-5) a.value = 1e-5;
-        return Derivable(value / a.value, (pr_value * a.value + a.pr_value * value)/ (a.value * a.value));
+        return Derivable(value / a.value, (pr_value * a.value - a.pr_value * value)/ (a.value * a.value));
     }
 
     static QVector<Derivable> AutoDiff(QVector<QPair<Derivable, Derivable> > modelOriginal,

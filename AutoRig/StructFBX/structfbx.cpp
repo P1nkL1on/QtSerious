@@ -52,8 +52,10 @@ void Joint::RecaulculateLocalTransformMatrix()
     localTransformMatrix = SetDeriveMatrix();
 
     Matrix<Derivable,1,3> currentRotation2 = (pater != NULL)?pater->currentRotation : Matrix<Derivable,1,3>(0,0,0);
-    if (pater != NULL)
+    if (pater != NULL){
+         //Derivable delem = Derivable(1/pater->localScale.getValue(), -pater->localScale.getProiz()/(pater->localScale.getValue() * pater->localScale.getValue()));
          ScaleDeriveMatrix(localTransformMatrix, Derivable(1) / pater->localScale);
+    }
     ScaleDeriveMatrix(localTransformMatrix, localScale);    // scale self
     TranslateDeriveMatrix(localTransformMatrix, localTranslation);
     RotateDeriveMatrix(localTransformMatrix, currentRotation2);

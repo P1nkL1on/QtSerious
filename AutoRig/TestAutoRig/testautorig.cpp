@@ -24,8 +24,8 @@ bool TestAutoRig::Uber()
 
     qDebug() << "Uber << created angles";
 
-    for (int i = 0; i < 2; i++)
-        QVector<float> resAngles = OptimiseMethods::GaussNewtonMethod(loss, firstAngles, 1e-5, 0, gt, i == 0);
+    for (int i = 0; i < 1; i++)
+        QVector<float> resAngles = OptimiseMethods::GaussNewtonMethod(loss, firstAngles, 1e-5, 20, gt, i != 0);
     qDebug() << "Uber << Qasi Newtone EXIT SUCCESS";
 }
 
@@ -87,7 +87,7 @@ bool TestAutoRig::UberBugHunt()
         TranslateDeriveMatrix(localTransform0, root);
         RotateDeriveMatrix(localTransform0, rot0);
 
-        ScaleDeriveMatrix(localTransform1, Derivable(1) / sc0);
+        ScaleDeriveMatrix(localTransform1,/* Derivable(1) / sc0*/ Derivable(1/sc0.getValue(), -sc0.getProiz()/(sc0.getValue() * sc0.getValue())));
         ScaleDeriveMatrix(localTransform1, sc1);    // scale self
         TranslateDeriveMatrix(localTransform1, Matrix<Derivable,1,3> (0,40,0));
         RotateDeriveMatrix(localTransform1, rot1);
@@ -110,8 +110,9 @@ bool TestAutoRig::UberBugHunt()
         tmp = Matrix<Derivable,1,4>(1,1,1,1) * globalTransform0;
         Matrix<Derivable,1,3> trans0 = Matrix<Derivable,1,3>(tmp(0,0), tmp(0,1), tmp(0,2));
 
-        globalTransform1 = globalTransform1 * localTransform0;
+
         globalTransform1 = globalTransform1 * localTransform1;
+        globalTransform1 = globalTransform1 * localTransform0;
 
         tmp = Matrix<Derivable,1,4>(1,1,1,1) * globalTransform1;
         Matrix<Derivable,1,3> trans1 = Matrix<Derivable,1,3>(tmp(0,0), tmp(0,1), tmp(0,2));
@@ -162,6 +163,7 @@ bool TestAutoRig::UberBugHunt()
             newMesh->vertexes << result;
 
         }
+        trace = (PARAMWITH1 == 9 || PARAMWITH1 == 10);
          if (trace){
              //targetMeshes[targMeshInd]->bindMesh
              if (PARAMWITH1 == 9){
@@ -170,7 +172,7 @@ bool TestAutoRig::UberBugHunt()
 //                 newMesh->vertexes[3](0,1).setPrValue(40);
              }
 
-            qDebug() << ">>>>>>>>>>> VERTEXES <<<<<<<<<<";
+            qDebug() << ">>>>>>>>>>> VERTEXES <<<<<<<<<<" << PARAMWITH1;
             for (int i = 0; i < newMesh->vertexes.length(); i++)
                 TraceVector(newMesh->vertexes[i]);
 
@@ -241,8 +243,8 @@ bool TestAutoRig::Modeling()
     // model bending to
     Mesh* ms = new Mesh();
     Derivable scale = Derivable(1.29);//0.5 + qrand() % 100 / 100.0;
-    Matrix<Derivable,1,3> trans = Matrix<Derivable,1,3>(2.7, 6.9, 9.5);//Matrix<Derivable,1,3>(qrand() % 200 - 100,qrand() % 200 - 100,qrand() % 200 - 100);
-    Matrix<Derivable,1,3> rotat = Matrix<Derivable,1,3>(102, 350, 162);//Matrix<Derivable,1,3>(qrand() % 360,qrand() % 360,qrand() % 360);
+    Matrix<Derivable,1,3> trans = Matrix<Derivable,1,3>(0,0,0);//(2.7, 6.9, 9.5//Matrix<Derivable,1,3>(qrand() % 200 - 100,qrand() % 200 - 100,qrand() % 200 - 100);
+    Matrix<Derivable,1,3> rotat = Matrix<Derivable,1,3>(0,0,0);//102, 350, 162//Matrix<Derivable,1,3>(qrand() % 360,qrand() % 360,qrand() % 360);
 
     TraceVector(trans);
     TraceVector(rotat);
