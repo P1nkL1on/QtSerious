@@ -6,6 +6,8 @@
 #include "meshcomparer.h"
 #include "gaussnewton.h"
 
+#include "qapplication.h"
+#include "cmath"
 
 using namespace DerivableVectorMatrixes;
 
@@ -13,19 +15,20 @@ bool TestAutoRig::Uber()
 {
     qDebug() << "Uber << request to constructor";
     MeshComparer loss(bendingRig, targetMeshes[targMeshInd]->bindMesh);
+    CallBackDrawing callback (window);
 
     //  ASS TRANSLATE           JOINT ROTATES  cx3     JOINT SCALES sx1
-    QVector<float> firstAngles = QVector<float>(3 + bendingRig->skeleton->joints.length() * 4);
+    QVector<float> parameters = QVector<float>(3 + bendingRig->skeleton->joints.length() * 4);
 
-    for (int c = 0; c < 3; c++)firstAngles[c] = bendingRig->skeleton->rootTransate(0,c).getValue();    // set an ass translations
-    firstAngles[4] = .1;    // set X angle of ass to .1 to prevent clever system of nothing doing
-    for (int c = 3 + bendingRig->skeleton->joints.length() * 3; c < firstAngles.length(); c++)
-        firstAngles[c] = 1;
+    for (int c = 0; c < 3; c++)parameters[c] = bendingRig->skeleton->rootTransate(0,c).getValue();    // set an ass translations
+    parameters[4] = 1e-5;
+    for (int c = 3 + bendingRig->skeleton->joints.length() * 3; c < parameters.length(); c++)
+        parameters[c] = 1;
 
     qDebug() << "Uber << created angles";
 
     for (int i = 0; i < 1; i++)
-        QVector<float> resAngles = OptimiseMethods::GaussNewtonMethod(loss, firstAngles, 1e-5, 20, gt, i != 0);
+        QVector<float> resAngles = OptimiseMethods::GaussNewtonMethod(loss, callback, parameters, 1e-3, 25, gt, i != 0);
     qDebug() << "Uber << Qasi Newtone EXIT SUCCESS";
 }
 
@@ -325,39 +328,25 @@ QString TestAutoRig::ApplyDrawToCanvas(QPainter *painter, const QMatrix4x4 view,
 }
 
 
-int was = 0, zad = 0;
+float was = 0, zad = 0;
 float TestAutoRig::TestBend()
 {
-//    bendingRig = new Rig();
-//    bendingRig->skeleton = new Skeleton();
-//    Joint* j1 = new Joint(Matrix<Derivable,1,3>(0,1,0),Matrix<Derivable,1,3>(0,0,0));
-//    Joint* j2 = new Joint(Matrix<Derivable,1,3>(0,1,0),Matrix<Derivable,1,3>(0,0,0));
-//    j1->kids << j2;
-//    j2->pater = j1;
-
-//    bendingRig->skeleton->joints << j1 << j2;
-
-//    bendingRig->bindMesh = new Mesh();
-//    bendingRig->skin = new Skin();
-//    qDebug() << "Model created";
-//    return 0.0;
-
+    float res = -1; was = 0;
     qDebug() << "Test bend called";
     //  ASS TRANSLATE           JOINT ROTATES       JOINT SCALES
-    QVector<Matrix<Derivable,1,3>> newRotations = QVector<Matrix<Derivable,1,3>>(bendingRig->skeleton->joints.length());
-    QVector<Derivable> newScales = QVector<Derivable>();
-    for (int i = 0; i < newRotations.length(); i++)
-        newScales << ((i % 5 != 0)? Derivable(1) : Derivable(2));  // test an arm shit
-    Matrix<Derivable,1,3> assTranslate;// = Matrix<Derivable,1,3>(0,0,++was * .5);
+    while (was < 100){
+        QVector<Matrix<Derivable,1,3>> newRotations = QVector<Matrix<Derivable,1,3>>(bendingRig->skeleton->joints.length());
+        QVector<Derivable> newScales = QVector<Derivable>();
 
-///   was += 1;
-///    for (int i = 0; i < newRotations.length(); i++)
-///        newRotations[i] = Matrix<Derivable,1,3>(was * (i + 1) , 0, 0);
-//    newRotations[8] = Matrix<Derivable,1,3>(0, 90,was * 5 + 90);
-//    newRotations[31] = Matrix<Derivable,1,3>(was * 30,0,0);
-//    newRotations[36] = Matrix<Derivable,1,3>(180 + was * 30,0,0);
+        for (int i = 0; i < newRotations.length(); i++)
+            newScales << ((i % 5 != 0)? Derivable(1) : Derivable(1 + was / 10.0));  // test an arm shit
+        Matrix<Derivable,1,3> assTranslate;// = Matrix<Derivable,1,3>(0,0,++was * .5);
+        was += .5;
 
-    float res = bendingRig->CompareWithMeshOnRotates(assTranslate, newRotations, newScales, targetMeshes[targMeshInd]->bindMesh).getValue();
+        res = bendingRig->CompareWithMeshOnRotates(assTranslate, newRotations, newScales, targetMeshes[targMeshInd]->bindMesh).getValue();
+        qDebug() << "Call redraw " << was;
+        window->repaint();
+    }
     qDebug() << "Test bend success";
     return res;
 }

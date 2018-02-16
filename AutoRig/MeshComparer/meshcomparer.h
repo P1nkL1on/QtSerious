@@ -7,6 +7,20 @@
 
 using Eigen::Matrix;
 using namespace DerOperations;
+#include "qmainwindow.h"
+
+class CallBackDrawing
+{
+private:
+    QMainWindow* wind;
+public:
+    CallBackDrawing(QMainWindow* window){
+        wind = window;
+    }
+    void operator ()(){
+        wind->repaint();
+    }
+};
 
 class MeshComparer
 {

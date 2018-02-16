@@ -41,8 +41,8 @@ namespace OptimiseMethods {
         }
     }
 
-    template <typename Function>//, typename CallBack>
-    QVector<float> GaussNewtonMethod (Function& func, /*CallBack& callback,*/ const QVector<float> params,
+    template <typename Function, typename CallBack>
+    QVector<float> GaussNewtonMethod (Function& func, CallBack& callback, const QVector<float> params,
                                      const float epsilon, const int maxIterationCount, QVector<GraphicMotion>&mts, bool isNumerical){
 
         QTime t , ttotal;
@@ -85,8 +85,8 @@ namespace OptimiseMethods {
             else
                 JacobianCalculator::CalculateForFunction(res, jacobMatrix, F, func);
                 //JacobianCalculator::CalculateMixed(res, jacobMatrix, F, func );
-            TraceJacobianM(jacobMatrix.transpose() * F);
-            TraceJacobianM(F);
+            //TraceJacobianM(jacobMatrix.transpose() * F);
+            //TraceJacobianM(F);
             jacobTrans = jacobMatrix.transpose();
             Eigen::MatrixXf jTj = jacobTrans * jacobMatrix;
             Eigen::MatrixXf jF = jacobTrans * F;
@@ -112,6 +112,7 @@ namespace OptimiseMethods {
             currentDistance = func(res); mts[0].values << currentDistance;
 
             iterationNumber ++;
+            callback();
             //qDebug() << ">> Callback call !"; callback (res);
             //if (t.elapsed() > 100)
             qDebug() << "Iteration " << iterationNumber << "Current distance is now " << currentDistance << "      Iteration time is: " << t.elapsed() << " ms " << ((isNumerical)? "numerical" : "autodiff"); t.restart();

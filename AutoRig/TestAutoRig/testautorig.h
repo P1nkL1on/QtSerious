@@ -11,6 +11,7 @@
 #include "QTime"
 #include "mainwindow.h"
 #include "gaussnewton.h"
+#include "mainwindow.h"
 using Eigen::Matrix;
 using namespace  DerOperations;
 
@@ -26,6 +27,7 @@ private:
 
 public:
     QVector3D* camCenter;
+    QMainWindow* window;
     void ChangeTargetMeshInd (int count);
     QString ApplyDrawToCanvas(QPainter* painter,const QMatrix4x4 view, const QMatrix4x4 perspective,
                            const int width, const int hei) override;

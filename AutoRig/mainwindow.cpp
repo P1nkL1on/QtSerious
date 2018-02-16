@@ -28,6 +28,7 @@ TestAutoRig tar;
 bool mouseStillPressed = false;
 void MainWindow::mouseMoveEvent(QMouseEvent *m)
 {
+    //QApplication::processEvents();
     unsigned short mod = 3;
     if (m->modifiers() & Qt::ShiftModifier) mod = 2;
     if (m->modifiers() & Qt::AltModifier) mod = 1;
@@ -149,6 +150,7 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
                 qDebug() << errMes;
         }
         tar = TestAutoRig((rgs[0]), rgs);
+        tar.window = this;
         tar.camCenter = &camCenter;
         tv.addGraphicsObject(&tar);
     }
