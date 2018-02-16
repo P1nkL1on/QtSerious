@@ -16,7 +16,7 @@ Joint::Joint()
     currentRotation = Matrix<Derivable,1,3>();
     bindMatrix = SetDeriveMatrix();
     bindTransform = Matrix<Derivable,1,3>();
-    localScale = 1;
+    localScale =  Matrix<Derivable,1,3>(1,1,1);
 }
 
 Joint::Joint(QString ID0, QString name0)
@@ -30,7 +30,7 @@ Joint::Joint(QString ID0, QString name0)
     currentRotation = Matrix<Derivable,1,3>();
     bindMatrix = SetDeriveMatrix();
     bindTransform = Matrix<Derivable,1,3>();
-    localScale = 1;
+    localScale =  Matrix<Derivable,1,3>(1,1,1);
 }
 
 Joint::Joint(Eigen::Matrix<Derivable, 1, 3> trans, Eigen::Matrix<Derivable, 1, 3> rotat)
@@ -43,7 +43,7 @@ Joint::Joint(Eigen::Matrix<Derivable, 1, 3> trans, Eigen::Matrix<Derivable, 1, 3
     currentRotation = rotat;
     bindMatrix = SetDeriveMatrix();
     bindTransform = localTranslation;
-    localScale = 1;
+    localScale =  Matrix<Derivable,1,3>(1,1,1);
 }
 
 void Joint::RecaulculateLocalTransformMatrix()
@@ -52,10 +52,10 @@ void Joint::RecaulculateLocalTransformMatrix()
     localTransformMatrix = SetDeriveMatrix();
 
     Matrix<Derivable,1,3> currentRotation2 = (pater != NULL)?pater->currentRotation : Matrix<Derivable,1,3>(0,0,0);
-    if (pater != NULL){
-         //Derivable delem = Derivable(1/pater->localScale.getValue(), -pater->localScale.getProiz()/(pater->localScale.getValue() * pater->localScale.getValue()));
-         ScaleDeriveMatrix(localTransformMatrix, Derivable(1) / pater->localScale);
-    }
+
+    if (pater != NULL)
+         ScaleDeriveMatrix(localTransformMatrix,
+                           Matrix<Derivable,1,3>(Derivable(1) / pater->localScale(0,0), Derivable(1) / pater->localScale(0,1), Derivable(1) / pater->localScale(0,2)));
     ScaleDeriveMatrix(localTransformMatrix, localScale);    // scale self
     TranslateDeriveMatrix(localTransformMatrix, localTranslation);
     RotateDeriveMatrix(localTransformMatrix, currentRotation2);

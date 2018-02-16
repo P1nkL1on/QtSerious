@@ -13,7 +13,7 @@ public:
     QString name;
     Joint* pater;
     QVector<Joint*> kids;
-    DerOperations::Derivable localScale;
+    Eigen::Matrix<DerOperations::Derivable,1,3> localScale;
     Eigen::Matrix<DerOperations::Derivable,1,3> localTranslation;
     Eigen::Matrix<DerOperations::Derivable,1,3> currentTranslation;
     Eigen::Matrix<DerOperations::Derivable,1,3> currentRotation;

@@ -275,14 +275,14 @@ QString Rig::ApplyDrawToCanvas(QPainter *painter, const QMatrix4x4 view, const Q
     QVector<Matrix<Derivable,1,3>> jointLocalRots = skeleton->getJointsLocalRotations();
     for (int curJointInd = 0; curJointInd < skeleton->joints.length(); curJointInd++)
         logs += ("#" + QString::number(curJointInd) + " : ")
-                 + ToString(jointLocalRots[curJointInd]) + "      sc: "+QString::number(skeleton->joints[curJointInd]->localScale.getValue())+"\n";
+                 + ToString(jointLocalRots[curJointInd]) + "      sc: "+ToString(skeleton->joints[curJointInd]->localScale)+"\n";
     painter->drawText(width, 40, 400, hei - 40,0, logs);//+" " +skeleton->joints[curPoint]->name);// +", "+ QString::number(skeleton->joints[curPoint]->currentRotation.y()) +", "+ QString::number(skeleton->joints[curPoint]->currentRotation.z()));
 
     //painter->end();
     return QString();
 }
 
-Derivable Rig::CompareWithMeshOnRotates(const Matrix<Derivable,1,3> rootTrans, const QVector<Matrix<Derivable,1,3>> newRotations, const QVector<Derivable> newScales, const Mesh *with)
+Derivable Rig::CompareWithMeshOnRotates(const Matrix<Derivable,1,3> rootTrans, const QVector<Matrix<Derivable,1,3>> newRotations, const QVector<Matrix<Derivable,1,3>> newScales, const Mesh *with)
 {
     skeleton->SetRootTranslation(rootTrans);
     skeleton->SetRotations(newRotations);
@@ -291,7 +291,7 @@ Derivable Rig::CompareWithMeshOnRotates(const Matrix<Derivable,1,3> rootTrans, c
     return bendedMesh->CompareWithAnotherMesh(with);
 }
 //CompareWithMeshOnRotatesCoord
-QVector<Derivable> Rig::CompareWithMeshOnRotatesCoord(const Matrix<Derivable,1,3> rootTrans, const QVector<Matrix<Derivable,1,3>> newRotations, const QVector<Derivable> newScales, const Mesh *with)
+QVector<Derivable> Rig::CompareWithMeshOnRotatesCoord(const Matrix<Derivable,1,3> rootTrans, const QVector<Matrix<Derivable,1,3>> newRotations, const QVector<Matrix<Derivable,1,3>> newScales, const Mesh *with)
 {
     skeleton->SetRootTranslation(rootTrans);
     skeleton->SetRotations(newRotations);

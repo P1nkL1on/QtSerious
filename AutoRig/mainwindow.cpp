@@ -57,13 +57,13 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
 {
     if (e->key() == Qt::Key_R){
         iteration = 0;
-        tar.Modeling();
+        tar.SetCustomLowModel();
         this->repaint();
     }
 
     if (e->key() == Qt::Key_H){
         iteration = 0;
-        tar.UberBugHunt();
+        tar.MiscBugHunt();
         this->repaint();
     }
     if (e->key() == Qt::Key_Up){
@@ -86,9 +86,9 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
     }
     if (e->key() == Qt::Key_E){
         for (int i = 0; i < 1000; i++){
-            tar.Modeling();
+            tar.SetCustomLowModel();
             this->repaint();
-            tar.Uber();
+            tar.GausNewtone();
             this->repaint();
         }
     }
@@ -97,11 +97,11 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
 //        this->repaint();
 //    }
     if (e->key() == Qt::Key_O){
-        tar.Uber();
+        tar.GausNewtone();
         this->repaint();
     }
     if (e->key() == Qt::Key_T){
-        tar.TestBend();
+        tar.TestSkinBending();
         this->repaint();
     }
 

@@ -7,18 +7,17 @@
 #include "gaussnewton.h"
 
 #include "qapplication.h"
-#include "cmath"
 
 using namespace DerivableVectorMatrixes;
 
-bool TestAutoRig::Uber()
+bool TestAutoRig::GausNewtone()
 {
     qDebug() << "Uber << request to constructor";
     MeshComparer loss(bendingRig, targetMeshes[targMeshInd]->bindMesh);
     CallBackDrawing callback (window);
 
     //  ASS TRANSLATE           JOINT ROTATES  cx3     JOINT SCALES sx1
-    QVector<float> parameters = QVector<float>(3 + bendingRig->skeleton->joints.length() * 4);
+    QVector<float> parameters = QVector<float>(3 + bendingRig->skeleton->joints.length() * 6);
 
     for (int c = 0; c < 3; c++)parameters[c] = bendingRig->skeleton->rootTransate(0,c).getValue();    // set an ass translations
     parameters[4] = 1e-5;
@@ -28,16 +27,16 @@ bool TestAutoRig::Uber()
     qDebug() << "Uber << created angles";
 
     for (int i = 0; i < 1; i++)
-        QVector<float> resAngles = OptimiseMethods::GaussNewtonMethod(loss, callback, parameters, 1e-3, 25, gt, i != 0);
+        QVector<float> resAngles = OptimiseMethods::GaussNewtonMethod(loss, callback, parameters, 1e-3, 25, i != 0);
     qDebug() << "Uber << Qasi Newtone EXIT SUCCESS";
 }
 
-bool TestAutoRig::UberBugHunt()
+bool TestAutoRig::MiscBugHunt()
 {
     bool trace = true;
     if (trace)
         qDebug() << "I wish you a good hunt";
-    Modeling();
+    SetCustomLowModel();
 
 //    bendingRig->skeleton->SetRootTranslation(rootTrans);
 //    bendingRig->skeleton->SetRotations(newRotations);
@@ -241,13 +240,13 @@ void RotateSome (QVector<Matrix<Derivable,1,3>>& verts, const Matrix<Derivable,1
         verts[i] = Summ3and4(Matrix<Derivable,1,3>(0,0,0), MakeVector4From3(verts[i], Derivable(1)) * rotMa);
     }
 }
-bool TestAutoRig::Modeling()
+bool TestAutoRig::SetCustomLowModel()
 {
     // model bending to
     Mesh* ms = new Mesh();
-    Derivable scale = Derivable(1.29);//0.5 + qrand() % 100 / 100.0;
-    Matrix<Derivable,1,3> trans = Matrix<Derivable,1,3>(0,0,0);//(2.7, 6.9, 9.5//Matrix<Derivable,1,3>(qrand() % 200 - 100,qrand() % 200 - 100,qrand() % 200 - 100);
-    Matrix<Derivable,1,3> rotat = Matrix<Derivable,1,3>(0,0,0);//102, 350, 162//Matrix<Derivable,1,3>(qrand() % 360,qrand() % 360,qrand() % 360);
+    Derivable scale = 0.5 + qrand() % 100 / 100.0;
+    Matrix<Derivable,1,3> trans = Matrix<Derivable,1,3>(qrand() % 200 - 100,qrand() % 200 - 100,qrand() % 200 - 100);
+    Matrix<Derivable,1,3> rotat = Matrix<Derivable,1,3>(qrand() % 360,qrand() % 360,qrand() % 360);
 
     TraceVector(trans);
     TraceVector(rotat);
@@ -312,8 +311,6 @@ bool TestAutoRig::Modeling()
     return true;
 }
 
-
-
 QString TestAutoRig::ApplyDrawToCanvas(QPainter *painter, const QMatrix4x4 view, const QMatrix4x4 perspective, const int width, const int hei)
 {
     bendingRig->ApplyDrawToCanvas(painter, view, perspective, width, hei);
@@ -327,19 +324,18 @@ QString TestAutoRig::ApplyDrawToCanvas(QPainter *painter, const QMatrix4x4 view,
     return QString();
 }
 
-
 float was = 0, zad = 0;
-float TestAutoRig::TestBend()
+float TestAutoRig::TestSkinBending()
 {
     float res = -1; was = 0;
     qDebug() << "Test bend called";
     //  ASS TRANSLATE           JOINT ROTATES       JOINT SCALES
     while (was < 100){
         QVector<Matrix<Derivable,1,3>> newRotations = QVector<Matrix<Derivable,1,3>>(bendingRig->skeleton->joints.length());
-        QVector<Derivable> newScales = QVector<Derivable>();
+        QVector<Matrix<Derivable,1,3>> newScales = QVector<Matrix<Derivable,1,3>>();
 
         for (int i = 0; i < newRotations.length(); i++)
-            newScales << ((i % 5 != 0)? Derivable(1) : Derivable(1 + was / 10.0));  // test an arm shit
+            newScales << ((i % 5 != 0)? Matrix<Derivable,1,3>(1,1,1) : Matrix<Derivable,1,3>(1,1,1+was / 10));  // test an arm shit
         Matrix<Derivable,1,3> assTranslate;// = Matrix<Derivable,1,3>(0,0,++was * .5);
         was += .5;
 

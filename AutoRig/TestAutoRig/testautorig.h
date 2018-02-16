@@ -34,10 +34,10 @@ public:
     TestAutoRig();
     TestAutoRig(Rig* rig, QVector<Rig*> mesh);
 
-    bool Modeling ();
-    bool Uber ();
-    bool UberBugHunt ();
-    float TestBend ();
+    bool SetCustomLowModel ();
+    bool GausNewtone ();
+    bool MiscBugHunt ();
+    float TestSkinBending ();
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 

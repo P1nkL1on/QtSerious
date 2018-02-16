@@ -37,6 +37,7 @@ namespace DerivableVectorMatrixes {
     Eigen::Matrix<DerOperations::Derivable, 4, 4> MakeDeriveRotationMatrix (const Eigen::Matrix<DerOperations::Derivable,1,3> ang);
 
     Eigen::Matrix<DerOperations::Derivable, 4, 4> MakeDeriveScaleMatrix (const DerOperations::Derivable scale);
+    Eigen::Matrix<DerOperations::Derivable, 4, 4> MakeDeriveScaleMatrix (const Eigen::Matrix<DerOperations::Derivable,1,3> scale);
     Eigen::Matrix<DerOperations::Derivable, 3, 3> MakeDeriveScale3Matrix (const DerOperations::Derivable scale);
 
     Eigen::Matrix<DerOperations::Derivable,1,4> MakeVector4From3 (const Eigen::Matrix<DerOperations::Derivable, 1,3> vec, const DerOperations::Derivable add);
@@ -51,6 +52,8 @@ namespace DerivableVectorMatrixes {
     void RotateDeriveMatrix (Eigen::Matrix<DerOperations::Derivable, 4, 4>& originalMatrix, const Eigen::Matrix<DerOperations::Derivable, 1, 3> rot);
     //void TurnRig();
     void ScaleDeriveMatrix (Eigen::Matrix<DerOperations::Derivable, 4, 4>& originalMatrix, const DerOperations::Derivable scale);
+    //void TurnRig();
+    void ScaleDeriveMatrix (Eigen::Matrix<DerOperations::Derivable, 4, 4>& originalMatrix, const Eigen::Matrix<DerOperations::Derivable,1,3> scale);
     //void TurnRig();
 }
 

@@ -18,6 +18,7 @@ public:
         wind = window;
     }
     void operator ()(){
+        qDebug() << "Repaint called";
         wind->repaint();
     }
 };
@@ -30,15 +31,15 @@ private:
     bool DistributeToParams (const QVector<Derivable> params,
                              Matrix<Derivable,1,3>& root ,
                              QVector<Matrix<Derivable,1,3>>& newRotations,
-                             QVector<Derivable>& newScales) const
+                             QVector<Matrix<Derivable,1,3>>& newScales) const
     {
         newRotations.clear();
         newScales.clear();
         root = Matrix<Derivable,1,3> (params[0], params[1], params[2]);
         for (int i = 1 ; i < 1 + currentRig->skeleton->joints.length(); i++)
             newRotations << Matrix<Derivable,1,3>(params[i * 3], params[i * 3 + 1], params[i * 3 + 2]);
-        for (int i = currentRig->skeleton->joints.length() * 3 + 3; i < params.length(); i++)
-            newScales << params[i];
+        for (int i = 1 + currentRig->skeleton->joints.length(); i * 3 < params.length(); i++)
+            newScales << Matrix<Derivable,1,3>(params[i * 3], params[i * 3 + 1], params[i * 3 + 2]);
         //qDebug() << "rot count " << newRotations.length() << "    scal count" << newScales.length();
         return true;
     }
@@ -53,7 +54,7 @@ public:
     QVector<Derivable> operator()(const QVector<Derivable> params) const
     {
         QVector<Matrix<Derivable,1,3>> newRotations;
-        QVector<Derivable> newScales;
+        QVector<Matrix<Derivable,1,3>> newScales;
         Matrix<Derivable,1,3> rootTrans;
 
         DistributeToParams(params, rootTrans, newRotations, newScales);
@@ -65,7 +66,7 @@ public:
         for (int i = 0; i < params.length(); i++)
             derParams << Derivable(params[i]);
         QVector<Matrix<Derivable,1,3>> newRotations;
-        QVector<Derivable> newScales;
+        QVector<Matrix<Derivable,1,3>> newScales;
         Matrix<Derivable,1,3> rootTrans;
 
         DistributeToParams(derParams, rootTrans, newRotations, newScales);

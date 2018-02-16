@@ -43,7 +43,7 @@ namespace OptimiseMethods {
 
     template <typename Function, typename CallBack>
     QVector<float> GaussNewtonMethod (Function& func, CallBack& callback, const QVector<float> params,
-                                     const float epsilon, const int maxIterationCount, QVector<GraphicMotion>&mts, bool isNumerical){
+                                     const float epsilon, const int maxIterationCount, bool isNumerical){
 
         QTime t , ttotal;
         t.start(); ttotal.start();
@@ -61,23 +61,23 @@ namespace OptimiseMethods {
         int iterationNumber = 0;
         float currentDistance = func(res), firstDist = currentDistance; // set proto distance here
 
-        mts.clear(); int wid = 50, hei = 10;
-        mts << GraphicMotion(Qt::black, hei,  (wid + 10) * 4, 25, 10, 0);
-        for (int i = 0; i < params.length(); i++){
-            if (i < 3){
-                // root
-                mts << GraphicMotion(Qt::red, hei,  wid, 55, (wid + 10) * (i % 3), 0);
-            }else{
-                if (i < (jacobMatrix.cols() - 3) / 4 * 3 + 3){
-                    // angles
-                     mts << GraphicMotion(QColor(255, 200,0), hei,  wid, 60 + (i / 3) * (hei + 4), (wid + 10) * (i % 3), 180);
-                }else{
-                    // scales
-                    mts << GraphicMotion(Qt::green, hei,  wid, 60 + (i - (jacobMatrix.cols() - 3) / 4 * 3 - 2) * (hei + 4), (wid + 10) * 3, 2);
-                    //qDebug() << 20 + (i - (jacobMatrix.cols() - 3) / 4 * 3) * (hei + 4);
-                }
-            }
-        }
+//        mts.clear(); int wid = 50, hei = 10;
+//        mts << GraphicMotion(Qt::black, hei,  (wid + 10) * 4, 25, 10, 0);
+//        for (int i = 0; i < params.length(); i++){
+//            if (i < 3){
+//                // root
+//                mts << GraphicMotion(Qt::red, hei,  wid, 55, (wid + 10) * (i % 3), 0);
+//            }else{
+//                if (i < (jacobMatrix.cols() - 3) / 4 * 3 + 3){
+//                    // angles
+//                     mts << GraphicMotion(QColor(255, 200,0), hei,  wid, 60 + (i / 3) * (hei + 4), (wid + 10) * (i % 3), 180);
+//                }else{
+//                    // scales
+//                    mts << GraphicMotion(Qt::green, hei,  wid, 60 + (i - (jacobMatrix.cols() - 3) / 4 * 3 - 2) * (hei + 4), (wid + 10) * 3, 2);
+//                    //qDebug() << 20 + (i - (jacobMatrix.cols() - 3) / 4 * 3) * (hei + 4);
+//                }
+//            }
+//        }
 
         do{
             if (isNumerical)
@@ -106,10 +106,10 @@ namespace OptimiseMethods {
             //if (i < (jacobMatrix.cols() - 3) / 4 * 3 + 3)   // do not apply scale
             {
                     res[i] = res[i] - step(i, 0) * h(i, 0);
-                    mts[i + 1].values << res[i];
+                    //mts[i + 1].values << res[i];
             }
 
-            currentDistance = func(res); mts[0].values << currentDistance;
+            currentDistance = func(res); //mts[0].values << currentDistance;
 
             iterationNumber ++;
             callback();
