@@ -23,8 +23,9 @@ private:
     QVector<Rig*> targetMeshes;
     Rig* bendingRig;
     int targMeshInd;
-    QVector<GraphicMotion> gt;
 
+    float eps;
+    int maxSteps;
 public:
     QVector3D* camCenter;
     QMainWindow* window;
@@ -35,8 +36,9 @@ public:
     TestAutoRig(Rig* rig, QVector<Rig*> mesh);
 
     bool SetCustomLowModel ();
-    bool GausNewtone ();
-    bool MiscBugHunt ();
+    bool SetCustomHighModel (float maxAngle);
+    QVector<float> BendSkeletonIntoMesh (bool isGaussNewton);
+    bool RewrapSkeletonToMesh(QVector<float> params);
     float TestSkinBending ();
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };

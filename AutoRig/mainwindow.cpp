@@ -55,17 +55,6 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *m)
 QVector3D camCenter; int iteration = 0;
 void MainWindow::keyPressEvent(QKeyEvent *e)
 {
-    if (e->key() == Qt::Key_R){
-        iteration = 0;
-        tar.SetCustomLowModel();
-        this->repaint();
-    }
-
-    if (e->key() == Qt::Key_H){
-        iteration = 0;
-        tar.MiscBugHunt();
-        this->repaint();
-    }
     if (e->key() == Qt::Key_Up){
         iteration = 0;
         tar.ChangeTargetMeshInd(1);
@@ -84,20 +73,21 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
         tv.SwapCurrentModelPrev();
         this->repaint();
     }
-    if (e->key() == Qt::Key_E){
-        for (int i = 0; i < 1000; i++){
-            tar.SetCustomLowModel();
-            this->repaint();
-            tar.GausNewtone();
-            this->repaint();
-        }
+
+
+    if (e->key() == Qt::Key_L){
+        iteration = 0;
+        tar.SetCustomLowModel();
+        this->repaint();
     }
-//    if (e->key() == Qt::Key_J){
-//        qDebug() << "Distance is " << tar.JacobianStep() << " on iteration " << ++iteration;
-//        this->repaint();
-//    }
-    if (e->key() == Qt::Key_O){
-        tar.GausNewtone();
+    if (e->key() == Qt::Key_H){
+        iteration = 0;
+        tar.SetCustomHighModel(30.0);
+        this->repaint();
+    }
+    if (e->key() == Qt::Key_B){
+        //tar.BendSkeletonIntoMesh(true);
+        tar.RewrapSkeletonToMesh(tar.BendSkeletonIntoMesh(true));
         this->repaint();
     }
     if (e->key() == Qt::Key_T){

@@ -281,22 +281,21 @@ QString Rig::ApplyDrawToCanvas(QPainter *painter, const QMatrix4x4 view, const Q
     //painter->end();
     return QString();
 }
-
-Derivable Rig::CompareWithMeshOnRotates(const Matrix<Derivable,1,3> rootTrans, const QVector<Matrix<Derivable,1,3>> newRotations, const QVector<Matrix<Derivable,1,3>> newScales, const Mesh *with)
-{
+void Rig::ApplyBending(const Eigen::Matrix<Derivable, 1, 3> rootTrans, const QVector<Eigen::Matrix<Derivable, 1, 3> > newRotations, const QVector<Eigen::Matrix<Derivable, 1, 3> > newScales){
     skeleton->SetRootTranslation(rootTrans);
     skeleton->SetRotations(newRotations);
     skeleton->SetScales(newScales);
     BendSkinToSkeleton();
+}
+
+Derivable Rig::CompareWithMeshOnRotates(const Matrix<Derivable,1,3> rootTrans, const QVector<Matrix<Derivable,1,3>> newRotations, const QVector<Matrix<Derivable,1,3>> newScales, const Mesh *with)
+{
+    ApplyBending(rootTrans, newRotations, newScales);
     return bendedMesh->CompareWithAnotherMesh(with);
 }
 //CompareWithMeshOnRotatesCoord
 QVector<Derivable> Rig::CompareWithMeshOnRotatesCoord(const Matrix<Derivable,1,3> rootTrans, const QVector<Matrix<Derivable,1,3>> newRotations, const QVector<Matrix<Derivable,1,3>> newScales, const Mesh *with)
 {
-    skeleton->SetRootTranslation(rootTrans);
-    skeleton->SetRotations(newRotations);
-    skeleton->SetScales(newScales);
-
-    BendSkinToSkeleton();
+    ApplyBending(rootTrans, newRotations, newScales);
     return bendedMesh->CompareWithAnotherMeshCoords(with);
 }

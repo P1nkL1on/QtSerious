@@ -28,6 +28,9 @@ class MeshComparer
 private:
     Rig* currentRig;
     Mesh* targetMesh;
+
+
+public:
     bool DistributeToParams (const QVector<Derivable> params,
                              Matrix<Derivable,1,3>& root ,
                              QVector<Matrix<Derivable,1,3>>& newRotations,
@@ -43,12 +46,10 @@ private:
         //qDebug() << "rot count " << newRotations.length() << "    scal count" << newScales.length();
         return true;
     }
-
-public:
     MeshComparer(Rig* rig, Mesh* mesh): currentRig(rig), targetMesh(mesh)
     {
         qDebug() << "Distance calculkator aka LossFunction contructed!";
-        Q_ASSERT(rig->bindMesh->vertexes.length() == targetMesh->vertexes.length());
+        Q_ASSERT(targetMesh == NULL || rig->bindMesh->vertexes.length() == targetMesh->vertexes.length());
     }
 
     QVector<Derivable> operator()(const QVector<Derivable> params) const
