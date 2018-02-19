@@ -41,7 +41,7 @@ bool TestAutoRig::RewrapSkeletonToMesh( QVector<float> params )
         withParams << Derivable(params[j]);
 
 
-
+    qDebug() << params;
     qDebug() << "Exchange meshes";
 //    boner->CalculateGlobalCoordForEachJointMatrix();
 //    sk->GenerateAttends(ms2->vertexes, boner->getJointsGlobalTranslationsForSkin());
@@ -49,9 +49,13 @@ bool TestAutoRig::RewrapSkeletonToMesh( QVector<float> params )
     qDebug() << "Recalculated";
     qDebug() << bendingRig->skin;
     bendingRig->bindMesh = targetMeshes[targMeshInd]->bindMesh;
+    bendingRig->skeleton->SetBonesScaleAsBoneLength();
     bendingRig->skin->GenerateAttends(bendingRig->bindMesh->vertexes, bendingRig->skeleton->getJointsGlobalTranslationsForSkin());
     qDebug() << "Attends generated";
     //return true;
+    for (int jC = (withParams.length() - 3 ) / 6, i = 3 + jC * 3; i < 3 + jC * 6; i++){
+        withParams[i] = Derivable(1);
+    }
 
     for (int i = 0; i < 100; i++){
         for (int j = 3; j < ((withParams.length() - 3) / 2) + 3; j++)

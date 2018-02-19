@@ -101,7 +101,6 @@ bool Skeleton::CalculateGlobalCoordForEachJointMatrix()
     for (int curJoint = 0; curJoint < joints.length(); curJoint++){
         joints[curJoint]->currentTranslation = Matrix<Derivable,1,3>();              // reset XYZ to calculate them further
         joints[curJoint]->currentRotation = localRotations[curJoint];               // now each joint have info about it need angles
-        //qDebug() << curJoint << joints[curJoint]->currentRotation;
         if (joints[curJoint]->pater == NULL){
             rootInds << curJoint;
             joints[curJoint]->localTranslation = rootTransate;
@@ -109,23 +108,22 @@ bool Skeleton::CalculateGlobalCoordForEachJointMatrix()
     }
     for (int jointInd = 0; jointInd < joints.length(); jointInd++){
         joints[jointInd]->RecaulculateLocalTransformMatrix();
-//        qDebug() << "!!!!!!!!!!!!!!!!!!!!" << jointInd;
-//        TraceMatrix(joints[jointInd]->localTransformMatrix);
     }
-
-    // apply for roots and go further
     Q_ASSERT(rootInds.length() > 0);
     for (int curRootInd = 0; curRootInd < rootInds.length(); curRootInd ++){
-        //qDebug() << "Root from " << curRootInd;
         Joint* root = (joints[rootInds[curRootInd]]);
         RecursiveGlobalCalculateCall(root);
     }
-//    for (int jointInd = 0; jointInd < joints.length(); jointInd++){
-//        qDebug() << "!g!g!g!g!g!g!g!g!!g!g!g!g!g!g!g!g!g!!" << jointInd;
-//        TraceMatrix(joints[jointInd]->globalTransformMatrix);
-//        TraceVector(joints[jointInd]->currentTranslation);
-//    }
     return true;
+}
+
+bool Skeleton::SetBonesScaleAsBoneLength()
+{
+    for (int i = 0; i < joints.length(); i++){
+        joints[i]->localTranslation = CommonFuncs::AddDirectMatrx(joints[i]->localTranslation, MakeDeriveScaleMatrix( joints[i]->localScale));
+        joints[i]->localScale = Matrix<Derivable,1,3>(1,1,1);
+    }
+    qDebug() << "All bones' scale translated into local transforms;";
 }
 
 
