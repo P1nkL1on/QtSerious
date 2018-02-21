@@ -3,6 +3,8 @@
 #include "QVector4D"
 #include "Derivable/dermatops.h"
 
+#include <Eigen/LU>
+
 using namespace DerivableVectorMatrixes;
 using namespace DerOperations;
 using Eigen::Matrix;
@@ -31,7 +33,7 @@ Rig::Rig(Mesh *mesh, Skeleton *skel, Skin *sk)
 
 void Rig::BendSkinToSkeleton()
 {
-    Q_ASSERT(bindMesh->vertexes.length() == skin->vertAttends.length());
+    //Q_ASSERT(skeleton->joints.length() == skin->clusterAttends.length());
 
     if (!skeleton->CalculateGlobalCoordForEachJointMatrix())
         return;
@@ -43,57 +45,48 @@ void Rig::BendSkinToSkeleton()
     newMesh->polygonStartIndexes = bindMesh->polygonStartIndexes;
     int vertexesTransformed = 0;
     QVector<int> failedIndexes;
-    for (int currentVertexInd = 0; currentVertexInd < skin->vertAttends.length(); currentVertexInd ++){
+    for (int currentVertexInd = 0; currentVertexInd < bindMesh->vertexes.length(); currentVertexInd ++){
         QVector<Matrix<Derivable,1,3>> bendedVariants;
         QVector<float> weightes;
 
-        // we have 0.3 && QVec3D && from joint a place and rotation
-        for (int jointInd = 0; jointInd < skin->vertAttends[currentVertexInd].jointIndexs.length(); jointInd++){
-            int jointBendInd = skin->vertAttends[currentVertexInd].jointIndexs[jointInd];
+        ///!! add
+        Matrix<Derivable,4,4> nowGlobal;
 
-            Matrix<Derivable,4,4> localAttendTransformMatrix = SetDeriveMatrix(),//QMatrix4x4(),
-                       localRotateMatrix = CommonFuncs::GetNormalRotateMatrix(skeleton->joints[jointBendInd]->currentRotation);
+        for (int clusterInd = 0; clusterInd < skin->clusterAttends.length(); clusterInd++){
+            int vertexInClusterIndex = skin->clusterAttends[clusterInd].vertexIndex.indexOf(currentVertexInd);
+            if (vertexInClusterIndex >= 0)
+            {
+                //qDebug() << currentVertexInd << "vertex in joint" << skin->clusterAttends[clusterInd].jointIndex << "is number" << currentVertexInd << "with wei" << skin->clusterAttends[clusterInd].weights[vertexInClusterIndex];
+                //int jointBendInd = skin->clusterAttends[currentVertexInd].vertexIndex[jointInd];
 
-            //localAttendTransformMatrix.translate(- skin->vertAttends[currentVertexInd].localJointCoords[jointInd]);
-            TranslateDeriveMatrix(localAttendTransformMatrix, - skin->vertAttends[currentVertexInd].localJointCoords[jointInd]);
+                nowGlobal = skin->clusterAttends[clusterInd].boneBindCoord.inverse();
+                Matrix<Derivable,1,4> tmp =
+                        MakeVector4From3(bindMesh->vertexes[currentVertexInd], Derivable(1))
+                        * nowGlobal
+                        * skeleton->joints[skin->clusterAttends[clusterInd].jointIndex]->globalTransformMatrix
 
-            bendedVariants <<
-            CommonFuncs::AddDirectMatrx(Matrix<Derivable,1,3>(1,1,1),
-                                         localAttendTransformMatrix
-                                        * localRotateMatrix
-                                        * skeleton->joints[jointBendInd]->globalTransformMatrix
-                                        );
+                        ;
 
-
-            weightes << skin->vertAttends[currentVertexInd].weights[jointInd];
+                bendedVariants << Matrix<Derivable,1,3>(tmp(0,0),tmp(0,1),tmp(0,2));
+                weightes << skin->clusterAttends[clusterInd].weights[vertexInClusterIndex];
+            }
         }
 
         Matrix<Derivable,1,3> result = Matrix<Derivable,1,3>();
         float bendedSumm = 0;
         for (int curPoint = 0; curPoint < weightes.length(); curPoint++)
             bendedSumm += weightes[curPoint];
-        if (bendedSumm == 0)
-            failedIndexes << currentVertexInd;
-        else
-        {
-            // select the middle, based on wighthres
-            for (int curPoint = 0; curPoint < bendedVariants.length(); curPoint++)
-                result = result +  Derivable(weightes[curPoint]/ bendedSumm) * bendedVariants[curPoint] ;
-            //result = bendedVariants[0];
-        }
 
+
+        // select the middle, based on wighthres
+        for (int curPoint = 0; curPoint < bendedVariants.length(); curPoint++)
+            result = result +  Derivable(weightes[curPoint]/ bendedSumm) * bendedVariants[curPoint] ;
 
         if (bendedVariants.length() > 0)
             vertexesTransformed ++;
         newMesh->vertexes << result;
     }
-
-    //qDebug() << QString::number(vertexesTransformed) + " / " + QString::number(skin->vertAttends.length()) + " / " + QString::number(bindMesh->vertexes.length()) +" vertexes transformed ( "+QString::number(failedIndexes.length())+" failed)";
-    //
     bendedMesh = newMesh;
-//    qDebug() << "MMMMMMMMMMMMMMMMMMMM";
-//    for (int i = 0; i < newMesh->vertexes.length(); i++)
-//        TraceVector(newMesh->vertexes[i]);
     return;
 }
 
@@ -180,21 +173,6 @@ QString Rig::ApplyDrawToCanvas(QPainter *painter, const QMatrix4x4 view, const Q
             //painter->drawLine(xb,yb,x,y);
         }
         // ...
-        // draw a attend
-        if (false && skin != NULL){
-            QVector<Matrix<Derivable, 1, 3>> attened3D = {};
-            QVector<QVector2D> attened2D = {};
-
-            for (int att = 0; att < skin->vertAttends[curPoint].localJointCoords.length(); att++)
-                attened3D << bindMesh->vertexes[curPoint] + skin->vertAttends[curPoint].localJointCoords[att];
-            attened2D = From3DTo2D(attened3D, view, perspective);
-            for (int att = 0; att < attened2D.length(); att++){
-                int xa, ya;
-                ApplyScreen(xa,ya, attened2D[att], width, hei);
-                painter->setPen(ChangeQPainter(QColor(255,0,0,5), 2));
-                painter->drawLine(x,y,xa,ya);
-            }
-        }
     }
     // draw a mf polygons
     // ..................................................................................................................................

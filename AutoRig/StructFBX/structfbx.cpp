@@ -79,11 +79,20 @@ void Joint::CalculateGlobalTransformMatrix()
 }
 
 
-AttendedVertex::AttendedVertex()
+AttendedCluster::AttendedCluster()
 {
-    jointIndexs = {};
+    vertexIndex = {};
     weights = {};
-    localJointCoords = {};
+    boneBindCoord = SetDeriveMatrix();
+    jointIndex = 0;
+}
+
+AttendedCluster::AttendedCluster(Matrix<Derivable,4,4> bindMatrix, int JointIndex)
+{
+    vertexIndex = {};
+    weights = {};
+    boneBindCoord = bindMatrix;
+    jointIndex = JointIndex;
 }
 
 Matrix<Derivable,1,3> CommonFuncs::AddDirect(const Matrix<Derivable,1,3> to, const Matrix<Derivable,1,3> Transform, const Matrix<Derivable,1,3> Rotation)

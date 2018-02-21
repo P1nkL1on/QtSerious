@@ -224,12 +224,15 @@ float TestAutoRig::TestSkinBending()
     float res = -1; was = 0;
     qDebug() << "Test bend called";
     //  ASS TRANSLATE           JOINT ROTATES       JOINT SCALES
-    while (was < 100){
+    while (was < 10){
         QVector<Matrix<Derivable,1,3>> newRotations = QVector<Matrix<Derivable,1,3>>(bendingRig->skeleton->joints.length());
         QVector<Matrix<Derivable,1,3>> newScales = QVector<Matrix<Derivable,1,3>>();
 
-        for (int i = 0; i < newRotations.length(); i++)
-            newScales << ((i % 5 != 0)? Matrix<Derivable,1,3>(1,1,1) : Matrix<Derivable,1,3>(1,1,1+was / 10));  // test an arm shit
+        for (int i = 0; i < newRotations.length(); i++){
+            newScales << ((i % 5 != 0)? Matrix<Derivable,1,3>(1,1,1) : Matrix<Derivable,1,3>(1,1,1+was / 1000.0));  // test an arm shit
+            newRotations[i] = Matrix<Derivable,1,3>(0,was * (i>5) * .02, 0);
+        }
+        newRotations[20] = Matrix<Derivable,1,3>(0,90,0);
         Matrix<Derivable,1,3> assTranslate;// = Matrix<Derivable,1,3>(0,0,++was * .5);
         was += .5;
 

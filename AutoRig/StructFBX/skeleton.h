@@ -24,7 +24,7 @@ public:
     bool SetBonesScaleAsBoneLength ();
 
     QVector<Eigen::Matrix<DerOperations::Derivable,1,3>> getJointsLocalRotations () const;
-    QVector<Eigen::Matrix<DerOperations::Derivable,1,3>> getJointsGlobalTranslationsForSkin () const;
+    QVector<Eigen::Matrix<DerOperations::Derivable,4,4>> getJointsGlobalTranslationsForSkin () const;
     Eigen::Matrix<DerOperations::Derivable,1,3> getJointCoordByIndex(int index, Eigen::Matrix<DerOperations::Derivable,1,3> &paterCoord);
     // local!
     void SetRotation (const Eigen::Matrix<DerOperations::Derivable,1,3> newRotation, int jointInd);

@@ -35,12 +35,15 @@ public:
 };
 
 
-struct AttendedVertex{
+struct AttendedCluster{
 public:
-    QVector<int> jointIndexs;
+    int jointIndex;
+    QVector<int> vertexIndex;
     QVector<float> weights;
-    QVector<Eigen::Matrix<DerOperations::Derivable,1,3>> localJointCoords;
-    AttendedVertex();
+    //QVector<Eigen::Matrix<DerOperations::Derivable,1,3>> localJointCoords;
+    Eigen::Matrix<DerOperations::Derivable,4,4> boneBindCoord;
+    AttendedCluster();
+    AttendedCluster(Eigen::Matrix<DerOperations::Derivable,4,4>, int JointIndex);
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 

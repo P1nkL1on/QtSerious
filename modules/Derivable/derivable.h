@@ -48,6 +48,11 @@ public:
         //if (a.value <= 1e-5 && a.value <= 1e-5) a.value = 1e-5;
         return Derivable(value / a.value, (pr_value * a.value - a.pr_value * value)/ (a.value * a.value));
     }
+    Derivable operator/= (const Derivable a) {
+        value /= a.value;
+        pr_value = (pr_value * a.value - a.pr_value * value)/ (a.value * a.value);
+        return Derivable(value, pr_value);
+    }
 
     static QVector<Derivable> AutoDiff(QVector<QPair<Derivable, Derivable> > modelOriginal,
                                        QVector<QPair<Derivable, Derivable> > modelFinal, QVector3D transform);

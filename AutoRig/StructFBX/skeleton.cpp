@@ -182,10 +182,10 @@ bool Skeleton::getJointTranslationAndRotation(const int jointIndex, Matrix<Deriv
     return true;
 }
 
-QVector<Matrix<Derivable,1,3>> Skeleton::getJointsGlobalTranslationsForSkin() const
+QVector<Matrix<Derivable,4,4>> Skeleton::getJointsGlobalTranslationsForSkin() const
 {
-    QVector<Matrix<Derivable,1,3>> res;
+    QVector<Matrix<Derivable,4,4>> res;
     for (int curJoint = 0; curJoint < joints.length(); curJoint++)
-            res << joints[curJoint]->currentTranslation;
+            res << joints[curJoint]->globalTransformMatrix;
     return res;
 }
