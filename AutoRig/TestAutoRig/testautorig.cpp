@@ -224,7 +224,7 @@ float TestAutoRig::TestSkinBending()
     float res = -1; was = 0;
     qDebug() << "Test bend called";
     //  ASS TRANSLATE           JOINT ROTATES       JOINT SCALES
-    while (was < 10){
+    while (was < 100){
         QVector<Matrix<Derivable,1,3>> newRotations = QVector<Matrix<Derivable,1,3>>(bendingRig->skeleton->joints.length());
         QVector<Matrix<Derivable,1,3>> newScales = QVector<Matrix<Derivable,1,3>>();
 
@@ -232,9 +232,10 @@ float TestAutoRig::TestSkinBending()
             newScales << ((i % 5 != 0)? Matrix<Derivable,1,3>(1,1,1) : Matrix<Derivable,1,3>(1,1,1+was / 1000.0));  // test an arm shit
             newRotations[i] = Matrix<Derivable,1,3>(0,was * (i>5) * .02, 0);
         }
+        newRotations[0] = Matrix<Derivable,1,3>(0,0,was);
         newRotations[20] = Matrix<Derivable,1,3>(0,90,0);
-        Matrix<Derivable,1,3> assTranslate;// = Matrix<Derivable,1,3>(0,0,++was * .5);
-        was += .5;
+        Matrix<Derivable,1,3> assTranslate = Matrix<Derivable,1,3>(0,0,++was * .5);
+        was += 2;
 
         res = bendingRig->CompareWithMeshOnRotates(assTranslate, newRotations, newScales, targetMeshes[targMeshInd]->bindMesh).getValue();
         qDebug() << "Call redraw " << was;

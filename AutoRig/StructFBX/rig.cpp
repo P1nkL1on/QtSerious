@@ -60,11 +60,12 @@ void Rig::BendSkinToSkeleton()
                 //int jointBendInd = skin->clusterAttends[currentVertexInd].vertexIndex[jointInd];
 
                 nowGlobal = skin->clusterAttends[clusterInd].boneBindCoord.inverse();
+                Joint* bone = skeleton->joints[skin->clusterAttends[clusterInd].jointIndex];
                 Matrix<Derivable,1,4> tmp =
                         MakeVector4From3(bindMesh->vertexes[currentVertexInd], Derivable(1))
                         * nowGlobal
-                        * skeleton->joints[skin->clusterAttends[clusterInd].jointIndex]->globalTransformMatrix
-
+                        * bone->globalTransformMatrix
+//                        * bone->localTransformMatrix.inverse()
                         ;
 
                 bendedVariants << Matrix<Derivable,1,3>(tmp(0,0),tmp(0,1),tmp(0,2));
