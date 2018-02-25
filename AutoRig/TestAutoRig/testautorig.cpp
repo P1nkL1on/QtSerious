@@ -229,12 +229,12 @@ float TestAutoRig::TestSkinBending()
         QVector<Matrix<Derivable,1,3>> newScales = QVector<Matrix<Derivable,1,3>>();
 
         for (int i = 0; i < newRotations.length(); i++){
-            newScales << ((i % 5 != 0)? Matrix<Derivable,1,3>(1,1,1) : Matrix<Derivable,1,3>(1,1,1+was / 1000.0));  // test an arm shit
+            newScales << ((i != 20)? Matrix<Derivable,1,3>(1,1,1) : Matrix<Derivable,1,3>(1+was / 50.0,1+was / 50.0,1+was / 50.0));  // test an arm shit
             newRotations[i] = Matrix<Derivable,1,3>(0,was * (i>5) * .02, 0);
         }
-        newRotations[0] = Matrix<Derivable,1,3>(0,0,was);
+        newRotations[0] = Matrix<Derivable,1,3>(was,was,was);
         newRotations[20] = Matrix<Derivable,1,3>(0,90,0);
-        Matrix<Derivable,1,3> assTranslate = Matrix<Derivable,1,3>(0,0,++was * .5);
+        Matrix<Derivable,1,3> assTranslate = Matrix<Derivable,1,3>(0,0,/*++was * .5*/0);
         was += 2;
 
         res = bendingRig->CompareWithMeshOnRotates(assTranslate, newRotations, newScales, targetMeshes[targMeshInd]->bindMesh).getValue();

@@ -3,7 +3,7 @@
 #include "QVector4D"
 #include "Derivable/dermatops.h"
 
-#include <Eigen/LU>
+#include "Eigen/LU"
 
 using namespace DerivableVectorMatrixes;
 using namespace DerOperations;
@@ -59,13 +59,12 @@ void Rig::BendSkinToSkeleton()
                 //qDebug() << currentVertexInd << "vertex in joint" << skin->clusterAttends[clusterInd].jointIndex << "is number" << currentVertexInd << "with wei" << skin->clusterAttends[clusterInd].weights[vertexInClusterIndex];
                 //int jointBendInd = skin->clusterAttends[currentVertexInd].vertexIndex[jointInd];
 
-                nowGlobal = skin->clusterAttends[clusterInd].boneBindCoord.inverse();
                 Joint* bone = skeleton->joints[skin->clusterAttends[clusterInd].jointIndex];
                 Matrix<Derivable,1,4> tmp =
                         MakeVector4From3(bindMesh->vertexes[currentVertexInd], Derivable(1))
-                        * nowGlobal
-                        * bone->globalTransformMatrix
-//                        * bone->localTransformMatrix.inverse()
+                        * skin->clusterAttends[clusterInd].boneBindCoord
+                        * (MakeDeriveRotationMatrix(bone->currentRotation) * bone->globalTransformMatrix)
+//                        *
                         ;
 
                 bendedVariants << Matrix<Derivable,1,3>(tmp(0,0),tmp(0,1),tmp(0,2));
@@ -230,23 +229,37 @@ QString Rig::ApplyDrawToCanvas(QPainter *painter, const QMatrix4x4 view, const Q
 
     Vertexes2D = From3DTo2D(Joints3D, view,perspective);
 
-    for (int curPoint = 0; curPoint < Vertexes2D.length() / 2; curPoint++)
+    for (int curJoint = 0; curJoint < Vertexes2D.length() / 2; curJoint++)
     {
 
         int startGreen = 0;
-        if (curPoint > 0 && curPoint < skeleton->joints.length()){
-            Joint* j = skeleton->joints[curPoint];
+        if (curJoint > 0 && curJoint < skeleton->joints.length()){
+            Joint* j = skeleton->joints[curJoint];
             while ( j->pater != NULL ){ startGreen += 30; j = j->pater;}
             if (startGreen > 255)startGreen = 255;
         }
         painter->setPen(ChangeQPainter(QColor(255,startGreen,0), 1));
 
         int xc,yc,xp,yp;
-        ApplyScreen(xc,yc,Vertexes2D[curPoint * 2], width, hei);
-        ApplyScreen(xp,yp,Vertexes2D[curPoint * 2 + 1], width, hei);
+        ApplyScreen(xc,yc,Vertexes2D[curJoint * 2], width, hei);
+        ApplyScreen(xp,yp,Vertexes2D[curJoint * 2 + 1], width, hei);
         painter->drawLine(xc,yc,xp,yp);
-        painter->drawText(xc, yc,300,150,0, QString::number(curPoint));//+" " +skeleton->joints[curPoint]->name);// +", "+ QString::number(skeleton->joints[curPoint]->currentRotation.y()) +", "+ QString::number(skeleton->joints[curPoint]->currentRotation.z()));
+        painter->drawText(xc, yc,300,150,0, QString::number(curJoint));//+" " +skeleton->joints[curPoint]->name);// +", "+ QString::number(skeleton->joints[curPoint]->currentRotation.y()) +", "+ QString::number(skeleton->joints[curPoint]->currentRotation.z()));
         //painter->drawText(xc, yc,300,150,0, QString::number(Joints3D[curPoint*2].x()) +"\n"+ QString::number(Joints3D[curPoint*2].y()) +"\n"+ QString::number(Joints3D[curPoint*2].z()));
+
+        if (bendedMesh != NULL){
+            int jointInd = curJoint, clusterInd = 0;
+            while (skin->clusterAttends[clusterInd].jointIndex != jointInd && clusterInd < skin->clusterAttends.length())
+                clusterInd++;
+            if (clusterInd < skin->clusterAttends.length())
+                for (int i = 0; i < skin->clusterAttends[clusterInd].vertexIndex.length(); i+= 10)
+                {
+                    int xv, yv;
+                    ApplyScreen(xv,yv,Vertexes2DBend[skin->clusterAttends[clusterInd].vertexIndex[i]], width, hei);
+                    painter->setPen(ChangeQPainter(QColor(70,220,0, 200), 1));
+                    painter->drawLine(xc,yc,xv,yv);
+                }
+        }
     }
 
 

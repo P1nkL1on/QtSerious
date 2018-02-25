@@ -3,6 +3,7 @@
 using namespace DerOperations;
 using Eigen::Matrix;
 
+
 Skin::Skin()
 {
     jointIndexes = QVector<int>();

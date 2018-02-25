@@ -4,6 +4,7 @@
 using namespace DerivableVectorMatrixes;
 using namespace DerOperations;
 using Eigen::Matrix;
+#include <Eigen/LU>
 
 Joint::Joint()
 {
@@ -91,7 +92,7 @@ AttendedCluster::AttendedCluster(Matrix<Derivable,4,4> bindMatrix, int JointInde
 {
     vertexIndex = {};
     weights = {};
-    boneBindCoord = bindMatrix;
+    boneBindCoord = bindMatrix.inverse();
     jointIndex = JointIndex;
 }
 

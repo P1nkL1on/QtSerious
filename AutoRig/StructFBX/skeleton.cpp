@@ -187,12 +187,6 @@ QVector<Matrix<Derivable,4,4>> Skeleton::getJointsGlobalTranslationsForSkin() co
 {
     QVector<Matrix<Derivable,4,4>> res;
     for (int curJoint = 0; curJoint < joints.length(); curJoint++)
-        res << joints[curJoint]->globalTransformMatrix;// * joints[curJoint]->localTransformMatrix.inverse();
-
-//        if (joints[curJoint]->pater != NULL)
-//            res << (joints[curJoint]->globalTransformMatrix * joints[curJoint]->localTransformMatrix.inverse());
-//        else
-//            res << joints[curJoint]->globalTransformMatrix;
-
+        res << MakeDeriveRotationMatrix(joints[curJoint]->currentRotation) * joints[curJoint]->globalTransformMatrix;
     return res;
 }
