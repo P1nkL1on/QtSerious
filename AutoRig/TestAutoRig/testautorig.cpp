@@ -49,13 +49,14 @@ bool TestAutoRig::RewrapSkeletonToMesh( QVector<float> params )
     qDebug() << "Recalculated";
     qDebug() << bendingRig->skin;
     bendingRig->bindMesh = targetMeshes[targMeshInd]->bindMesh;
-    bendingRig->skeleton->SetBonesScaleAsBoneLength();
     bendingRig->skin->GenerateAttends(bendingRig->bindMesh->vertexes, bendingRig->skeleton->getJointsGlobalTranslationsForSkin());
+    bendingRig->skeleton->SetBonesScaleAsBoneLength();
     qDebug() << "Attends generated";
-    //return true;
-    for (int jC = (withParams.length() - 3 ) / 6, i = 3 + jC * 3; i < 3 + jC * 6; i++){
+
+    // set new scales to normal 1
+    for (int jC = (withParams.length() - 3 ) / 6, i = 3 + jC * 3; i < 3 + jC * 6; i++)
         withParams[i] = Derivable(1);
-    }
+
 
     for (int i = 0; i < 100; i++){
         for (int j = 3; j < ((withParams.length() - 3) / 2) + 3; j++)
