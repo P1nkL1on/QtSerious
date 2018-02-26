@@ -202,16 +202,16 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
         if (parseType == 5 && line.indexOf("Lcl") >= 0){
                 currentParseSplited = line.split(',');
                 Matrix<Derivable,1,3> parsedVect;
-                if (line.indexOf("Translation") >= 0 || line.indexOf("Rotation") >= 0 || line.indexOf("Scaling") >= 0)
+                if (line.indexOf(" Translation") >= 0 || line.indexOf(" Rotation") >= 0 || line.indexOf(" Scaling") >= 0)
                     parsedVect = Matrix<Derivable,1,3>(Derivable(QStringToFloat(currentParseSplited[currentParseSplited.length() - 3])),
                                            Derivable(QStringToFloat(currentParseSplited[currentParseSplited.length() - 2])),
                                            Derivable(QStringToFloat(currentParseSplited[currentParseSplited.length() - 1])));
                 // redirect it to new limbs
-                if (line.indexOf("Translation") >= 0)
+                if (line.indexOf(" Translation") >= 0)
                     lastJointCreated->currentTranslation = parsedVect;
-                if (line.indexOf("Rotation") >= 0)
+                if (line.indexOf(" Rotation") >= 0)
                     lastJointCreated->currentRotation = parsedVect;
-                if (line.indexOf("Scaling") >= 0);
+                if (line.indexOf(" Scaling") >= 0);
                     // IGNORE THIS
                 //qDebug() << lastJointCreated.ID << lastJointCreated.name;
             }
@@ -331,8 +331,8 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
         //
         Matrix<Derivable,4,4> usemat = SetDeriveMatrix();
         if (last->pater != NULL){
-            usemat = last->pater->bindMatrix/*.inverted()*/;
-            usemat = usemat.reverse();
+            usemat = last->pater->bindMatrix;
+            //usemat = usemat.reverse();
         }
 
         Matrix<Derivable,1,4> temp =
@@ -366,6 +366,13 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
     resSkin->GenerateAttends(resMesh->vertexes, resSkeleton->getJointsGlobalTranslationsForSkin());
 
     loadedRig = Rig(resMesh, resSkeleton, resSkin);
+
+    for (int i = 0; i < resSkeleton->joints.length(); i++){
+        qDebug() << resSkeleton->joints[i]->name;
+        //TraceVector( resSkeleton->joints[i]->localTranslation);
+        TraceVector(resSkeleton->joints[i]->currentRotation);
+    }
+
     return QString();
 }
 
@@ -399,7 +406,8 @@ QString loaderFBX::loadMeshOBJ(QTextStream &textStream, Mesh &loadedMesh)
     while (!textStream.atEnd()){
         line = textStream.readLine();
         if (line.indexOf("v ") == 0){
-            currentParseSplited = line.remove(0, 2).split(' ');
+            while (line[0] == 'v' || line[0] == ' ') line = line.remove(0,1);
+            currentParseSplited = line.split(' ');
             Q_ASSERT(currentParseSplited.length() == 3);
             loadedVertexes << Matrix<Derivable,1,3>(QStringToFloat(currentParseSplited[0]),
                                         QStringToFloat(currentParseSplited[1]),
@@ -418,9 +426,9 @@ QString loaderFBX::loadMeshOBJ(QTextStream &textStream, Mesh &loadedMesh)
     QVector<Matrix<Derivable,1,3>> loadedDerV3s = QVector<Matrix<Derivable,1,3>>();
 
 
-    Matrix<Derivable,1,3> trans = Matrix<Derivable,1,3>(10,20,-30);
+    Matrix<Derivable,1,3> trans = Matrix<Derivable,1,3>(0,0,0);
     for (int i = 0; i < loadedVertexes.length(); i++){
-        Derivable scale = (i % 100 == 0)? .63 : .6;
+        Derivable scale = 1;//(i % 100 == 0)? .6 : .6;
         loadedDerV3s << Matrix<Derivable,1,3>(
                     scale * Derivable(loadedVertexes[i].x()) + trans(0,0),
                     scale * Derivable(loadedVertexes[i].y()) + trans(0,1),

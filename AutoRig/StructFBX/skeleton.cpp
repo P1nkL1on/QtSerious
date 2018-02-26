@@ -80,7 +80,7 @@ bool EqualSkeletonRotations (QVector<Matrix<Derivable,1,3>> a, QVector<Matrix<De
 void RecursiveGlobalCalculateCall (Joint* joint){
     joint->CalculateGlobalTransformMatrix();
 
-    joint->currentTranslation = CommonFuncs::AddDirectMatrx(Matrix<Derivable,1,3>(1,1,1),
+    joint->currentTranslation = CommonFuncs::AddDirectMatrx(Matrix<Derivable,1,3>(0,0,0),
                                                             joint->globalTransformMatrix);
     for (int childId = 0; childId < joint->kids.length(); childId++)
         RecursiveGlobalCalculateCall(joint->kids[childId]);
@@ -91,9 +91,9 @@ void RecursiveGlobalCalculateCall (Joint* joint){
 bool Skeleton::CalculateGlobalCoordForEachJointMatrix()
 {
     transformesApplied = 0;
-    //if (EqualSkeletonRotations(getJointsLocalRotations(), localRotations))
-    //    return false;
-    //
+//    if (EqualSkeletonRotations(getJointsLocalRotationsForDrawing(), localRotations))
+//        return false;
+
     QVector<int> rootInds = {};
 
     for (int curJoint = 0; curJoint < joints.length(); curJoint++){

@@ -44,13 +44,15 @@ namespace OptimiseMethods {
     template <typename Function, typename CallBack>
     QVector<float> GaussNewtonMethod (Function& func, CallBack& callback, const QVector<float> params,
                                      const float epsilon, const int maxIterationCount, bool isNumerical){
-
+    qDebug() << "GNM called";
         QTime t , ttotal;
         t.start(); ttotal.start();
         QVector<float> res = params;
         Matrix<float,-1,-1>
                 jacobMatrix, F;
+    qDebug() << "JCB called";
         JacobianCalculator::CalculateForFunction(res, jacobMatrix, F, func );
+    qDebug() << "JCB done";
         Matrix<float,-1,-1>
                 jacobTrans = Matrix<float, -1, -1>(jacobMatrix.rows(), jacobMatrix.cols()),
                 step = Matrix<float,-1,-1>( jacobMatrix.cols(), 1),

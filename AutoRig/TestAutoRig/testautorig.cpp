@@ -222,28 +222,41 @@ QString TestAutoRig::ApplyDrawToCanvas(QPainter *painter, const QMatrix4x4 view,
 float was = 0, zad = 0;
 float TestAutoRig::TestSkinBending()
 {
-    float res = -1; was = 0;
-    qDebug() << "Test bend called";
-    //  ASS TRANSLATE           JOINT ROTATES       JOINT SCALES
-    while (was < 100){
-        QVector<Matrix<Derivable,1,3>> newRotations = QVector<Matrix<Derivable,1,3>>(bendingRig->skeleton->joints.length());
-        QVector<Matrix<Derivable,1,3>> newScales = QVector<Matrix<Derivable,1,3>>();
+    QVector<Matrix<Derivable,1,3>> newRotations = QVector<Matrix<Derivable,1,3>>(bendingRig->skeleton->joints.length());
+    QVector<Matrix<Derivable,1,3>> newScales = QVector<Matrix<Derivable,1,3>>();
+    for (int i = 0; i < newRotations.length(); i++)
+        newScales << Matrix<Derivable,1,3>(1,1,1);
 
-        for (int i = 0; i < newRotations.length(); i++){
-            newScales << ((i != 20)? Matrix<Derivable,1,3>(1,1,1) : Matrix<Derivable,1,3>(1+was / 50.0,1+was / 50.0,1+was / 50.0));  // test an arm shit
-            newRotations[i] = Matrix<Derivable,1,3>(0,was * (i>5) * .02, 0);
-        }
-        newRotations[0] = Matrix<Derivable,1,3>(was,was,was);
-        newRotations[20] = Matrix<Derivable,1,3>(0,90,0);
-        Matrix<Derivable,1,3> assTranslate = Matrix<Derivable,1,3>(0,0,/*++was * .5*/0);
-        was += 2;
-
-        res = bendingRig->CompareWithMeshOnRotates(assTranslate, newRotations, newScales, targetMeshes[targMeshInd]->bindMesh).getValue();
-        qDebug() << "Call redraw " << was;
+    float ang = 0;
+    while (ang < 90){
+        newRotations[32](0,1) = ang; ang += 100;
+        bendingRig->ApplyBending(Matrix<Derivable,1,3>(0,0,0), newRotations, newScales);
         window->repaint();
     }
-    qDebug() << "Test bend success";
-    return res;
+
+    qDebug() << "tested";
+    return 0;
+
+//    float res = -1; was = 0;
+//    qDebug() << "Test bend called";
+//    //  ASS TRANSLATE           JOINT ROTATES       JOINT SCALES
+//    while (was < 100){
+
+
+//        for (int i = 0; i < newRotations.length(); i++){
+//            newScales << ((i != 20)? Matrix<Derivable,1,3>(1,1,1) : Matrix<Derivable,1,3>(1+was / 50.0,1+was / 50.0,1+was / 50.0));  // test an arm shit
+//            newRotations[i] = Matrix<Derivable,1,3>(0,was * (i>5) * .02, 0);
+//        }
+//        //newRotations[0] = Matrix<Derivable,1,3>(was,was,was);
+//        newRotations[20] = Matrix<Derivable,1,3>(0, was ,0);
+//        Matrix<Derivable,1,3> assTranslate = Matrix<Derivable,1,3>(0,0,/*++was * .5*/0);
+//        was += 2;
+//        res = bendingRig->CompareWithMeshOnRotates(assTranslate, newRotations, newScales, targetMeshes[targMeshInd]->bindMesh).getValue();
+//        qDebug() << "Call redraw " << was;
+//        window->repaint();
+//    }
+//    qDebug() << "Test bend success";
+//    return res;
 }
 
 
