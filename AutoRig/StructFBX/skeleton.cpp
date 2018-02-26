@@ -125,7 +125,7 @@ bool Skeleton::SetBonesScaleAsBoneLength()
 }
 
 
-QVector<Matrix<Derivable,1,3>> Skeleton::getJointsLocalRotations() const
+QVector<Matrix<Derivable,1,3>> Skeleton::getJointsLocalRotationsForDrawing() const
 {
     QVector<Matrix<Derivable,1,3>> res;
     for (int curJoint = 0; curJoint < joints.length(); curJoint++)

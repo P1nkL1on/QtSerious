@@ -4,11 +4,11 @@
 
 class Skeleton
 {  
-
     QVector<Eigen::Matrix<DerOperations::Derivable,1,3>> localScales;
     QVector<Eigen::Matrix<DerOperations::Derivable,1,3>> localRotations;
     void RecursiveApplyLocalRotations(Joint* joint, Eigen::Matrix<DerOperations::Derivable,1,3> currentRotation);
     int transformesApplied;
+    void SetRotation (const Eigen::Matrix<DerOperations::Derivable,1,3> newRotation, int jointInd);
 public:
     Eigen::Matrix<DerOperations::Derivable,1,3> rootTransate;
     QVector<Joint*> joints;
@@ -19,17 +19,14 @@ public:
     void SetNullRotations();
 
     void DebugTree () const;
-    bool CalculateGlobalCoordForEachJoint ();
     bool CalculateGlobalCoordForEachJointMatrix();
     bool SetBonesScaleAsBoneLength ();
 
-    QVector<Eigen::Matrix<DerOperations::Derivable,1,3>> getJointsLocalRotations () const;
+    QVector<Eigen::Matrix<DerOperations::Derivable,1,3>> getJointsLocalRotationsForDrawing () const;
     QVector<Eigen::Matrix<DerOperations::Derivable,4,4>> getJointsGlobalTranslationsForSkin () const;
     Eigen::Matrix<DerOperations::Derivable,1,3> getJointCoordByIndex(int index, Eigen::Matrix<DerOperations::Derivable,1,3> &paterCoord);
     // local!
-    void SetRotation (const Eigen::Matrix<DerOperations::Derivable,1,3> newRotation, int jointInd);
     void SetRotations (const QVector<Eigen::Matrix<DerOperations::Derivable,1,3>> newRotations);
-
     void SetRootTranslation (const Eigen::Matrix<DerOperations::Derivable,1,3> assTranslate);
     void SetScales (const QVector<Eigen::Matrix<DerOperations::Derivable,1,3>> newScales);
 

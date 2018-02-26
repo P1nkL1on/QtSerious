@@ -264,7 +264,7 @@ QString Rig::ApplyDrawToCanvas(QPainter *painter, const QMatrix4x4 view, const Q
 
 
     QString logs = "";
-    QVector<Matrix<Derivable,1,3>> jointLocalRots = skeleton->getJointsLocalRotations();
+    QVector<Matrix<Derivable,1,3>> jointLocalRots = skeleton->getJointsLocalRotationsForDrawing();
     for (int curJointInd = 0; curJointInd < skeleton->joints.length(); curJointInd++)
         logs += ("#" + QString::number(curJointInd) + " : ")
                  + ToString(jointLocalRots[curJointInd]) + "      sc: "+ToString(skeleton->joints[curJointInd]->localScale)+"\n";
