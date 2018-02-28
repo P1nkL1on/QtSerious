@@ -16,7 +16,8 @@ using namespace DerivableVectorMatrixes;
 
 QString loaderFBX::loadModelFBXAdress(QString path, Rig &loadedRig)
 {
-    QString errMessage = "Can not load FBX from \"" + path + "\"";
+    QString errMessage = "Can not load FBX from \"" + path + "\"", origPath = path;
+
 
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly))
@@ -27,6 +28,9 @@ QString loaderFBX::loadModelFBXAdress(QString path, Rig &loadedRig)
     //return error with file adress | return emptystring == success
     if (err.isEmpty())
         qDebug() << "    @    " + path.remove(0,path.lastIndexOf('/') + 1) + " was loaded;";
+
+    saveModelFBX(origPath, loadedRig);
+
     return ((!err.isEmpty())? errMessage + ": " + err : QString());
 }
 
@@ -40,6 +44,7 @@ int QStringToInt (QString str){
 
 QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
 
+    QVector<int> saveIndexes = QVector<int>(); int lineNumber = 0;
     char isMoreDebug = 'n'; // if (isMoreDebug == 'y')
     Rigging = true;
     //check empty file
@@ -72,7 +77,7 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
 
     // file reading
     while (!textStream.atEnd()){
-        prevLine = line;
+        prevLine = line; lineNumber ++;
         line = textStream.readLine();
 
 
@@ -109,6 +114,7 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
 
             switch (parseType){
                 case 0: // parse vertexes from giant array
+                    saveIndexes << lineNumber;
                     currentParseSplited = currentParse.split(',');
                     for (int parsedPoint = 0; parsedPoint < currentParseSplited.length() / 3; parsedPoint ++)
                         loadedVertexes << Matrix<Derivable,1,3>(Derivable(QStringToFloat(currentParseSplited[parsedPoint * 3])),
@@ -149,6 +155,7 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
             }
 
             //clear parse type
+            if (parseType == 0) saveIndexes << 0;
             parseType = -1;
             currentParse = "";
         }
@@ -169,8 +176,10 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
         // 16 == cluster_to_bone_connection
 
         // CONDITION
-        if (prevLine.indexOf("Vertices:")>=0 || parseType == 0)
+        if (prevLine.indexOf("Vertices:")>=0 || parseType == 0){
+            saveIndexes << lineNumber;
             parseType = 0;
+        }
         if (prevLine.indexOf("PolygonVertexIndex") >= 0 || parseType == 1)
             parseType = 1;
         if ((prevLine.indexOf("Model") == 0 && prevLine.indexOf("LimbNode") >= 0) || parseType == 5)
@@ -191,9 +200,10 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
         //PARSING
         // || currentDirectory.indexOf("/Weights") == currentDirectory.length() - 8)
         if (parseType == 0 || parseType == 1 ||
-            parseType == 9 || parseType == 10 )
+                parseType == 9 || parseType == 10 )
             // remember all to a currentParse
             currentParse += (line.indexOf("a: ") == 0)? line.remove(0, 3) : line;
+
 
         // limb parse
         if (line.indexOf("LimbNode") >= 0)
@@ -207,8 +217,10 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
                                            Derivable(QStringToFloat(currentParseSplited[currentParseSplited.length() - 2])),
                                            Derivable(QStringToFloat(currentParseSplited[currentParseSplited.length() - 1])));
                 // redirect it to new limbs
-                if (line.indexOf(" Translation") >= 0)
+                if (line.indexOf(" Translation") >= 0){
                     lastJointCreated->currentTranslation = parsedVect;
+                    saveIndexes << lineNumber;
+                }
                 if (line.indexOf(" Rotation") >= 0)
                     lastJointCreated->currentRotation = parsedVect;
                 if (line.indexOf(" Scaling") >= 0);
@@ -228,6 +240,7 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
         }
 
         if (parseType == 8 && line.indexOf("a: ") == 0){
+            saveIndexes << lineNumber;
             currentParseSplited = line.remove(0,3).split(',');
             bindTransformFromClusters << Matrix<Derivable,1,3>(Derivable(QStringToFloat(currentParseSplited[12])),
                                                    Derivable(QStringToFloat(currentParseSplited[13])),
@@ -236,6 +249,7 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
         }
 
         if (parseType == 11 && prevLine.indexOf("Matrix: ")>=0 && nextJointUseInd >= 0){
+            saveIndexes << lineNumber;
             currentParseSplited = line.remove(0,3).split(',');
             // bindmatrix read
             QVector<float> temp = {};
@@ -366,6 +380,7 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
     resSkin->GenerateAttends(resMesh->vertexes, resSkeleton->getJointsGlobalTranslationsForSkin());
 
     loadedRig = Rig(resMesh, resSkeleton, resSkin);
+    loadedRig.changeLines = saveIndexes;
 
     for (int i = 0; i < resSkeleton->joints.length(); i++){
         qDebug() << resSkeleton->joints[i]->name;
@@ -438,4 +453,40 @@ QString loaderFBX::loadMeshOBJ(QTextStream &textStream, Mesh &loadedMesh)
     loadedMesh.polygonIndexes = loadedPolygonIndexes;
     loadedMesh.polygonStartIndexes = loadedPolygonStartIndexes;
     return QString("");
+}
+
+QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
+{
+    QVector<int> changeLineIndexes = savingRig.changeLines;
+    QString saved = path.mid(0, path.lastIndexOf('.')) + "_saved" + path.mid(path.lastIndexOf('.'));
+    qDebug() << changeLineIndexes;
+    qDebug() << "Saving to "<< saved;
+
+    QFile saveto(saved), file(path);
+
+    if (!file.open(QIODevice::ReadOnly) || !saveto.open(QIODevice::ReadWrite))
+         return "Can not save a file to " + saved;
+
+    QTextStream stread(&file), stwrite(&saveto);
+    QString line;
+    int currentIndex = 0, lineIndex = 0;
+
+    while (!stread.atEnd()){
+        lineIndex++;
+        line = stread.readLine();
+
+        if (currentIndex < changeLineIndexes.length() && !changeLineIndexes[currentIndex])   // skip pausing zeros
+            currentIndex++;
+
+        if (currentIndex >=changeLineIndexes.length() || lineIndex != changeLineIndexes[currentIndex]){
+            stwrite << line << endl;
+
+        }
+        else{
+            stwrite << "@@@@ " << changeLineIndexes[currentIndex] << " @@@@" << endl;
+            currentIndex++;
+        }
+    }
+
+    return QString();
 }

@@ -25,7 +25,7 @@ QVector<float> TestAutoRig::BendSkeletonIntoMesh(bool isGaussNewton)
     for (int c = 3 + bendingRig->skeleton->joints.length() * 3; c < parameters.length(); c++)
         parameters[c] = 1;
 
-    QVector<float> resParams = OptimiseMethods::GaussNewtonMethod(loss, callback, parameters, eps, 3, !isGaussNewton);
+    QVector<float> resParams = OptimiseMethods::GaussNewtonMethod(loss, callback, parameters, eps, 6, !isGaussNewton);
     qDebug() << "Bend success;";
     return resParams;
 }
@@ -36,31 +36,33 @@ bool TestAutoRig::RewrapSkeletonToMesh( QVector<float> params )
     Matrix<Derivable,1,3> root;
     QVector<Matrix<Derivable,1,3>> rotat;
     QVector<Matrix<Derivable,1,3>> scals;
-    QVector<Derivable> withParams = QVector<Derivable>();
+    static QVector<Derivable> withParams = QVector<Derivable>();
     for (int j =0; j < params.length(); j++)
         withParams << Derivable(params[j]);
 
-
     qDebug() << params;
     qDebug() << "Exchange meshes";
-//    boner->CalculateGlobalCoordForEachJointMatrix();
-//    sk->GenerateAttends(ms2->vertexes, boner->getJointsGlobalTranslationsForSkin());
     bendingRig->skeleton->CalculateGlobalCoordForEachJointMatrix();
     qDebug() << "Recalculated";
     qDebug() << bendingRig->skin;
+
+
     bendingRig->bindMesh = targetMeshes[targMeshInd]->bindMesh;
     bendingRig->skin->GenerateAttends(bendingRig->bindMesh->vertexes, bendingRig->skeleton->getJointsGlobalTranslationsForSkin());
+
     bendingRig->skeleton->SetBonesScaleAsBoneLength();
+    //bendingRig->skeleton->CalculateGlobalCoordForEachJointMatrix();
+
     qDebug() << "Attends generated";
 
     // set new scales to normal 1
     for (int jC = (withParams.length() - 3 ) / 6, i = 3 + jC * 3; i < 3 + jC * 6; i++)
         withParams[i] = Derivable(1);
 
-
+    //return false;
     for (int i = 0; i < 100; i++){
-        for (int j = 3; j < ((withParams.length() - 3) / 2) + 3; j++)
-            withParams[j] = withParams[j] / Derivable(1.05);
+       //for (int j = 3; j < ((withParams.length() - 3) / 2) + 3; j++)
+       //     withParams[j] = withParams[j] / Derivable(1.05);
         mc.DistributeToParams(withParams, root, rotat, scals);
         bendingRig->ApplyBending(root, rotat, scals);
         qDebug() << "Maaag!";
@@ -175,14 +177,15 @@ bool TestAutoRig::SetCustomLowModel()
 bool TestAutoRig::SetCustomHighModel(float maxAngle)
 {
     qsrand(static_cast<quint64>(QTime::currentTime().msecsSinceStartOfDay()));
-    QVector<Matrix<Derivable,1,3>> newRotations = QVector<Matrix<Derivable,1,3>>(bendingRig->skeleton->joints.length());
+    QVector<Matrix<Derivable,1,3>> newRotations = QVector<Matrix<Derivable,1,3>>();
     QVector<Matrix<Derivable,1,3>> newScales = QVector<Matrix<Derivable,1,3>>();
 
-    Matrix<Derivable,1,3> assTranslate = Matrix<Derivable,1,3>(qrand() % 200 - 100,qrand() % 200 - 100,qrand() % 200 - 100);
+    Matrix<Derivable,1,3> assTranslate = bendingRig->skeleton->rootTransate;//Matrix<Derivable,1,3>(qrand() % 200 - 100,qrand() % 200 - 100,qrand() % 200 - 100);
     for (int i = 0; i < bendingRig->skeleton->joints.length(); i++){
 
-        newScales << Matrix<Derivable,1,3>(qrand() % 100 / 100.0 + .5,qrand() % 100 / 100.0 + .5,qrand() % 100 / 100.0 + .5);
-        newRotations << Matrix<Derivable,1,3>((newScales[i](0,0) - .5) * 30 - 15,(newScales[i](0,1) - .5) * 30 - 15,(newScales[i](0,2) - .5) * 30 - 15);
+        newScales <</*((i < 20 || i > 28)?  : */Matrix<Derivable,1,3>(qrand() % 100 / 100.0 + .5,qrand() % 100 / 100.0 + .5,qrand() % 100 / 100.0 + .5);
+        newRotations <<Matrix<Derivable,1,3>(0,0,0);//((newScales[i](0,0) - .5) * 30 - 15,(newScales[i](0,1) - .5) * 30 - 15,(newScales[i](0,2) - .5) * 30 - 15);
+        //newScales[newScales.length() - 1] = Matrix<Derivable,1,3>(1,1,1);//;
     }
     float res = bendingRig->CompareWithMeshOnRotates(assTranslate, newRotations, newScales, targetMeshes[targMeshInd]->bindMesh).getValue();
     Mesh* createdMesh = new Mesh();
@@ -229,8 +232,9 @@ float TestAutoRig::TestSkinBending()
 
     float ang = 0;
     while (ang < 90){
-        newRotations[32](0,1) = ang; ang += 100;
-        bendingRig->ApplyBending(Matrix<Derivable,1,3>(0,0,0), newRotations, newScales);
+        //newRotations[32](0,1) = ang;
+        ang += 100;
+        bendingRig->ApplyBending(bendingRig->skeleton->rootTransate, newRotations, newScales);
         window->repaint();
     }
 

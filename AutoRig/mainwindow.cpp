@@ -105,8 +105,8 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
             //"!pucn export",
 //            "!Samba exported",
 //            "!bboy exported",
-//           "!guard yelling exported"
-            "humanoid"
+           "!guard yelling exported"
+//            "humanoid"
 //            "plane"
         };
 
@@ -126,7 +126,7 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
             }
         }
         // also load a OBJ poses
-        QVector<QString> meshNames = {"Mike", "Rusich"};//, "head-left","fabulos", "fabulos-zad","liying", "bind", "handforwardy90"};
+        QVector<QString> meshNames = {"Mike", "Rusich", "head-left","fabulos", "fabulos-zad","liying", "bind", "handforwardy90"};
         for (int i = 0; i < meshNames.length(); i++){
             Mesh* loadMesh = new Mesh();
             QString errMes = loaderFBX::loadMeshOBJAdress(modelsAdress + "GuardPosesOBJ/" + meshNames[i]+".OBJ", *loadMesh);

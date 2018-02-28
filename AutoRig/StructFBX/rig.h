@@ -20,6 +20,8 @@ public:
     QColor modelColor;
     QColor conturColor;
 
+    QVector<int> changeLines;
+
     // change a mesh w/t a skeleton n skin
     void BendSkinToSkeleton ();
     // drawing to canvas
