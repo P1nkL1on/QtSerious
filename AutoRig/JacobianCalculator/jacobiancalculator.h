@@ -86,7 +86,7 @@ namespace JacobianCalculator {
     }
 
     template <typename Function>
-    bool CalculateForFunction (QVector<float> currentParams, Matrix<float, -1, -1>& resJacobian, Matrix<float,-1,-1>& F, Function &loss){
+    bool CalculateForFunction (QVector<float> currentParams, Matrix<float, -1, -1>& resJacobian, Matrix<float,-1,-1>& F, Function &loss, int times){
         //return CalculateNumerical(currentParams, resJacobian, F, loss);
         QVector<Derivable> derCurParams; derCurParams.clear();
         //= currentParams;
@@ -106,7 +106,7 @@ namespace JacobianCalculator {
         for (int i = 0; i < jacobColumn.length(); i++)
             F(i,0) = .5 * jacobColumn[i].getValue();
 
-        for (int curParam = 0; curParam < derCurParams.length(); curParam ++)
+        for (int curParam = 0; curParam < ((times > 0)? times : derCurParams.length()); curParam ++)
         {
             qDebug() << curParam << "/" << derCurParams.length();
             //if (curParam < ((derCurParams.length() - 3) / 4 * 3 + 3)){

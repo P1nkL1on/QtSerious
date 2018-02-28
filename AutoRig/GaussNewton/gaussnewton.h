@@ -51,7 +51,7 @@ namespace OptimiseMethods {
         Matrix<float,-1,-1>
                 jacobMatrix, F;
     qDebug() << "JCB called";
-        JacobianCalculator::CalculateForFunction(res, jacobMatrix, F, func );
+        JacobianCalculator::CalculateForFunction(res, jacobMatrix, F, func, 1 );
     qDebug() << "JCB done";
         Matrix<float,-1,-1>
                 jacobTrans = Matrix<float, -1, -1>(jacobMatrix.rows(), jacobMatrix.cols()),
@@ -85,7 +85,7 @@ namespace OptimiseMethods {
             if (isNumerical)
                 JacobianCalculator::CalculateNumerical(res, jacobMatrix, F, func );
             else
-                JacobianCalculator::CalculateForFunction(res, jacobMatrix, F, func);
+                JacobianCalculator::CalculateForFunction(res, jacobMatrix, F, func, -1);
                 //JacobianCalculator::CalculateMixed(res, jacobMatrix, F, func );
             //TraceJacobianM(jacobMatrix.transpose() * F);
             //TraceJacobianM(F);
