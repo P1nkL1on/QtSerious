@@ -469,22 +469,26 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
 
     QTextStream stread(&file), stwrite(&saveto);
     QString line;
-    int currentIndex = 0, lineIndex = 0;
+    int currentIndex = 0, lineIndex = 0, vertexAreWroten = 0, writeType = 0, wrotenCount = 0;
 
     while (!stread.atEnd()){
         lineIndex++;
         line = stread.readLine();
 
         if (currentIndex < changeLineIndexes.length() && !changeLineIndexes[currentIndex])   // skip pausing zeros
-            currentIndex++;
+        {currentIndex++; vertexAreWroten ++; writeType++;}
 
         if (currentIndex >=changeLineIndexes.length() || lineIndex != changeLineIndexes[currentIndex]){
             stwrite << line << endl;
 
         }
         else{
-            stwrite << "@@@@ " << changeLineIndexes[currentIndex] << " @@@@" << endl;
+            stwrite << "@@@@ " << changeLineIndexes[currentIndex] << " @@@@" << vertexAreWroten << "vertex are wroten _____ now is " << writeType << endl;
             currentIndex++;
+            if (vertexAreWroten) {
+                wrotenCount ++;
+                if (wrotenCount % savingRig.skeleton->joints.length() == 0) writeType ++;
+            }
         }
     }
 
