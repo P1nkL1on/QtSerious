@@ -46,11 +46,9 @@ bool TestAutoRig::RewrapSkeletonToMesh( QVector<float> params )
     qDebug() << "Recalculated";
     qDebug() << bendingRig->skin;
 
-
     bendingRig->bindMesh = targetMeshes[targMeshInd]->bindMesh;
-    bendingRig->skin->GenerateAttends(bendingRig->bindMesh->vertexes, bendingRig->skeleton->getJointsGlobalTranslationsForSkin());
+    bendingRig->skin->GenerateAttends(bendingRig->bindMesh->vertexes, bendingRig->skeleton->SetBonesScaleAsBoneLength());
 
-    bendingRig->skeleton->SetBonesScaleAsBoneLength();
     //bendingRig->skeleton->CalculateGlobalCoordForEachJointMatrix();
 
     qDebug() << "Attends generated";

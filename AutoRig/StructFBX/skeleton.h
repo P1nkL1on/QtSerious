@@ -20,7 +20,7 @@ public:
 
     void DebugTree () const;
     bool CalculateGlobalCoordForEachJointMatrix();
-    bool SetBonesScaleAsBoneLength ();
+    QVector<Eigen::Matrix<DerOperations::Derivable,4,4>> SetBonesScaleAsBoneLength ();
 
     QVector<Eigen::Matrix<DerOperations::Derivable,1,3>> getJointsLocalRotationsForDrawing () const;
     QVector<Eigen::Matrix<DerOperations::Derivable,4,4>> getJointsGlobalTranslationsForSkin () const;
