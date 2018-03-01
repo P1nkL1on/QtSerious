@@ -473,7 +473,7 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
 
     QTextStream stread(&file), stwrite(&saveto);
     QString line, lastID;
-    int currentIndex = 0, lineIndex = 0, vertexAreWroten = 0, writeType = 0, wrotenCount = 0;
+    int currentIndex = 0, vertexLines = 0, lineIndex = 0, vertexAreWroten = 0, writeType = 0, wrotenCount = 0;
 
 
     while (!stread.atEnd()){
@@ -494,8 +494,8 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
 
             //P: "Lcl Translation", "Lcl Translation", "", "A",0.111782073974609,-40.173641204834,-5.70924186706543
             //stwrite << "@@@@ " << changeLineIndexes[currentIndex] << " @@@@" << vertexAreWroten << "vertex are wroten _____ now is " << writeType << endl;
-            QString newLine;
             int jointCount = savingRig.skeleton->joints.length(), jointIndex = wrotenCount % jointCount;
+            QString newLine = "@@@@ For joint " + QString::number(jointIndex) + " index for "+ QString::number(writeType);
 
             if (writeType == 1){
                 // a LclTrans
@@ -509,12 +509,14 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
 
             if (writeType == 2){
                 qDebug() << ">> ID" << lastID; int needIndex = -1;
-                for (int cj = 0; cj < jointCount; cj++)
+                for (int cj = 0; cj < jointCount; cj++, qDebug() << cj << savingRig.skeleton->joints[cj - 1]->ID << lastID )
                     if (savingRig.skeleton->joints[cj]->ID == lastID) needIndex = cj;
                 if (needIndex >= 0){
-
+                    newLine = "For joint " + QString::number(needIndex);
                 }
             }
+
+            stwrite << newLine << "    << ! << " << endl;
 
             currentIndex++;
             if (vertexAreWroten) {
