@@ -118,14 +118,14 @@ bool Skeleton::CalculateGlobalCoordForEachJointMatrix()
 QVector<Matrix<Derivable, 4, 4> > Skeleton::SetBonesScaleAsBoneLength()
 {
 
-    for (int i = 0; i < joints.length(); i++)
-        joints[i]->localTranslation = CommonFuncs::AddDirectMatrx(joints[i]->localTranslation, MakeDeriveScaleMatrix( joints[i]->localScale));
-
     QVector<Matrix<Derivable, 4, 4> > res = getJointsGlobalTranslationsForSkin();
+    for (int i = 0; i < joints.length(); i++)
+        joints[i]->localTranslation = CommonFuncs::AddDirectMatrx(joints[i]->localTranslation, MakeDeriveRotationMatrix(localRotations[i])* MakeDeriveScaleMatrix( joints[i]->localScale));
+
 
     for (int i = 0; i < joints.length(); i++){
         joints[i]->localScale = Matrix<Derivable,1,3>(1,1,1);
-        localScales[i] = Matrix<Derivable,1,3>(1,1,1);
+        localScales[i] = Matrix<Derivable,1,3>(1,1,1);//joints[i]->localScale;
     }
     qDebug() << "All bones' scale translated into local transforms;";
     return res;
@@ -191,6 +191,9 @@ QVector<Matrix<Derivable,4,4>> Skeleton::getJointsGlobalTranslationsForSkin() co
 {
     QVector<Matrix<Derivable,4,4>> res;
     for (int curJoint = 0; curJoint < joints.length(); curJoint++)
-        res << MakeDeriveScaleMatrix(joints[curJoint]->localScale).inverse() * MakeDeriveRotationMatrix(joints[curJoint]->currentRotation) * joints[curJoint]->globalTransformMatrix;
+            res <<
+                   MakeDeriveScaleMatrix(joints[curJoint]->localScale).inverse()
+                   * MakeDeriveRotationMatrix(joints[curJoint]->currentRotation)
+                   * joints[curJoint]->globalTransformMatrix;
     return res;
 }

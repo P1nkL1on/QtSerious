@@ -49,7 +49,6 @@ Joint::Joint(Eigen::Matrix<Derivable, 1, 3> trans, Eigen::Matrix<Derivable, 1, 3
 
 void Joint::RecaulculateLocalTransformMatrix()
 {
-    bool isChecked = ((pater != NULL) && (pater->currentRotation(0,1).getValue() != 0 || pater->currentRotation(0,2).getValue() != 0 | pater->currentRotation(0,0).getValue() != 0));
     localTransformMatrix = SetDeriveMatrix();
 
     Matrix<Derivable,1,3> currentRotation2 = (pater != NULL)?pater->currentRotation : Matrix<Derivable,1,3>(0,0,0);

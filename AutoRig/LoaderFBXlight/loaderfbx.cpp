@@ -455,6 +455,10 @@ QString loaderFBX::loadMeshOBJ(QTextStream &textStream, Mesh &loadedMesh)
     return QString("");
 }
 
+QString DeriveVectorToString (const Matrix<Derivable,1,3> vec){
+    return QString::number(vec(0,0).getValue()) + "," + QString::number(vec(0,1).getValue()) + "," + QString::number(vec(0,2).getValue());
+}
+
 QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
 {
     QVector<int> changeLineIndexes = savingRig.changeLines;
@@ -468,12 +472,15 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
          return "Can not save a file to " + saved;
 
     QTextStream stread(&file), stwrite(&saveto);
-    QString line;
+    QString line, lastID;
     int currentIndex = 0, lineIndex = 0, vertexAreWroten = 0, writeType = 0, wrotenCount = 0;
+
 
     while (!stread.atEnd()){
         lineIndex++;
         line = stread.readLine();
+
+        if (line.indexOf("Node: ") >= 0) lastID = line.mid(line.indexOf("Node: ") + 6);
 
         if (currentIndex < changeLineIndexes.length() && !changeLineIndexes[currentIndex])   // skip pausing zeros
         {currentIndex++; vertexAreWroten ++; writeType++;}
@@ -483,11 +490,36 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
 
         }
         else{
-            stwrite << "@@@@ " << changeLineIndexes[currentIndex] << " @@@@" << vertexAreWroten << "vertex are wroten _____ now is " << writeType << endl;
+
+
+            //P: "Lcl Translation", "Lcl Translation", "", "A",0.111782073974609,-40.173641204834,-5.70924186706543
+            //stwrite << "@@@@ " << changeLineIndexes[currentIndex] << " @@@@" << vertexAreWroten << "vertex are wroten _____ now is " << writeType << endl;
+            QString newLine;
+            int jointCount = savingRig.skeleton->joints.length(), jointIndex = wrotenCount % jointCount;
+
+            if (writeType == 1){
+                // a LclTrans
+                newLine = line.mid(0, line.lastIndexOf("\"A\",") + 4);
+                newLine += DeriveVectorToString(savingRig.skeleton->joints[jointIndex]->localTranslation);
+                if (savingRig.skeleton->joints[jointIndex]->pater == NULL)
+                    newLine = line;
+                qDebug() << "------" << line;
+                qDebug() << "++++++" << newLine;
+            }
+
+            if (writeType == 2){
+                qDebug() << ">> ID" << lastID; int needIndex = -1;
+                for (int cj = 0; cj < jointCount; cj++)
+                    if (savingRig.skeleton->joints[cj]->ID == lastID) needIndex = cj;
+                if (needIndex >= 0){
+
+                }
+            }
+
             currentIndex++;
             if (vertexAreWroten) {
                 wrotenCount ++;
-                if (wrotenCount % savingRig.skeleton->joints.length() == 0) writeType ++;
+                if (wrotenCount % jointCount == 0) writeType ++;
             }
         }
     }
