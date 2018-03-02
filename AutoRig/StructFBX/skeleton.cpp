@@ -118,20 +118,16 @@ bool Skeleton::CalculateGlobalCoordForEachJointMatrix()
 QVector<Matrix<Derivable, 4, 4> > Skeleton::SetBonesScaleAsBoneLength()
 {
     QVector<Matrix<Derivable, 4, 4> > res = getJointsGlobalTranslationsForSkin();
-    for (int i = 0; i < joints.length(); i++)
-    {
-        qDebug() << "";
-        qDebug() << " Joint " << i;
-        TraceVector(joints[i]->localTranslation);
-        TraceVector(joints[i]->localScale);
-        joints[i]->localTranslation = CommonFuncs::AddDirectMatrx(joints[i]->localTranslation, /*MakeDeriveRotationMatrix(localRotations[i])* */MakeDeriveScaleMatrix( joints[i]->localScale));
 
+    for (int i = 0; i < joints.length(); i++)
+        if (joints[i]->pater != NULL)
+            joints[i]->localTranslation = CommonFuncs::AddDirectMatrx(joints[i]->localTranslation, MakeDeriveScaleMatrix( joints[i]->pater->localScale));
+
+    for (int i = 0; i < joints.length(); i++){
         joints[i]->localScale = Matrix<Derivable,1,3>(1,1,1);
-        localScales[i] = Matrix<Derivable,1,3>(1,1,1);//joints[i]->localScale;
-        qDebug() << "=";
-        TraceVector(joints[i]->localTranslation);
-        TraceVector(joints[i]->localScale);
+        localScales[i] = Matrix<Derivable,1,3>(1,1,1);
     }
+
     qDebug() << "All bones' scale translated into local transforms;";
     return res;
 }
@@ -181,16 +177,6 @@ void Skeleton::SetScales(const QVector<Matrix<Derivable,1,3>> newScales)
         joints[cJ]->localScale = newScales[cJ];
 }
 
-bool Skeleton::getJointTranslationAndRotation(const int jointIndex, Matrix<Derivable,1,3> &translation, Matrix<Derivable,1,3> &rotation) const
-{
-    translation = joints[jointIndex]->currentTranslation;
-    rotation = Matrix<Derivable,1,3>(); Joint* jn = joints[jointIndex];
-    do{
-        rotation = rotation + jn->currentRotation;
-        jn = jn->pater;
-    } while ( jn != NULL );
-    return true;
-}
 
 QVector<Matrix<Derivable,4,4>> Skeleton::getJointsGlobalTranslationsForSkin() const
 {

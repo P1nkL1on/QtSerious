@@ -506,13 +506,14 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
                 newLine += DeriveVectorToString(savingRig.skeleton->joints[jointIndex]->localTranslation);
                 if (savingRig.skeleton->joints[jointIndex]->pater == NULL)
                     newLine = line;
-                qDebug() << "------" << line;
-                qDebug() << "++++++" << newLine;
+                //qDebug() << "------" << line;
+                //qDebug() << "++++++" << newLine;
             }
 
             if (writeType == 2){
-                qDebug() << ">> ID" << lastID; int needIndex = -1;
-                for (int cj = 0; cj < jointCount; cj++, qDebug() << cj << savingRig.skeleton->joints[cj - 1]->ID << lastID )
+                //qDebug() << ">> ID" << lastID;
+                int needIndex = -1;
+                for (int cj = 0; cj < jointCount; cj++)//, //qDebug() << cj << savingRig.skeleton->joints[cj - 1]->ID << lastID )
                     if (savingRig.skeleton->joints[cj]->ID == lastID) needIndex = cj;
                 if (needIndex >= 0){
                     newLine = "For joint " + QString::number(needIndex);

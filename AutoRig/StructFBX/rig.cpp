@@ -180,7 +180,7 @@ QString Rig::ApplyDrawToCanvas(QPainter *painter, const QMatrix4x4 view, const Q
 
     QVector<QPainterPath> polygonDrawArray;
     QVector<QColor> polygonColorArray;
-    QVector<float> distFromPolygonCentersToCamera;
+    //QVector<float> distFromPolygonCentersToCamera;
 
     for (int currentPolygon = 0; currentPolygon < drawMesh->polygonStartIndexes.length() - 1; currentPolygon++){
         QPolygon poly;
@@ -203,17 +203,17 @@ QString Rig::ApplyDrawToCanvas(QPainter *painter, const QMatrix4x4 view, const Q
         polygonDrawArray << newPolyg;
         polygonColorArray << modelColor;//(QColor(colorIntenese,colorIntenese,colorIntenese));
 
-        distFromPolygonCentersToCamera << (QfromDer3( VertexInPolygonSumm )* (1.0 / totalVertexInPolygonCount)).distanceToPoint(*cameraCenter);
+        //distFromPolygonCentersToCamera << (QfromDer3( VertexInPolygonSumm )* (1.0 / totalVertexInPolygonCount)).distanceToPoint(*cameraCenter);
     }
     QBrush brush;
     painter->setPen(QPen(conturColor));
 
-    QVector<int> needPolygonInds = GetSortedIndex(distFromPolygonCentersToCamera);
+    //QVector<int> needPolygonInds = GetSortedIndex(distFromPolygonCentersToCamera);
     for (int cPath = 0, index = 0; cPath < polygonDrawArray.length(); cPath ++){
-        index =  needPolygonInds[cPath];
+        index =  cPath;//needPolygonInds[cPath];
         brush = QBrush(polygonColorArray[index]);
         painter->fillPath(polygonDrawArray[index], brush);
-        painter->drawPath(polygonDrawArray[index]);
+        //painter->drawPath(polygonDrawArray[index]);
     }
     // ..................................................................................................................................
 

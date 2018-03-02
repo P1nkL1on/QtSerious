@@ -94,8 +94,8 @@ namespace OptimiseMethods {
             Eigen::MatrixXf jF = jacobTrans * F;
             // trace a jF
             for (int i = 0; i < jF.rows() * 0; i++){
-                qDebug() << ((i < (jacobMatrix.cols() - 3) / 4 * 3 + 3)?((i < 3)? "ASS" : "JOINT") : "SCALE")
-                         << jF(i,0) << "   val:" << res[i];
+                //qDebug() << ((i < (jacobMatrix.cols() - 3) / 4 * 3 + 3)?((i < 3)? "ASS" : "JOINT") : "SCALE")
+                         //<< jF(i,0) << "   val:" << res[i];
             }
             //
             step = jTj.colPivHouseholderQr().solve(jF);

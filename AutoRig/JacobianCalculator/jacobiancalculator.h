@@ -110,7 +110,7 @@ namespace JacobianCalculator {
 
         for (int curParam = 0; curParam < ((times > 0)? times : derCurParams.length()); curParam ++)
         {
-            qDebug() << curParam << "/" << derCurParams.length();
+            //qDebug() << curParam << "/" << derCurParams.length();
             //if (curParam < ((derCurParams.length() - 3) / 4 * 3 + 3)){
                 derCurParams[curParam].setPrValue(1);
                 jacobColumn = loss(derCurParams);

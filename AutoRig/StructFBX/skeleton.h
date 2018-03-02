@@ -13,6 +13,7 @@ public:
     Eigen::Matrix<DerOperations::Derivable,1,3> rootTransate;
     QVector<Joint*> joints;
     Skeleton();
+    Skeleton( const Skeleton & ) = default;
     Skeleton(QVector<Joint*> j);
 
     // local
@@ -31,7 +32,7 @@ public:
     void SetScales (const QVector<Eigen::Matrix<DerOperations::Derivable,1,3>> newScales);
 
     // return local!
-    bool getJointTranslationAndRotation (const int jointIndex, Eigen::Matrix<DerOperations::Derivable,1,3>& translation, Eigen::Matrix<DerOperations::Derivable,1,3>& rotation) const;
+    //bool getJointTranslationAndRotation (const int jointIndex, Eigen::Matrix<DerOperations::Derivable,1,3>& translation, Eigen::Matrix<DerOperations::Derivable,1,3>& rotation) const;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };

@@ -25,7 +25,7 @@ QVector<float> TestAutoRig::BendSkeletonIntoMesh(bool isGaussNewton)
     for (int c = 3 + bendingRig->skeleton->joints.length() * 3; c < parameters.length(); c++)
         parameters[c] = 1;
 
-    QVector<float> resParams = OptimiseMethods::GaussNewtonMethod(loss, callback, parameters, eps, 6, !isGaussNewton);
+    QVector<float> resParams = OptimiseMethods::GaussNewtonMethod(loss, callback, parameters, eps, 12, !isGaussNewton);
     qDebug() << "Bend success;";
     return resParams;
 }
@@ -52,9 +52,12 @@ bool TestAutoRig::RewrapSkeletonToMesh( QVector<float> params )
 
 //    // set new scales to normal 1
     for (int jC = (withParams.length() - 3 ) / 6, i = 3 + jC * 3; i < 3 + jC * 6; i++)
-        withParams[i] = Derivable(1);
+       withParams[i] = Derivable(1);//withParams[i];
 
-    return false;
+    //return false;
+
+
+
     for (int i = 0; i < 100; i++){
        for (int j = 3; j < ((withParams.length() - 3) / 2) + 3; j++)
             withParams[j] = withParams[j] / Derivable(1.05);
@@ -177,24 +180,53 @@ bool TestAutoRig::SetCustomHighModel(float maxAngle)
 
     Matrix<Derivable,1,3> assTranslate = bendingRig->skeleton->rootTransate;//Matrix<Derivable,1,3>(qrand() % 200 - 100,qrand() % 200 - 100,qrand() % 200 - 100);
     for (int i = 0; i < bendingRig->skeleton->joints.length(); i++){
-
-        newScales <<
-                     //((i < 20 || i > 28)?  Matrix<Derivable,1,3>(1,1,1) :
-                     Matrix<Derivable,1,3>(qrand() % 100 / 100.0 + .5,qrand() % 100 / 100.0 + .5,qrand() % 100 / 100.0 + .5);//);
-        newRotations <<
-                     Matrix<Derivable,1,3>(0,0,0);//((newScales[i](0,0) - .5) * 30 - 15,(newScales[i](0,1) - .5) * 30 - 15,(newScales[i](0,2) - .5) * 30 - 15);
-        //newScales[newScales.length() - 1] = Matrix<Derivable,1,3>(1 + i / 20.0,1 + i / 60.0,1 + i / 200.0);//;
+        newScales << Matrix<Derivable,1,3>(1,1,1);
+        newRotations <<  Matrix<Derivable,1,3>(0,0,0);
     }
-    float res = bendingRig->CompareWithMeshOnRotates(assTranslate, newRotations, newScales, targetMeshes[targMeshInd]->bindMesh).getValue();
+    newScales[4] = Matrix<Derivable,1,3>(1.5,1.5,1.5);
+//    for (int i = 0; i < bendingRig->skeleton->joints.length(); i++){
+
+//        float newScale = qrand() % 100 / 100.0 + .5;
+//        newScales << Matrix<Derivable,1,3>(newScale,newScale,newScale);
+
+//        newRotations <<
+//                     //Matrix<Derivable,1,3>(0,0,0);
+//                       Matrix<Derivable,1,3>((newScales[i](0,0) - .5) * 30 - 15,(newScales[i](0,1) - .5) * 30 - 15,(newScales[i](0,2) - .5) * 30 - 15);
+//        //newScales[newScales.length() - 1] = Matrix<Derivable,1,3>(1 + i / 20.0,1 + i / 60.0,1 + i / 200.0);//;
+//        //qDebug() << "";
+//        //qDebug() << "Joint #"<<i;
+//        //TraceVector(newRotations[i]);
+//        //TraceVector(newScales[i]);
+//    }
+
+
+    bendingRig->ApplyBending(assTranslate, newRotations, newScales); //CompareWithMeshOnRotates(assTranslate, newRotations, newScales, targetMeshes[targMeshInd]->bindMesh).getValue();
+    for (int i = 0; i < bendingRig->skeleton->joints.length(); i++)
+        if (bendingRig->skeleton->joints[i]->pater == NULL){
+            qDebug() << "Ass : " ;
+            TraceVector(bendingRig->skeleton->rootTransate);
+        }
+    else
+        {
+            qDebug() << "Joint " << i;
+            Matrix<Derivable,1,3> t0 = bendingRig->skeleton->joints[i]->currentTranslation - bendingRig->skeleton->joints[i]->pater->currentTranslation;
+            TraceVector(t0);
+        }
+
+    Skeleton* sk = new Skeleton(*(bendingRig->skeleton));
+
+
     Mesh* createdMesh = new Mesh();
     createdMesh->vertexes = bendingRig->bendedMesh->vertexes;
     createdMesh->polygonIndexes = bendingRig->bendedMesh->polygonIndexes;
     createdMesh->polygonStartIndexes = bendingRig->bendedMesh->polygonStartIndexes;
 
     targetMeshes.clear();
-    Rig* newMesh = new Rig(createdMesh, NULL, NULL);
+
+    Rig* newMesh = new Rig(createdMesh, sk, NULL);
     newMesh->modelColor = QColor(0, 200, 0, 20);
     newMesh->conturColor = QColor(0,0,0,0);
+
     targetMeshes << newMesh;
     targMeshInd = 0;
     qDebug() << "Mesh created and puted in queue;";
@@ -204,7 +236,7 @@ bool TestAutoRig::SetCustomHighModel(float maxAngle)
         newRotations << Matrix<Derivable,1,3>(0,0,0);
         newScales << Matrix<Derivable,1,3>(1,1,1);
     }
-    res = bendingRig->CompareWithMeshOnRotates(Matrix<Derivable,1,3>(0,0,0), newRotations, newScales, targetMeshes[0]->bindMesh).getValue();
+    bendingRig->ApplyBending(bendingRig->skeleton->rootTransate, newRotations, newScales); //CompareWithMeshOnRotates(assTranslate, newRotations, newScales, targetMeshes[targMeshInd]->bindMesh).getValue();
     qDebug() << "Model transforms reseted;";
     eps = 1e-4; maxSteps = 20;
 }
@@ -235,6 +267,20 @@ float TestAutoRig::TestSkinBending()
         ang += 10;
         bendingRig->ApplyBending(bendingRig->skeleton->rootTransate, newRotations, newScales);
         window->repaint();
+    }
+    for (int i = 0; i < bendingRig->skeleton->joints.length(); i++)
+    {
+        if (bendingRig->skeleton->joints[i]->pater == NULL){ qDebug() << "ROOT";}
+        qDebug() << " Joint " << i;
+        if (bendingRig->skeleton->joints[i]->pater == NULL)
+            TraceVector(bendingRig->skeleton->rootTransate);
+        else{
+            TraceVector(bendingRig->skeleton->joints[i]->localTranslation);
+            qDebug()<< "^ WANT          v REAL";
+            Matrix<Derivable,1,3> tmp = (bendingRig->skeleton->joints[i]->currentTranslation - bendingRig->skeleton->joints[i]->pater->currentTranslation);
+            TraceVector(tmp);
+        }
+        TraceVector(bendingRig->skeleton->joints[i]->localScale);
     }
     qDebug() << "tested";
     return 0;
