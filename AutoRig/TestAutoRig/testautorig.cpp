@@ -54,7 +54,7 @@ bool TestAutoRig::RewrapSkeletonToMesh( QVector<float> params )
     for (int jC = (withParams.length() - 3 ) / 6, i = 3 + jC * 3; i < 3 + jC * 6; i++)
         withParams[i] = Derivable(1);
 
-//    return false;
+    return false;
     for (int i = 0; i < 100; i++){
        for (int j = 3; j < ((withParams.length() - 3) / 2) + 3; j++)
             withParams[j] = withParams[j] / Derivable(1.05);
@@ -230,7 +230,8 @@ float TestAutoRig::TestSkinBending()
 
     static float ang = 0; int times = 0;
     while (times++ < 4){
-        newRotations[20](0,1) = ang;
+        newRotations[2](0,1) = ang;
+        newRotations[3](0,2) = ang / 2;
         ang += 10;
         bendingRig->ApplyBending(bendingRig->skeleton->rootTransate, newRotations, newScales);
         window->repaint();

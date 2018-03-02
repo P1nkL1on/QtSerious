@@ -112,14 +112,17 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
             //...
             char prevWasNegative  = 'y';
 
+
+            QVector3D meshOffset = QVector3D(-1,136,0);
+
             switch (parseType){
                 case 0: // parse vertexes from giant array
                     saveIndexes << lineNumber;
                     currentParseSplited = currentParse.split(',');
                     for (int parsedPoint = 0; parsedPoint < currentParseSplited.length() / 3; parsedPoint ++)
-                        loadedVertexes << Matrix<Derivable,1,3>(Derivable(QStringToFloat(currentParseSplited[parsedPoint * 3])),
-                                                    Derivable(QStringToFloat(currentParseSplited[parsedPoint * 3 + 1])),
-                                                    Derivable(QStringToFloat(currentParseSplited[parsedPoint * 3 + 2])));
+                        loadedVertexes << Matrix<Derivable,1,3>(Derivable(QStringToFloat(currentParseSplited[parsedPoint * 3]) - meshOffset.x()),
+                                                    Derivable(QStringToFloat(currentParseSplited[parsedPoint * 3 + 1]) - meshOffset.y()),
+                                                    Derivable(QStringToFloat(currentParseSplited[parsedPoint * 3 + 2]) - meshOffset.z()));
                     //
                     break;
                 case 1:

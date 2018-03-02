@@ -55,6 +55,7 @@ namespace JacobianCalculator {
             }
         F *= 0.5;
         residual = F.cast<float>();
+        return true;
     }
 
     template <typename Function>
@@ -83,6 +84,7 @@ namespace JacobianCalculator {
         }
         F *= 0.5;
         residual = F.cast<float>();
+        return true;
     }
 
     template <typename Function>
@@ -124,7 +126,7 @@ namespace JacobianCalculator {
 //            resJacobian.col(Ind) -= lastCol * 2;
 //            lastCol += resJacobian.col(Ind);
 //        }
-        return 0;
+        return true;
     }
 
 }
