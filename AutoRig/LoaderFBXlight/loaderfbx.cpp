@@ -113,7 +113,7 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
             char prevWasNegative  = 'y';
 
 
-            QVector3D meshOffset = QVector3D(-1,136,0);
+            QVector3D meshOffset = QVector3D(0,0,0);//-1,136,0);
 
             switch (parseType){
                 case 0: // parse vertexes from giant array

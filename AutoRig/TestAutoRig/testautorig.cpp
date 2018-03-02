@@ -179,25 +179,25 @@ bool TestAutoRig::SetCustomHighModel(float maxAngle)
     QVector<Matrix<Derivable,1,3>> newScales = QVector<Matrix<Derivable,1,3>>();
 
     Matrix<Derivable,1,3> assTranslate = bendingRig->skeleton->rootTransate;//Matrix<Derivable,1,3>(qrand() % 200 - 100,qrand() % 200 - 100,qrand() % 200 - 100);
-    for (int i = 0; i < bendingRig->skeleton->joints.length(); i++){
-        newScales << Matrix<Derivable,1,3>(1,1,1);
-        newRotations <<  Matrix<Derivable,1,3>(0,0,0);
-    }
-    newScales[4] = Matrix<Derivable,1,3>(1.5,1.5,1.5);
 //    for (int i = 0; i < bendingRig->skeleton->joints.length(); i++){
-
-//        float newScale = qrand() % 100 / 100.0 + .5;
-//        newScales << Matrix<Derivable,1,3>(newScale,newScale,newScale);
-
-//        newRotations <<
-//                     //Matrix<Derivable,1,3>(0,0,0);
-//                       Matrix<Derivable,1,3>((newScales[i](0,0) - .5) * 30 - 15,(newScales[i](0,1) - .5) * 30 - 15,(newScales[i](0,2) - .5) * 30 - 15);
-//        //newScales[newScales.length() - 1] = Matrix<Derivable,1,3>(1 + i / 20.0,1 + i / 60.0,1 + i / 200.0);//;
-//        //qDebug() << "";
-//        //qDebug() << "Joint #"<<i;
-//        //TraceVector(newRotations[i]);
-//        //TraceVector(newScales[i]);
+//        newScales << Matrix<Derivable,1,3>(1,1,1);
+//        newRotations <<  Matrix<Derivable,1,3>(0,0,0);
 //    }
+//    newScales[4] = Matrix<Derivable,1,3>(1.5,1.5,1.5);
+    for (int i = 0; i < bendingRig->skeleton->joints.length(); i++){
+
+        //float newScale = qrand() % 100 / 100.0 + .5;
+        newScales << Matrix<Derivable,1,3>(qrand() % 100 / 100.0 + .5,qrand() % 100 / 100.0 + .5,qrand() % 100 / 100.0 + .5);
+
+        newRotations <<
+                     //Matrix<Derivable,1,3>(0,0,0);
+                       Matrix<Derivable,1,3>((newScales[i](0,0) - .5) * 30 - 15,(newScales[i](0,1) - .5) * 30 - 15,(newScales[i](0,2) - .5) * 30 - 15);
+        //newScales[newScales.length() - 1] = Matrix<Derivable,1,3>(1 + i / 20.0,1 + i / 60.0,1 + i / 200.0);//;
+        //qDebug() << "";
+        //qDebug() << "Joint #"<<i;
+        //TraceVector(newRotations[i]);
+        //TraceVector(newScales[i]);
+    }
 
 
     bendingRig->ApplyBending(assTranslate, newRotations, newScales); //CompareWithMeshOnRotates(assTranslate, newRotations, newScales, targetMeshes[targMeshInd]->bindMesh).getValue();

@@ -105,8 +105,8 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
             //"!pucn export",
 //            "!Samba exported",
 //            "!bboy exported",
-                "hand"
-//         "!guard yelling exported"
+//                "hand"
+         "!guard yelling exported"
 //            "humanoid"
 //            "plane"
         };
