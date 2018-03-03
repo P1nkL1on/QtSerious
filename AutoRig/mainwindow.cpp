@@ -21,7 +21,18 @@ Camera cam = Camera (0, 0, 0);
 TestViewer tv = TestViewer();
 QVector<Rig*> rgs;
 //QVector<Mesh*> mshs;
-QVector<QString> names;
+QVector<QString> names = {
+    //"!bboy 2 exported",
+    //"joints_only2,"
+    //"joints_only2t",
+    //"!pucn export",
+    //"!Samba exported",
+    //"!bboy exported",
+      "hand"
+    //"!guard yelling exported"
+    //"humanoid"
+    //"plane"
+};
 TestAutoRig tar;
 
 // constrols
@@ -89,6 +100,8 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
         //tar.BendSkeletonIntoMesh(true);
         tar.RewrapSkeletonToMesh(tar.BendSkeletonIntoMesh(true));
         this->repaint();
+        QString err =
+                loaderFBX::saveModelFBX(modelsAdress + "FBX/"+names[0]+".FBX", *(rgs[0]));
     }
     if (e->key() == Qt::Key_T){
         tar.TestSkinBending();
@@ -98,18 +111,7 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
 
     if (tv.ModelCount() == 0 && e->key() == Qt::Key_Space){
         qDebug() << "Autorug stanalobe (ha-ha) activated;";
-        names = {
-            //"!bboy 2 exported",
-            //"joints_only2,"
-            //"joints_only2t",
-            //"!pucn export",
-//            "!Samba exported",
-//            "!bboy exported",
-//                "hand"
-//         "!guard yelling exported"
-            "humanoid"
-//            "plane"
-        };
+
 
         int loadedModel = 0;
         for (int currentModel = 0; currentModel < names.length(); currentModel++){

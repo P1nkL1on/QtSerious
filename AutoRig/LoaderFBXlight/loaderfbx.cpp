@@ -29,7 +29,7 @@ QString loaderFBX::loadModelFBXAdress(QString path, Rig &loadedRig)
     if (err.isEmpty())
         qDebug() << "    @    " + path.remove(0,path.lastIndexOf('/') + 1) + " was loaded;";
 
-    saveModelFBX(origPath, loadedRig);
+    //saveModelFBX(origPath, loadedRig);
 
     return ((!err.isEmpty())? errMessage + ": " + err : QString());
 }
@@ -113,7 +113,7 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
             char prevWasNegative  = 'y';
 
 
-            QVector3D meshOffset = QVector3D(0,0,0);//-1,136,0);
+
 
             switch (parseType){
                 case 0: // parse vertexes from giant array
@@ -158,7 +158,7 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
             }
 
             //clear parse type
-            if (parseType == 0) saveIndexes << 0;
+            if (parseType == 0) {saveIndexes[saveIndexes.length() - 1] = -saveIndexes.length() - 1;}
             parseType = -1;
             currentParse = "";
         }
@@ -476,16 +476,22 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
 
     QTextStream stread(&file), stwrite(&saveto);
     QString line, lastID;
-    int currentIndex = 0, vertexLines = 0, lineIndex = 0, vertexAreWroten = 0, writeType = 0, wrotenCount = 0;
+    int currentIndex = 0, vertexLines = 0, lineIndex = 0, vertexAreWroten = 0, writeType = 0, wrotenCount = 0, vertexOnlyLines = 0,
+        modelVertexPerLine = 0;
+    for (int i = 0; i < changeLineIndexes.length(); i++)
+        if (changeLineIndexes[i] <= 0)vertexOnlyLines = i;
 
+    /// CHANGE TO BENDED!@!!!!
+    modelVertexPerLine = (savingRig.bindMesh->vertexes.length() - 1) / vertexOnlyLines + 1;
 
+    qDebug() << "Start copyying";
     while (!stread.atEnd()){
         lineIndex++;
         line = stread.readLine();
 
         if (line.indexOf("Node: ") >= 0) lastID = line.mid(line.indexOf("Node: ") + 6);
 
-        if (currentIndex < changeLineIndexes.length() && !changeLineIndexes[currentIndex])   // skip pausing zeros
+        if (currentIndex < changeLineIndexes.length() && changeLineIndexes[currentIndex]<=0)   // skip pausing zeros
         {currentIndex++; vertexAreWroten ++; writeType++;}
 
         if (currentIndex >=changeLineIndexes.length() || lineIndex != changeLineIndexes[currentIndex]){
@@ -499,6 +505,17 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
             //stwrite << "@@@@ " << changeLineIndexes[currentIndex] << " @@@@" << vertexAreWroten << "vertex are wroten _____ now is " << writeType << endl;
             int jointCount = savingRig.skeleton->joints.length(), jointIndex = wrotenCount % jointCount;
             QString newLine = "@@@@ For joint " + QString::number(jointIndex) + " index for "+ QString::number(writeType);
+
+            if (!vertexAreWroten){
+                newLine = (!currentIndex)? "\t\t\ta: " : "";
+                //newLine = "vertexes" + QString::number(currentIndex) + "/"+QString::number(vertexOnlyLines);
+                for (int v = currentIndex * modelVertexPerLine; v < (currentIndex + 1) * modelVertexPerLine; v++)
+                    if (v < savingRig.bindMesh->vertexes.length())
+                        newLine += QString::number(savingRig.bindMesh->vertexes[v](0,0).getValue() + meshOffset.x()) + "," +
+                                   QString::number(savingRig.bindMesh->vertexes[v](0,1).getValue() + meshOffset.y()) + "," +
+                                   QString::number(savingRig.bindMesh->vertexes[v](0,2).getValue() + meshOffset.z()) + ((v < savingRig.bindMesh->vertexes.length() - 1)? "," : "");
+
+            }
 
             if (writeType == 1){
                 // a LclTrans
@@ -516,11 +533,15 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
                 for (int cj = 0; cj < jointCount; cj++)//, //qDebug() << cj << savingRig.skeleton->joints[cj - 1]->ID << lastID )
                     if (savingRig.skeleton->joints[cj]->ID == lastID) needIndex = cj;
                 if (needIndex >= 0){
-                    newLine = "For joint " + QString::number(needIndex);
+                    //newLine = "For joint " + QString::number(needIndex);
+                    newLine = line;
                 }
             }
+            if (writeType == 3){
+                newLine = line;
+            }
 
-            stwrite << newLine << "    << ! << " << endl;
+            stwrite << newLine /*<< "    << ! << "*/ << endl;
 
             currentIndex++;
             if (vertexAreWroten) {

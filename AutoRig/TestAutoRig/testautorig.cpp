@@ -190,8 +190,8 @@ bool TestAutoRig::SetCustomHighModel(float maxAngle)
         newScales << Matrix<Derivable,1,3>(qrand() % 100 / 100.0 + .5,qrand() % 100 / 100.0 + .5,qrand() % 100 / 100.0 + .5);
 
         newRotations <<
-                     //Matrix<Derivable,1,3>(0,0,0);
-                       Matrix<Derivable,1,3>((newScales[i](0,0) - .5) * 30 - 15,(newScales[i](0,1) - .5) * 30 - 15,(newScales[i](0,2) - .5) * 30 - 15);
+                     Matrix<Derivable,1,3>(0,0,0);
+                     //  Matrix<Derivable,1,3>((newScales[i](0,0) - .5) * 30 - 15,(newScales[i](0,1) - .5) * 30 - 15,(newScales[i](0,2) - .5) * 30 - 15);
         //newScales[newScales.length() - 1] = Matrix<Derivable,1,3>(1 + i / 20.0,1 + i / 60.0,1 + i / 200.0);//;
         //qDebug() << "";
         //qDebug() << "Joint #"<<i;
