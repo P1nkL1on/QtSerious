@@ -34,7 +34,7 @@ Rig::Rig(Mesh *mesh, Skeleton *skel, Skin *sk)
 void Rig::BendSkinToSkeleton()
 {
     if (!skeleton->CalculateGlobalCoordForEachJointMatrix())
-    return;
+        return;
 
     //skin->GenerateProizAttends(bindMesh->vertexes, skeleton->getJointsGlobalTranslationsForSkin());
 
@@ -62,7 +62,7 @@ void Rig::BendSkinToSkeleton()
                         MakeVector4From3(bindMesh->vertexes[currentVertexInd], Derivable(1))
                         * skin->clusterAttends[clusterInd].boneBindCoord
                         * (MakeDeriveRotationMatrix(bone->currentRotation) * bone->globalTransformMatrix)
-//                        *
+                        //                        *
                         ;
 
                 bendedVariants << Matrix<Derivable,1,3>(tmp(0,0),tmp(0,1),tmp(0,2));
@@ -95,7 +95,7 @@ QVector<QVector2D> From3DTo2D (const QVector<Matrix<Derivable,1,3>> Input3D, con
     QVector<QVector2D> resultPoints = {};
     for (int curPoint = 0; curPoint < Input3D.length(); curPoint++){
         QVector4D temp = QVector4D(Input3D[curPoint](0,0).getValue(), Input3D[curPoint](0,1).getValue(), Input3D[curPoint](0,2).getValue(), 1.0);
-        temp = temp * view * perspective;
+                temp = temp * view * perspective;
         resultPoints << QVector2D(temp.x() / temp.w(), temp.y() / temp.w());
     }
     return resultPoints;
@@ -140,9 +140,10 @@ QVector<int> GetSortedIndex (const QVector<float> dists){
 float ang = 0;
 QString Rig::ApplyDrawToCanvas(QPainter *painter, const QMatrix4x4 view, const QMatrix4x4 perspective, const int width, const int hei)
 {
-//    if (skeleton != NULL && skin != NULL && bindMesh != NULL){
-//        BendSkinToSkeleton();
-//    }
+    return QString();
+    //    if (skeleton != NULL && skin != NULL && bindMesh != NULL){
+    //        BendSkinToSkeleton();
+    //    }
     // vertexes
     // ...
 
@@ -158,7 +159,7 @@ QString Rig::ApplyDrawToCanvas(QPainter *painter, const QMatrix4x4 view, const Q
         painter->setPen(ChangeQPainter(QColor(0,105, 200,200), 1));
         if (ApplyScreen(x,y, Vertexes2D[curPoint], width, hei))
             //if (false)
-                painter->drawPoint(x,y);
+            painter->drawPoint(x,y);
         appliedToScreenCoords << QPoint(x,y);
         // ...
         // bended mods
@@ -248,19 +249,19 @@ QString Rig::ApplyDrawToCanvas(QPainter *painter, const QMatrix4x4 view, const Q
         painter->drawText(xc, yc,300,150,0, QString::number(curJoint));//+" " +skeleton->joints[curPoint]->name);// +", "+ QString::number(skeleton->joints[curPoint]->currentRotation.y()) +", "+ QString::number(skeleton->joints[curPoint]->currentRotation.z()));
         //painter->drawText(xc, yc,300,150,0, skeleton->joints[curJoint]->name +"\n"+ QString::number(Joints3D[curJoint * 2](0,0).getValue()) +"\n"+ QString::number(Joints3D[curJoint * 2](0,1).getValue()) +"\n"+ QString::number(Joints3D[curJoint * 2](0,2).getValue()));
 
-//        if (bendedMesh != NULL){
-//            int jointInd = curJoint, clusterInd = 0;
-//            while (skin->clusterAttends[clusterInd].jointIndex != jointInd && clusterInd < skin->clusterAttends.length())
-//                clusterInd++;
-//            if (clusterInd < skin->clusterAttends.length())
-//                for (int i = 0; i < skin->clusterAttends[clusterInd].vertexIndex.length(); i+= 10)
-//                {
-//                    int xv, yv;
-//                    ApplyScreen(xv,yv,Vertexes2DBend[skin->clusterAttends[clusterInd].vertexIndex[i]], width, hei);
-//                    painter->setPen(ChangeQPainter(QColor(70,220,0, 200), 1));
-//                    painter->drawLine(xc,yc,xv,yv);
-//                }
-//        }
+        //        if (bendedMesh != NULL){
+        //            int jointInd = curJoint, clusterInd = 0;
+        //            while (skin->clusterAttends[clusterInd].jointIndex != jointInd && clusterInd < skin->clusterAttends.length())
+        //                clusterInd++;
+        //            if (clusterInd < skin->clusterAttends.length())
+        //                for (int i = 0; i < skin->clusterAttends[clusterInd].vertexIndex.length(); i+= 10)
+        //                {
+        //                    int xv, yv;
+        //                    ApplyScreen(xv,yv,Vertexes2DBend[skin->clusterAttends[clusterInd].vertexIndex[i]], width, hei);
+        //                    painter->setPen(ChangeQPainter(QColor(70,220,0, 200), 1));
+        //                    painter->drawLine(xc,yc,xv,yv);
+        //                }
+        //        }
     }
 
 
@@ -268,7 +269,7 @@ QString Rig::ApplyDrawToCanvas(QPainter *painter, const QMatrix4x4 view, const Q
     QVector<Matrix<Derivable,1,3>> jointLocalRots = skeleton->getJointsLocalRotationsForDrawing();
     for (int curJointInd = 0; curJointInd < skeleton->joints.length(); curJointInd++)
         logs += ("#" + QString::number(curJointInd) + " : ")
-                 + ToString(jointLocalRots[curJointInd]) + "      sc: "+ToString(skeleton->joints[curJointInd]->localScale)+"\n";
+                + ToString(jointLocalRots[curJointInd]) + "      sc: "+ToString(skeleton->joints[curJointInd]->localScale)+"\n";
     painter->drawText(width, 40, 400, hei - 40,0, logs);//+" " +skeleton->joints[curPoint]->name);// +", "+ QString::number(skeleton->joints[curPoint]->currentRotation.y()) +", "+ QString::number(skeleton->joints[curPoint]->currentRotation.z()));
 
     //painter->end();

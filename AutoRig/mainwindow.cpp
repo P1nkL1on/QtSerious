@@ -28,8 +28,8 @@ QVector<QString> names = {
     //"!pucn export",
     //"!Samba exported",
     //"!bboy exported",
-      "hand"
-    //"!guard yelling exported"
+    //  "hand"
+    "!guard yelling exported"
     //"humanoid"
     //"plane"
 };

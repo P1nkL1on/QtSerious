@@ -577,6 +577,6 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
 //        Matrix<Derivable,1,3> globCoordOfJoint = savingRig.skeleton->joints[i]->currentTranslation + savingRig.skeleton->rootTransate + offset;
 //        TraceVector(globCoordOfJoint);
 //    }
-
+    qDebug() << "Successfully saved :3";
     return QString();
 }
