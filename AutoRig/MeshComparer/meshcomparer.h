@@ -18,7 +18,7 @@ public:
         wind = window;
     }
     void operator ()(){
-        qDebug() << "Repaint called";
+        //qDebug() << "Repaint called";
         wind->repaint();
     }
 };

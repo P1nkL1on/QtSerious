@@ -12,10 +12,10 @@ using namespace DerivableVectorMatrixes;
 
 QVector<float> TestAutoRig::BendSkeletonIntoMesh(bool isGaussNewton)
 {
-    qDebug() << "Bend call;";
+    qDebug() << "Bending call;";
     MeshComparer loss(bendingRig, targetMeshes[targMeshInd]->bindMesh);
     CallBackDrawing callback (window);
-    qDebug() << "Loss and callback functions created;";
+    //qDebug() << "Loss and callback functions created;";
 
     QVector<float> parameters = QVector<float>(3 + bendingRig->skeleton->joints.length() * 6);
 
@@ -41,14 +41,14 @@ bool TestAutoRig::RewrapSkeletonToMesh( QVector<float> params )
     for (int j =0; j < params.length(); j++)
         withParams << Derivable(params[j]);
 
-    qDebug() << params;
+    //qDebug() << params;
     bendingRig->skeleton->CalculateGlobalCoordForEachJointMatrix();
-    qDebug() << bendingRig->skin;
+    //qDebug() << bendingRig->skin;
 
     bendingRig->bindMesh = targetMeshes[targMeshInd]->bindMesh;
     bendingRig->skin->GenerateAttends(bendingRig->bindMesh->vertexes, bendingRig->skeleton->SetBonesScaleAsBoneLength());
 
-    qDebug() << "Attends generated";
+    qDebug() << "Attends regenerated";
 
 //    // set new scales to normal 1
     for (int jC = (withParams.length() - 3 ) / 6, i = 3 + jC * 3; i < 3 + jC * 6; i++)
@@ -63,9 +63,10 @@ bool TestAutoRig::RewrapSkeletonToMesh( QVector<float> params )
             withParams[j] = withParams[j] / Derivable(1.05);
         mc.DistributeToParams(withParams, root, rotat, scals);
         bendingRig->ApplyBending(root, rotat, scals);
-        qDebug() << "Maaag!";
+        //qDebug() << "Maaag!";
         window->repaint();
     }
+    qDebug() << "Bend finish;";
 }
 
 void TestAutoRig::ChangeTargetMeshInd(int count)
@@ -109,7 +110,7 @@ bool TestAutoRig::SetCustomLowModel()
 
     TraceVector(trans);
     TraceVector(rotat);
-    qDebug() << "scale: " << scale.getValue();
+    //qDebug() << "scale: " << scale.getValue();
 
     ms->vertexes
              << Matrix<Derivable,1,3>(0,0,0) * scale + trans
@@ -167,7 +168,7 @@ bool TestAutoRig::SetCustomLowModel()
     targMeshInd = 0;
     //targetMeshes[1] = rb;
     bendingRig = rb;
-    qDebug() << targetMeshes;
+    //qDebug() << targetMeshes;
     eps = 1e-6; maxSteps = 300;
     return true;
 }
@@ -201,17 +202,17 @@ bool TestAutoRig::SetCustomHighModel(float maxAngle)
 
 
     bendingRig->ApplyBending(assTranslate, newRotations, newScales); //CompareWithMeshOnRotates(assTranslate, newRotations, newScales, targetMeshes[targMeshInd]->bindMesh).getValue();
-    for (int i = 0; i < bendingRig->skeleton->joints.length(); i++)
-        if (bendingRig->skeleton->joints[i]->pater == NULL){
-            qDebug() << "Ass : " ;
-            TraceVector(bendingRig->skeleton->rootTransate);
-        }
-    else
-        {
-            qDebug() << "Joint " << i;
-            Matrix<Derivable,1,3> t0 = bendingRig->skeleton->joints[i]->currentTranslation - bendingRig->skeleton->joints[i]->pater->currentTranslation;
-            TraceVector(t0);
-        }
+//    for (int i = 0; i < bendingRig->skeleton->joints.length(); i++)
+//        if (bendingRig->skeleton->joints[i]->pater == NULL){
+//            qDebug() << "Ass : " ;
+//            TraceVector(bendingRig->skeleton->rootTransate);
+//        }
+//    else
+//        {
+//            qDebug() << "Joint " << i;
+//            Matrix<Derivable,1,3> t0 = bendingRig->skeleton->joints[i]->currentTranslation - bendingRig->skeleton->joints[i]->pater->currentTranslation;
+//            TraceVector(t0);
+//        }
 
     Skeleton* sk = new Skeleton(*(bendingRig->skeleton));
 

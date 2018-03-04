@@ -1,0 +1,189 @@
+release
+
+"Spine2"
+"Derivable3D (              0 (0)               0 (0)               0 (0) )"
+"LeftShoulder"
+"Derivable3D (             10 (0)          9.8387 (0)        -24.1495 (0) )"
+"LeftArm"
+"Derivable3D (             13 (0)         -3.1305 (0)         8.49706 (0) )"
+"LeftForeArm"
+"Derivable3D (             32 (0)        -1.78885 (0)       -0.894427 (0) )"
+"LeftHand"
+"Derivable3D (             28 (0)               0 (0)               0 (0) )"
+"LeftHandIndex1"
+"Derivable3D (             18 (0)          3.1305 (0)         4.91935 (0) )"
+"LeftHandIndex2"
+"Derivable3D (              4 (0)        -4.91935 (0)        -1.34164 (0) )"
+"LeftHandIndex3"
+"Derivable3D (              3 (0)               0 (0)               0 (0) )"
+"LeftHandIndex4"
+"Derivable3D (              4 (0)        -5.36656 (0)         4.02492 (0) )"
+"LeftHandThumb1"
+"Derivable3D (              6 (0)         1.34164 (0)         4.02492 (0) )"
+"LeftHandThumb2"
+"Derivable3D (              5 (0)        0.894427 (0)         2.68328 (0) )"
+"LeftHandThumb3"
+"Derivable3D (              5 (0)         1.34164 (0)         4.02492 (0) )"
+"LeftHandThumb4"
+"Derivable3D (              3 (0)        0.894427 (0)         2.68328 (0) )"
+
+
+
+
+
+debug
+
+"Spine2"
+"Derivable3D (              0 (0)               0 (0)               0 (0) )"
+"LeftShoulder"
+"Derivable3D (        10.9129 (0)         26.7327 (0)        -2.70563 (0) )"
+"LeftArm"
+"Derivable3D (        13.8949 (0)        -9.01691 (0)         1.21567 (0) )"
+"LeftForeArm"
+"Derivable3D (        32.2462 (0)       -0.183671 (0)        -2.28566 (0) )"
+"LeftHand"
+"Derivable3D (        28.0135 (0)        0.183361 (0)        0.670486 (0) )"
+"LeftHandIndex1"
+"Derivable3D (        18.1097 (0)     -3.87573e-5 (0)      5.02634e-5 (0) )"
+"LeftHandIndex2"
+"Derivable3D (        4.18372 (0)     -1.93787e-5 (0)     -5.14746e-6 (0) )"
+"LeftHandIndex3"
+"Derivable3D (        3.83024 (0)       -0.098056 (0)       0.0583952 (0) )"
+"LeftHandIndex4"
+"Derivable3D (        4.86362 (0)     -6.10352e-5 (0)     -3.43323e-5 (0) )"
+"LeftHandThumb1"
+"Derivable3D (        6.27397 (0)        -3.20701 (0)          3.8594 (0) )"
+"LeftHandThumb2"
+"Derivable3D (        5.06013 (0)        -2.92145 (0)         2.92161 (0) )"
+"LeftHandThumb3"
+"Derivable3D (        5.80909 (0)        -3.35383 (0)         3.35391 (0) )"
+"LeftHandThumb4"
+
+
+
+
+
+
+
+release
+
+
+
+Autorug stanalobe (ha-ha) activated;
+"Spine2"
+"Derivable3D (              0 (0)             135 (0)               0 (0) )"
+Matrix4x4 Derivable (type:Custom
+"                   1 (0)                    0 (0)                    0 (0)                    0 (0) "
+"                   0 (0)                    1 (0)                    0 (0)                    0 (0) "
+"                   0 (0)                    0 (0)                    1 (0)                    0 (0) "
+"                   0 (0)                    0 (0)                    0 (0)                    1 (0) "
+)
+"Derivable3D (              0 (0)               0 (0)               0 (0) )"
+"LeftShoulder"
+"Derivable3D (             10 (0)              26 (0)              -2 (0) )"
+Matrix4x4 Derivable (type:Custom
+"                   1 (0)                    0 (0)                    0 (0)                    0 (0) "
+"                   0 (0)             0.447214 (0)             0.894427 (0)                    0 (0) "
+"                   0 (0)            -0.894427 (0)             0.447214 (0)                    0 (0) "
+"                   0 (0)                    0 (0)                    0 (0)                    1 (0) "
+)
+"Derivable3D (             10 (0)          9.8387 (0)        -24.1495 (0) )"
+"LeftArm"
+"Derivable3D (             13 (0)              -9 (0)               1 (0) )"
+Matrix4x4 Derivable (type:Custom
+"                   1 (0)                    0 (0)                    0 (0)                    0 (0) "
+"                   0 (0)             0.447214 (0)             0.894427 (0)                    0 (0) "
+"                   0 (0)            -0.894427 (0)             0.447214 (0)                    0 (0) "
+"                   0 (0)                    0 (0)                    0 (0)                    1 (0) "
+)
+"Derivable3D (             13 (0)         -3.1305 (0)         8.49706 (0) )"
+"LeftForeArm"
+"Derivable3D (             32 (0)               0 (0)              -2 (0) )"
+Matrix4x4 Derivable (type:Custom
+"                   1 (0)                    0 (0)                    0 (0)                    0 (0) "
+"                   0 (0)             0.447214 (0)             0.894427 (0)                    0 (0) "
+"                   0 (0)            -0.894427 (0)             0.447214 (0)                    0 (0) "
+"                   0 (0)                    0 (0)                    0 (0)                    1 (0) "
+)
+"Derivable3D (             32 (0)        -1.78885 (0)       -0.894427 (0) )"
+"LeftHand"
+"Derivable3D (             28 (0)               0 (0)               0 (0) )"
+Matrix4x4 Derivable (type:Custom
+"                   1 (0)                    0 (0)                    0 (0)                    0 (0) "
+"                   0 (0)             0.447214 (0)             0.894427 (0)                    0 (0) "
+"                   0 (0)            -0.894427 (0)             0.447214 (0)                    0 (0) "
+"                   0 (0)                    0 (0)                    0 (0)                    1 (0) "
+)
+"Derivable3D (             28 (0)               0 (0)               0 (0) )"
+"LeftHandIndex1"
+"Derivable3D (             18 (0)              -3 (0)               5 (0) )"
+Matrix4x4 Derivable (type:Custom
+"                   1 (0)                    0 (0)                    0 (0)                    0 (0) "
+"                   0 (0)             0.447214 (0)             0.894427 (0)                    0 (0) "
+"                   0 (0)            -0.894427 (0)             0.447214 (0)                    0 (0) "
+"                   0 (0)                    0 (0)                    0 (0)                    1 (0) "
+)
+"Derivable3D (             18 (0)          3.1305 (0)         4.91935 (0) )"
+"LeftHandIndex2"
+"Derivable3D (              4 (0)              -1 (0)              -5 (0) )"
+Matrix4x4 Derivable (type:Custom
+"                   1 (0)                    0 (0)                    0 (0)                    0 (0) "
+"                   0 (0)             0.447214 (0)             0.894427 (0)                    0 (0) "
+"                   0 (0)            -0.894427 (0)             0.447214 (0)                    0 (0) "
+"                   0 (0)                    0 (0)                    0 (0)                    1 (0) "
+)
+"Derivable3D (              4 (0)        -4.91935 (0)        -1.34164 (0) )"
+"LeftHandIndex3"
+"Derivable3D (              3 (0)               0 (0)               0 (0) )"
+Matrix4x4 Derivable (type:Custom
+"                   1 (0)                    0 (0)                    0 (0)                    0 (0) "
+"                   0 (0)             0.447214 (0)             0.894427 (0)                    0 (0) "
+"                   0 (0)            -0.894427 (0)             0.447214 (0)                    0 (0) "
+"                   0 (0)                    0 (0)                    0 (0)                    1 (0) "
+)
+"Derivable3D (              3 (0)               0 (0)               0 (0) )"
+"LeftHandIndex4"
+"Derivable3D (              4 (0)              -6 (0)              -3 (0) )"
+Matrix4x4 Derivable (type:Custom
+"                   1 (0)                    0 (0)                    0 (0)                    0 (0) "
+"                   0 (0)             0.447214 (0)             0.894427 (0)                    0 (0) "
+"                   0 (0)            -0.894427 (0)             0.447214 (0)                    0 (0) "
+"                   0 (0)                    0 (0)                    0 (0)                    1 (0) "
+)
+"Derivable3D (              4 (0)        -5.36656 (0)         4.02492 (0) )"
+"LeftHandThumb1"
+"Derivable3D (              6 (0)              -3 (0)               3 (0) )"
+Matrix4x4 Derivable (type:Custom
+"                   1 (0)                    0 (0)                    0 (0)                    0 (0) "
+"                   0 (0)             0.447214 (0)             0.894427 (0)                    0 (0) "
+"                   0 (0)            -0.894427 (0)             0.447214 (0)                    0 (0) "
+"                   0 (0)                    0 (0)                    0 (0)                    1 (0) "
+)
+"Derivable3D (              6 (0)         1.34164 (0)         4.02492 (0) )"
+"LeftHandThumb2"
+"Derivable3D (              5 (0)              -2 (0)               2 (0) )"
+Matrix4x4 Derivable (type:Custom
+"                   1 (0)                    0 (0)                    0 (0)                    0 (0) "
+"                   0 (0)             0.447214 (0)             0.894427 (0)                    0 (0) "
+"                   0 (0)            -0.894427 (0)             0.447214 (0)                    0 (0) "
+"                   0 (0)                    0 (0)                    0 (0)                    1 (0) "
+)
+"Derivable3D (              5 (0)        0.894427 (0)         2.68328 (0) )"
+"LeftHandThumb3"
+"Derivable3D (              5 (0)              -3 (0)               3 (0) )"
+Matrix4x4 Derivable (type:Custom
+"                   1 (0)                    0 (0)                    0 (0)                    0 (0) "
+"                   0 (0)             0.447214 (0)             0.894427 (0)                    0 (0) "
+"                   0 (0)            -0.894427 (0)             0.447214 (0)                    0 (0) "
+"                   0 (0)                    0 (0)                    0 (0)                    1 (0) "
+)
+"Derivable3D (              5 (0)         1.34164 (0)         4.02492 (0) )"
+"LeftHandThumb4"
+"Derivable3D (              3 (0)              -2 (0)               2 (0) )"
+Matrix4x4 Derivable (type:Custom
+"                   1 (0)                    0 (0)                    0 (0)                    0 (0) "
+"                   0 (0)             0.447214 (0)             0.894427 (0)                    0 (0) "
+"                   0 (0)            -0.894427 (0)             0.447214 (0)                    0 (0) "
+"                   0 (0)                    0 (0)                    0 (0)                    1 (0) "
+)
+"Derivable3D (              3 (0)        0.894427 (0)         2.68328 (0) )"

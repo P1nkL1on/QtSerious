@@ -35,7 +35,11 @@ QString loaderFBX::loadModelFBXAdress(QString path, Rig &loadedRig)
 }
 
 float QStringToFloat (QString str){
-    return ::atof(str.toStdString().c_str());
+//    return ::atof(str.toStdString().c_str());
+    bool isOk = true;
+    const auto res = str.toFloat(&isOk);
+    Q_ASSERT(isOk);
+    return res;
 }
 
 int QStringToInt (QString str){
@@ -130,7 +134,7 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
                     prevWasNegative = 'y';
                     for (int parseIndex = 0; parseIndex < currentParseSplited.length(); parseIndex ++)
                     {
-                        int parsedIndex = QStringToInt(currentParseSplited[parseIndex]);
+                        int parsedIndex = QStringToInt (currentParseSplited[parseIndex]);
                         if (prevWasNegative == 'y')
                             loadedPolygonStartIndexes << parseIndex;
                         prevWasNegative = (parsedIndex < 0)? 'y' : 'n';
@@ -352,13 +356,18 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
             //usemat = usemat.reverse();
         }
 
+        qDebug() << loadedJoints[curJoint]->name;
+        TraceVector(loadedJoints[curJoint]->currentTranslation);
+
         Matrix<Derivable,1,4> temp =
                 Matrix<Derivable,1,4>(last->currentTranslation.x(), last->currentTranslation.y(), last->currentTranslation.z(), 1.0) * usemat;
+        TraceMatrix(usemat);
         // kostil for djepa
         if (last->pater == NULL)
             temp = MakeVector4From3(-last->bindTransform, Derivable(0));
         loadedJoints[curJoint]->currentTranslation = Matrix<Derivable,1,3>(temp(0,0), temp(0,1), temp(0,2));
         loadedJoints[curJoint]->localTranslation = loadedJoints[curJoint]->currentTranslation;
+        TraceVector(loadedJoints[curJoint]->localTranslation);
     }
     // >.........................................................................
 
@@ -385,11 +394,11 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
     loadedRig = Rig(resMesh, resSkeleton, resSkin);
     loadedRig.changeLines = saveIndexes;
 
-    for (int i = 0; i < resSkeleton->joints.length(); i++){
-        qDebug() << resSkeleton->joints[i]->name;
-        //TraceVector( resSkeleton->joints[i]->localTranslation);
-        TraceVector(resSkeleton->joints[i]->currentRotation);
-    }
+//    for (int i = 0; i < resSkeleton->joints.length(); i++){
+//        qDebug() << resSkeleton->joints[i]->name;
+//        //TraceVector( resSkeleton->joints[i]->localTranslation);
+//        TraceVector(resSkeleton->joints[i]->localTranslation);
+//    }
 
     return QString();
 }
@@ -467,7 +476,7 @@ QString DeriveMatrixToString (const Matrix<Derivable,4,4> mat){
     for (int i = 0; i < 4; i++)
         for (int j = 0; j < 4; j++)
             res += QString::number(mat(i,j).getValue()) + (( 4 * i + j < 15 )?",":"");
-    qDebug() << res;
+    //qDebug() << res;
     return res;
 }
 
@@ -475,7 +484,7 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
 {
     QVector<int> changeLineIndexes = savingRig.changeLines;
     QString saved = path.mid(0, path.lastIndexOf('.')) + "_saved" + path.mid(path.lastIndexOf('.'));
-    qDebug() << changeLineIndexes;
+    //qDebug() << changeLineIndexes;
     qDebug() << "Saving to "<< saved;
 
     QFile saveto(saved), file(path);
@@ -495,7 +504,7 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
     Matrix<Derivable,1,3> offset = Matrix<Derivable,1,3>(meshOffset.x(), meshOffset.y(), meshOffset.z());
     savingRig.skeleton->CalculateGlobalCoordForEachJointMatrix();
 
-    qDebug() << "Start copyying";
+    qDebug() << "Start copying;";
     while (!stread.atEnd()){
         lineIndex++;
         line = stread.readLine();

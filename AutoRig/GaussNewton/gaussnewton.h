@@ -44,15 +44,14 @@ namespace OptimiseMethods {
     template <typename Function, typename CallBack>
     QVector<float> GaussNewtonMethod (Function& func, CallBack& callback, const QVector<float> params,
                                      const float epsilon, const int maxIterationCount, bool isNumerical){
-    qDebug() << "GNM called";
+    qDebug() << "Gauss Newtone called;";
         QTime t , ttotal;
         t.start(); ttotal.start();
         QVector<float> res = params;
         Matrix<float,-1,-1>
                 jacobMatrix, F;
-    qDebug() << "JCB called";
         JacobianCalculator::CalculateForFunction(res, jacobMatrix, F, func, 1 );
-    qDebug() << "JCB done";
+    qDebug() << "Jacobian calculated;";
         Matrix<float,-1,-1>
                 jacobTrans = Matrix<float, -1, -1>(jacobMatrix.rows(), jacobMatrix.cols()),
                 step = Matrix<float,-1,-1>( jacobMatrix.cols(), 1),
@@ -119,7 +118,7 @@ namespace OptimiseMethods {
             //if (t.elapsed() > 100)
             qDebug() << "Iteration " << iterationNumber << "Current distance is now " << currentDistance << "      Iteration time is: " << t.elapsed() << " ms " << ((isNumerical)? "numerical" : "autodiff"); t.restart();
             if (iterationNumber > maxIterationCount){
-                qDebug() << ((currentDistance < firstDist * .5)? "@ Finish by too much iteration count!" : "@ !!!!!!!AAAAAAAAAAAA!!!!!!!!!");
+                //qDebug() << ((currentDistance < firstDist * .5)? "@ Finish by too much iteration count!" : "@ !!!!!!!AAAAAAAAAAAA!!!!!!!!!");
                 break;
             }
             //if (stepLength < 1){ qDebug() << "@ Finish cause steps become too liitle!"; break; }
