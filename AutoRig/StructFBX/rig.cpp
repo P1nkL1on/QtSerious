@@ -43,6 +43,12 @@ void Rig::BendSkinToSkeleton()
     newMesh->polygonStartIndexes = bindMesh->polygonStartIndexes;
     int vertexesTransformed = 0;
     QVector<int> failedIndexes;
+
+    QVector<Matrix<Derivable,4,4>> jointsTransMatrixes;
+    for (int i = 0; i < skeleton->joints.length(); i++)
+        jointsTransMatrixes << MakeDeriveRotationMatrix(skeleton->joints[i]->currentRotation) * skeleton->joints[i]->globalTransformMatrix;
+
+
     for (int currentVertexInd = 0; currentVertexInd < bindMesh->vertexes.length(); currentVertexInd ++){
         QVector<Matrix<Derivable,1,3>> bendedVariants;
         QVector<float> weightes;
@@ -57,11 +63,12 @@ void Rig::BendSkinToSkeleton()
                 //qDebug() << currentVertexInd << "vertex in joint" << skin->clusterAttends[clusterInd].jointIndex << "is number" << currentVertexInd << "with wei" << skin->clusterAttends[clusterInd].weights[vertexInClusterIndex];
                 //int jointBendInd = skin->clusterAttends[currentVertexInd].vertexIndex[jointInd];
 
-                Joint* bone = skeleton->joints[skin->clusterAttends[clusterInd].jointIndex];
+                //Joint* bone = skeleton->joints[skin->clusterAttends[clusterInd].jointIndex];
                 Matrix<Derivable,1,4> tmp =
                         MakeVector4From3(bindMesh->vertexes[currentVertexInd], Derivable(1))
                         * skin->clusterAttends[clusterInd].boneBindCoord
-                        * (MakeDeriveRotationMatrix(bone->currentRotation) * bone->globalTransformMatrix)
+                        * jointsTransMatrixes[skin->clusterAttends[clusterInd].jointIndex];
+                        //* (MakeDeriveRotationMatrix(bone->currentRotation) * bone->globalTransformMatrix)
                         //                        *
                         ;
 
@@ -140,7 +147,7 @@ QVector<int> GetSortedIndex (const QVector<float> dists){
 float ang = 0;
 QString Rig::ApplyDrawToCanvas(QPainter *painter, const QMatrix4x4 view, const QMatrix4x4 perspective, const int width, const int hei)
 {
-    return QString();
+    //return QString();
     //    if (skeleton != NULL && skin != NULL && bindMesh != NULL){
     //        BendSkinToSkeleton();
     //    }
