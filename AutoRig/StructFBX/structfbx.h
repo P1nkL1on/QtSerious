@@ -4,7 +4,7 @@
 #include "qstring.h"
 #include "qvector.h"
 #include "Eigen/Core"
-#include "Derivable.h"
+#include "derivable.h"
 
 
 struct Joint{

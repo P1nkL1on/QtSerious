@@ -6,7 +6,7 @@
 #include "QDebug"
 #include "Eigen/Core"
 #include "QVector"
-#include "Derivable.h"
+#include "derivable.h"
 #include "QString"
 
 namespace DerivableVectorMatrixes {

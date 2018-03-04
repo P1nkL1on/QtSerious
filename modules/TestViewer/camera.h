@@ -1,8 +1,9 @@
 #ifndef CAMERA_H
 #define CAMERA_H
-#include "qmatrix4x4"
-#include "qvector"
-#include "QVector2D"
+
+#include <QMatrix4x4>
+#include <QVector>
+#include <QVector2D>
 
 class Camera
 {
