@@ -29,8 +29,8 @@ QVector<QString> names = {
     //"!Samba exported",
     //"!bboy exported",
     //  "hand"
-    "!guard yelling exported"
-    //"humanoid"
+    //"!guard yelling exported"
+    "humanoid"
     //"plane"
 };
 TestAutoRig tar;
@@ -132,7 +132,7 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
         QVector<QString> meshNames = {"Mike", "Rusich", "head-left","fabulos", "fabulos-zad","liying", "bind", "handforwardy90"};
         for (int i = 0; i < meshNames.length(); i++){
             Mesh* loadMesh = new Mesh();
-            QString errMes = loaderFBX::loadMeshOBJAdress(modelsAdress + "GuardPosesOBJ/" + meshNames[i]+".OBJ", *loadMesh);
+            QString errMes = loaderFBX::loadMeshOBJAdress(modelsAdress + meshNames[i]+".OBJ", *loadMesh);
             if (errMes.isEmpty()){
                 Rig* rgMs = new Rig(loadMesh, NULL, NULL);
                 rgMs->cameraCenter = &camCenter;

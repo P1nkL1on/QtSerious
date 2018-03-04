@@ -25,7 +25,7 @@ QVector<float> TestAutoRig::BendSkeletonIntoMesh(bool isGaussNewton)
     for (int c = 3 + bendingRig->skeleton->joints.length() * 3; c < parameters.length(); c++)
         parameters[c] = 1;
 
-    QVector<float> resParams = OptimiseMethods::GaussNewtonMethod(loss, callback, parameters, eps, 6, !isGaussNewton);
+    QVector<float> resParams = OptimiseMethods::GaussNewtonMethod(loss, callback, parameters, eps, maxSteps, !isGaussNewton);
     qDebug() << "Bend success;";
     return resParams;
 }
@@ -239,7 +239,7 @@ bool TestAutoRig::SetCustomHighModel(float maxAngle)
     }
     bendingRig->ApplyBending(bendingRig->skeleton->rootTransate, newRotations, newScales); //CompareWithMeshOnRotates(assTranslate, newRotations, newScales, targetMeshes[targMeshInd]->bindMesh).getValue();
     qDebug() << "Model transforms reseted;";
-    eps = 1e-4; maxSteps = 20;
+    eps = 1e-6; maxSteps = 20;
 }
 
 QString TestAutoRig::ApplyDrawToCanvas(QPainter *painter, const QMatrix4x4 view, const QMatrix4x4 perspective, const int width, const int hei)
