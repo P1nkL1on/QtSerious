@@ -462,6 +462,15 @@ QString DeriveVectorToString (const Matrix<Derivable,1,3> vec){
     return QString::number(vec(0,0).getValue()) + "," + QString::number(vec(0,1).getValue()) + "," + QString::number(vec(0,2).getValue());
 }
 
+QString DeriveMatrixToString (const Matrix<Derivable,4,4> mat){
+    QString res = "";
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 4; j++)
+            res += QString::number(mat(i,j).getValue()) + (( 4 * i + j < 15 )?",":"");
+    qDebug() << res;
+    return res;
+}
+
 QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
 {
     QVector<int> changeLineIndexes = savingRig.changeLines;
@@ -483,6 +492,8 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
 
     /// CHANGE TO BENDED!@!!!!
     modelVertexPerLine = (savingRig.bindMesh->vertexes.length() - 1) / vertexOnlyLines + 1;
+    Matrix<Derivable,1,3> offset = Matrix<Derivable,1,3>(meshOffset.x(), meshOffset.y(), meshOffset.z());
+    savingRig.skeleton->CalculateGlobalCoordForEachJointMatrix();
 
     qDebug() << "Start copyying";
     while (!stread.atEnd()){
@@ -494,10 +505,8 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
         if (currentIndex < changeLineIndexes.length() && changeLineIndexes[currentIndex]<=0)   // skip pausing zeros
         {currentIndex++; vertexAreWroten ++; writeType++;}
 
-        if (currentIndex >=changeLineIndexes.length() || lineIndex != changeLineIndexes[currentIndex]){
-            stwrite << line << endl;
-
-        }
+        if (currentIndex >=changeLineIndexes.length() || lineIndex != changeLineIndexes[currentIndex])
+            stwrite << line << endl;        
         else{
 
 
@@ -533,15 +542,18 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
                 for (int cj = 0; cj < jointCount; cj++)//, //qDebug() << cj << savingRig.skeleton->joints[cj - 1]->ID << lastID )
                     if (savingRig.skeleton->joints[cj]->ID == lastID) needIndex = cj;
                 if (needIndex >= 0){
-                    //newLine = "For joint " + QString::number(needIndex);
-                    newLine = line;
+                    Matrix<Derivable,1,3> globCoordOfJoint = savingRig.skeleton->joints[needIndex]->currentTranslation + savingRig.skeleton->rootTransate + offset;
+                    newLine = "\t\t\t\ta: " + DeriveMatrixToString(MakeDeriveTranslationMatrix( globCoordOfJoint, true));
                 }
             }
+
             if (writeType == 3){
-                newLine = line;
+                //newLine = line + " " + QString::number();
+                Matrix<Derivable,1,3> globCoordOfJoint = savingRig.skeleton->joints[jointIndex]->currentTranslation + savingRig.skeleton->rootTransate + offset;
+                newLine = "\t\t\t\ta: " + DeriveMatrixToString(MakeDeriveTranslationMatrix( globCoordOfJoint, true));
             }
 
-            stwrite << newLine /*<< "    << ! << "*/ << endl;
+            stwrite << newLine << "    << ! << " << endl;
 
             currentIndex++;
             if (vertexAreWroten) {
@@ -551,13 +563,11 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
         }
     }
 
-    savingRig.skeleton->CalculateGlobalCoordForEachJointMatrix();
-    Matrix<Derivable,1,3> offset = Matrix<Derivable,1,3>(meshOffset.x(), meshOffset.y(), meshOffset.z());
-    for (int i = 0; i < savingRig.skeleton->joints.length(); i++){
-        qDebug() << "Joint" << i << "  " << savingRig.skeleton->joints[i]->ID;
-        Matrix<Derivable,1,3> globCoordOfJoint = savingRig.skeleton->joints[i]->currentTranslation + savingRig.skeleton->rootTransate + offset;
-        TraceVector(globCoordOfJoint);
-    }
+//    for (int i = 0; i < savingRig.skeleton->joints.length(); i++){
+//        qDebug() << "Joint" << i << "  " << savingRig.skeleton->joints[i]->ID;
+//        Matrix<Derivable,1,3> globCoordOfJoint = savingRig.skeleton->joints[i]->currentTranslation + savingRig.skeleton->rootTransate + offset;
+//        TraceVector(globCoordOfJoint);
+//    }
 
     return QString();
 }
