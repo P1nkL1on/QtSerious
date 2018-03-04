@@ -28,9 +28,9 @@ QVector<QString> names = {
     //"!pucn export",
     //"!Samba exported",
     //"!bboy exported",
-    //  "hand"
+      "hand"
     //"!guard yelling exported"
-    "humanoid"
+    //"humanoid"
     //"plane"
 };
 TestAutoRig tar;

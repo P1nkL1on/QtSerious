@@ -25,6 +25,7 @@ public:
 
     QVector<Eigen::Matrix<DerOperations::Derivable,1,3>> getJointsLocalRotationsForDrawing () const;
     QVector<Eigen::Matrix<DerOperations::Derivable,4,4>> getJointsGlobalTranslationsForSkin () const;
+    QVector<Eigen::Matrix<DerOperations::Derivable,1,3>> getJointsGlobalTranslationsForSaveClusters () const;
     Eigen::Matrix<DerOperations::Derivable,1,3> getJointCoordByIndex(int index, Eigen::Matrix<DerOperations::Derivable,1,3> &paterCoord);
     // local!
     void SetRotations (const QVector<Eigen::Matrix<DerOperations::Derivable,1,3>> newRotations);

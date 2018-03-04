@@ -247,7 +247,7 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
         }
 
         if (parseType == 8 && line.indexOf("a: ") == 0){
-            saveIndexes << lineNumber;
+            saveIndexes << lineNumber << lineNumber + 3;
             currentParseSplited = line.remove(0,3).split(',');
             bindTransformFromClusters << Matrix<Derivable,1,3>(Derivable(QStringToFloat(currentParseSplited[12])),
                                                    Derivable(QStringToFloat(currentParseSplited[13])),
@@ -366,7 +366,7 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
         if (last->pater == NULL)
             temp = MakeVector4From3(-last->bindTransform, Derivable(0));
         loadedJoints[curJoint]->currentTranslation = Matrix<Derivable,1,3>(temp(0,0), temp(0,1), temp(0,2));
-        loadedJoints[curJoint]->localTranslation = loadedJoints[curJoint]->currentTranslation;
+        loadedJoints[curJoint]->endCurrentTranslation = loadedJoints[curJoint]->localTranslation = loadedJoints[curJoint]->currentTranslation;
         TraceVector(loadedJoints[curJoint]->localTranslation);
     }
     // >.........................................................................
@@ -503,6 +503,7 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
     modelVertexPerLine = (savingRig.bindMesh->vertexes.length() - 1) / vertexOnlyLines + 1;
     Matrix<Derivable,1,3> offset = Matrix<Derivable,1,3>(meshOffset.x(), meshOffset.y(), meshOffset.z());
     savingRig.skeleton->CalculateGlobalCoordForEachJointMatrix();
+    QVector<Matrix<Derivable,1,3>> clusterUsingGuys = savingRig.skeleton->getJointsGlobalTranslationsForSaveClusters();
 
     qDebug() << "Start copying;";
     while (!stread.atEnd()){
@@ -537,7 +538,7 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
 
             if (writeType == 1){
                 // a LclTrans
-                newLine = line.mid(0, line.lastIndexOf("\"A\",") + 4);
+                newLine = "\t\t\tP: \"Lcl Translation\", \"Lcl Translation\", \"\", \"A+\",";
                 newLine += DeriveVectorToString(savingRig.skeleton->joints[jointIndex]->localTranslation);
                 if (savingRig.skeleton->joints[jointIndex]->pater == NULL)
                     newLine = line;
@@ -552,17 +553,29 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
                     if (savingRig.skeleton->joints[cj]->ID == lastID) needIndex = cj;
                 if (needIndex >= 0){
                     Matrix<Derivable,1,3> globCoordOfJoint = savingRig.skeleton->joints[needIndex]->currentTranslation + savingRig.skeleton->rootTransate + offset;
-                    newLine = "\t\t\t\ta: " + DeriveMatrixToString(MakeDeriveTranslationMatrix( globCoordOfJoint, true));
+                    newLine = "\t\t\t\ta: " + DeriveMatrixToString(MakeDeriveTranslationMatrix( globCoordOfJoint, true));// + " bindpose";
                 }
             }
 
-            if (writeType == 3){
+            if (writeType == 3 || writeType == 4){
+                Derivable isLink = Derivable(((writeType - 3) * jointCount + jointIndex) % 2 * 2 - 1);
+                jointIndex =  ((writeType - 3) * jointCount + jointIndex) / 2;
+                //qDebug() << isLink.getValue();
                 //newLine = line + " " + QString::number();
-                Matrix<Derivable,1,3> globCoordOfJoint = savingRig.skeleton->joints[jointIndex]->currentTranslation + savingRig.skeleton->rootTransate + offset;
-                newLine = "\t\t\t\ta: " + DeriveMatrixToString(MakeDeriveTranslationMatrix( globCoordOfJoint, true));
+                Matrix<Derivable,1,3> globCoordOfJoint =
+                        (/*clusterUsingGuys[jointIndex]*/
+                         savingRig.skeleton->joints[jointIndex]->endCurrentTranslation
+                         + savingRig.skeleton->rootTransate
+                         + offset);
+//                for (int c = 0; c < 3; c++)
+//                    globCoordOfJoint(0,c) = globCoordOfJoint(0,c) +
+                //globCoordOfJoint = globCoordOfJoint + Matrix<Derivable,1,3>(1,-1,0);
+
+                TraceMatrix(MakeDeriveTranslationMatrix( globCoordOfJoint * isLink, true));
+                newLine = "\t\t\t\ta: " + DeriveMatrixToString(MakeDeriveTranslationMatrix( globCoordOfJoint * isLink, true));//+ " cluster trans " + QString::number(jointIndex);
             }
 
-            stwrite << newLine << "    << ! << " << endl;
+            stwrite << newLine <</* "    << ! << " <<*/ endl;
 
             currentIndex++;
             if (vertexAreWroten) {

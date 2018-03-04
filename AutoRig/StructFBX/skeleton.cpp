@@ -82,6 +82,9 @@ void RecursiveGlobalCalculateCall (Joint* joint){
 
     joint->currentTranslation = CommonFuncs::AddDirectMatrx(Matrix<Derivable,1,3>(0,0,0),
                                                             joint->globalTransformMatrix);
+    //if (joint->pater != NULL)
+    //    joint->pater->endCurrentTranslation = joint->currentTranslation;
+
     for (int childId = 0; childId < joint->kids.length(); childId++)
         RecursiveGlobalCalculateCall(joint->kids[childId]);
 }
@@ -187,4 +190,23 @@ QVector<Matrix<Derivable,4,4>> Skeleton::getJointsGlobalTranslationsForSkin() co
                    * MakeDeriveRotationMatrix(joints[curJoint]->currentRotation)
                    * joints[curJoint]->globalTransformMatrix;
     return res;
+}
+
+QVector<Matrix<Derivable,1,3>> Skeleton::getJointsGlobalTranslationsForSaveClusters() const
+{
+    QVector<Matrix<Derivable,4,4>> res = getJointsGlobalTranslationsForSkin();
+    QVector<Matrix<Derivable,1,3>> ret;
+    Matrix<Derivable,1,4> tmp;
+    for (int i = 0; i < res.length(); i++){
+        tmp = Matrix<Derivable,1,4>(1,1,1,1);
+        tmp = tmp * res[i];
+        ret << Matrix<Derivable,1,3>(tmp(0,0), tmp(0,1), tmp(0,2));
+        qDebug() << i;
+        TraceVector(ret[ret.length() - 1]);
+        TraceVector(joints[i]->endCurrentTranslation);
+
+        ret[ret.length() - 1] = ret[ret.length() - 1] + joints[i]->endCurrentTranslation;;
+    }
+
+    return ret;
 }
