@@ -551,5 +551,13 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
         }
     }
 
+    savingRig.skeleton->CalculateGlobalCoordForEachJointMatrix();
+    Matrix<Derivable,1,3> offset = Matrix<Derivable,1,3>(meshOffset.x(), meshOffset.y(), meshOffset.z());
+    for (int i = 0; i < savingRig.skeleton->joints.length(); i++){
+        qDebug() << "Joint" << i << "  " << savingRig.skeleton->joints[i]->ID;
+        Matrix<Derivable,1,3> globCoordOfJoint = savingRig.skeleton->joints[i]->currentTranslation + savingRig.skeleton->rootTransate + offset;
+        TraceVector(globCoordOfJoint);
+    }
+
     return QString();
 }
