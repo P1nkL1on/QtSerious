@@ -556,8 +556,12 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
                 for (int cj = 0; cj < jointCount; cj++)//, //qDebug() << cj << savingRig.skeleton->joints[cj - 1]->ID << lastID )
                     if (savingRig.skeleton->joints[cj]->ID == lastID) needIndex = cj;
                 if (needIndex >= 0){
-                    Matrix<Derivable,1,3> globCoordOfJoint = savingRig.skeleton->joints[needIndex]->currentTranslation + savingRig.skeleton->rootTransate + offset;
-                    newLine = "\t\t\t\ta: " + DeriveMatrixToString(MakeDeriveTranslationMatrix( globCoordOfJoint, true));// + " bindpose";
+                    Matrix<Derivable,1,3> globCoordOfJoint =
+                            savingRig.skeleton->joints[needIndex]->currentTranslation
+                            //- savingRig.skeleton->joints[needIndex]->localTranslation
+                            + savingRig.skeleton->rootTransate
+                            + offset;
+                    newLine = "\t\t\t\ta: " + DeriveMatrixToString(MakeDeriveTranslationMatrix( globCoordOfJoint, true)) /*+ "   " + savingRig.skeleton->joints[needIndex]->name*/ ;// + " bindpose";
                 }
             }
 
@@ -572,7 +576,7 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
                 qDebug() << savingRig.skeleton->joints[ jointIndex ]->name<< "       " << DeriveMatrixToString(MakeDeriveTranslationMatrix( globCoordOfJoint * isLink, true));
             }
 
-            stwrite << newLine << "    << ! << " << endl;
+            stwrite << newLine/* << "    << ! << "*/ << endl;
 
             currentIndex++;
             if (vertexAreWroten) {

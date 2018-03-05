@@ -13,6 +13,7 @@ public:
     QString name;
     Joint* pater;
     QVector<Joint*> kids;
+    QVector<QString> AnimCurvesIDs;
     Eigen::Matrix<DerOperations::Derivable,1,3> localScale;
     Eigen::Matrix<DerOperations::Derivable,1,3> localTranslation;
     Eigen::Matrix<DerOperations::Derivable,1,3> currentTranslation;

@@ -18,6 +18,7 @@ Joint::Joint()
     bindMatrix = SetDeriveMatrix();
     bindTransform = Matrix<Derivable,1,3>();
     localScale =  Matrix<Derivable,1,3>(1,1,1);
+    AnimCurvesIDs = {"-","-","-"};
 }
 
 Joint::Joint(QString ID0, QString name0)
@@ -32,6 +33,7 @@ Joint::Joint(QString ID0, QString name0)
     bindMatrix = SetDeriveMatrix();
     bindTransform = Matrix<Derivable,1,3>();
     localScale =  Matrix<Derivable,1,3>(1,1,1);
+    AnimCurvesIDs = {"-","-","-"};
 }
 
 Joint::Joint(Eigen::Matrix<Derivable, 1, 3> trans, Eigen::Matrix<Derivable, 1, 3> rotat)
@@ -45,6 +47,7 @@ Joint::Joint(Eigen::Matrix<Derivable, 1, 3> trans, Eigen::Matrix<Derivable, 1, 3
     bindMatrix = SetDeriveMatrix();
     bindTransform = localTranslation;
     localScale =  Matrix<Derivable,1,3>(1,1,1);
+    AnimCurvesIDs = {"-","-","-"};
 }
 
 void Joint::RecaulculateLocalTransformMatrix()
