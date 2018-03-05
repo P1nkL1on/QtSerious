@@ -529,7 +529,7 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
         if (changeLineIndexes[i] <= 0)vertexOnlyLines = i;
 
     /// CHANGE TO BENDED!@!!!!
-    modelVertexPerLine = (savingRig.bindMesh->vertexes.length() - 1) / vertexOnlyLines + 1;
+    modelVertexPerLine = (savingRig.bendedMesh->vertexes.length() - 1) / vertexOnlyLines + 1;
     Matrix<Derivable,1,3> offset = Matrix<Derivable,1,3>(meshOffset.x(), meshOffset.y(), meshOffset.z());
     savingRig.skeleton->CalculateGlobalCoordForEachJointMatrix();
     QVector<Matrix<Derivable,1,3>> clusterUsingGuys = savingRig.skeleton->getJointsGlobalTranslationsForSaveClusters();
@@ -589,10 +589,10 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
                     newLine = (!currentIndex)? "\t\t\ta: " : "";
                     //newLine = "vertexes" + QString::number(currentIndex) + "/"+QString::number(vertexOnlyLines);
                     for (int v = currentIndex * modelVertexPerLine; v < (currentIndex + 1) * modelVertexPerLine; v++)
-                        if (v < savingRig.bindMesh->vertexes.length())
-                            newLine += QString::number(savingRig.bindMesh->vertexes[v](0,0).getValue() + meshOffset.x()) + "," +
-                                       QString::number(savingRig.bindMesh->vertexes[v](0,1).getValue() + meshOffset.y()) + "," +
-                                       QString::number(savingRig.bindMesh->vertexes[v](0,2).getValue() + meshOffset.z()) + ((v < savingRig.bindMesh->vertexes.length() - 1)? "," : "");
+                        if (v < savingRig.bendedMesh->vertexes.length())
+                            newLine += QString::number(savingRig.bendedMesh->vertexes[v](0,0).getValue() + meshOffset.x()) + "," +
+                                       QString::number(savingRig.bendedMesh->vertexes[v](0,1).getValue() + meshOffset.y()) + "," +
+                                       QString::number(savingRig.bendedMesh->vertexes[v](0,2).getValue() + meshOffset.z()) + ((v < savingRig.bendedMesh->vertexes.length() - 1)? "," : "");
 
                 }
 

@@ -8,7 +8,7 @@
 namespace loaderFBX
 {
 // we also need a AnimCurveNode::T for Model connection
-    static QVector3D meshOffset = QVector3D(-1,136,0);
+    static QVector3D meshOffset = QVector3D(0,0,0);//(-1,136,0);
     QString loadModelFBXAdress (QString path, Rig& loadedRig);
     QString loadModelFBX (QTextStream& textStream, Rig& loadedRig);
     QString loadMeshOBJAdress (QString path, Mesh& loadedMesh);
