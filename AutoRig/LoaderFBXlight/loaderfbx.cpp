@@ -182,6 +182,8 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
         // 15 == bone_to_bone_connection
         // 16 == cluster_to_bone_connection
 
+        // 17 == anim_to_bone_connectyion
+
         // CONDITION
         if (prevLine.indexOf("Vertices:")>=0 || parseType == 0){
             saveIndexes << lineNumber;
@@ -203,6 +205,9 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
             parseType = 15;
         if (prevLine.indexOf("Model::") == 1 && prevLine.indexOf("SubDeformer::",8) > 0)
             parseType = 16;
+        if (prevLine.indexOf("AnimCurveNode::T") == 1 && prevLine.indexOf("Model::",16) > 0)
+            parseType = 17;
+
 
         //PARSING
         // || currentDirectory.indexOf("/Weights") == currentDirectory.length() - 8)
@@ -332,6 +337,26 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
                 }else{
                     if (isMoreDebug == 'y')
                         qDebug() << "    X    Limb and cluster connection failed: " + line;
+                }
+                parseType = -1;
+            }
+        // connect a ID of AnimNodeT to Joint
+            if (parseType == 17)
+            {
+                //;AnimCurveNode::T, Model::LeftHand
+                //C: "OP",1593408123472,1591748865584, "Lcl Translation"
+
+                currentParseSplited = line.split(',');
+                int boneInd = -1;
+                for (int jointInd = 0; jointInd < loadedJoints.length(); jointInd++)
+                    if (loadedJoints[jointInd]->ID == currentParseSplited[currentParseSplited.length() - 2])
+                    { boneInd = jointInd; break; }
+                if (boneInd >= 0)
+                {
+                    loadedJoints[boneInd]->AnimCurvesIDs[0] = currentParseSplited[currentParseSplited.length() - 3];
+                }else{
+                    if (isMoreDebug == 'y')
+                        qDebug() << "    X    AnimNode and bone connection failed: " + line;
                 }
                 parseType = -1;
             }
@@ -509,6 +534,9 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
     savingRig.skeleton->CalculateGlobalCoordForEachJointMatrix();
     QVector<Matrix<Derivable,1,3>> clusterUsingGuys = savingRig.skeleton->getJointsGlobalTranslationsForSaveClusters();
 
+    int rewriteAnimNodes = 0, rewriteAnimNodeJointIndex = 0;
+    QVector<QString> coords = {"X","Y","Z"};
+
     qDebug() << "Start copying;";
     while (!stread.atEnd()){
         lineIndex++;
@@ -519,69 +547,104 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
         if (currentIndex < changeLineIndexes.length() && changeLineIndexes[currentIndex]<=0)   // skip pausing zeros
         {currentIndex++; vertexAreWroten ++; writeType++;}
 
-        if (currentIndex >=changeLineIndexes.length() || lineIndex != changeLineIndexes[currentIndex])
+        if ((currentIndex >=changeLineIndexes.length() || lineIndex != changeLineIndexes[currentIndex]) && rewriteAnimNodes <= 0){
             stwrite << line << endl;        
-        else{
 
 
-            //P: "Lcl Translation", "Lcl Translation", "", "A",0.111782073974609,-40.173641204834,-5.70924186706543
-            //stwrite << "@@@@ " << changeLineIndexes[currentIndex] << " @@@@" << vertexAreWroten << "vertex are wroten _____ now is " << writeType << endl;
-            int jointCount = savingRig.skeleton->joints.length(), jointIndex = wrotenCount % jointCount;
-            QString newLine = "@@@@ For joint " + QString::number(jointIndex) + " index for "+ QString::number(writeType);
-
-            if (!vertexAreWroten){
-                newLine = (!currentIndex)? "\t\t\ta: " : "";
-                //newLine = "vertexes" + QString::number(currentIndex) + "/"+QString::number(vertexOnlyLines);
-                for (int v = currentIndex * modelVertexPerLine; v < (currentIndex + 1) * modelVertexPerLine; v++)
-                    if (v < savingRig.bindMesh->vertexes.length())
-                        newLine += QString::number(savingRig.bindMesh->vertexes[v](0,0).getValue() + meshOffset.x()) + "," +
-                                   QString::number(savingRig.bindMesh->vertexes[v](0,1).getValue() + meshOffset.y()) + "," +
-                                   QString::number(savingRig.bindMesh->vertexes[v](0,2).getValue() + meshOffset.z()) + ((v < savingRig.bindMesh->vertexes.length() - 1)? "," : "");
-
+            //AnimationCurveNode: 1593408122640, "AnimCurveNode::T", "" { anim node check
+            if (line.indexOf("AnimationCurveNode:") >= 0 && line.indexOf("AnimCurveNode::T") > 0){
+                QString needID = line.split(' ')[1];
+                for (int cJ = 0; cJ < savingRig.skeleton->joints.length(); cJ++)
+                    for (int aN = 0; aN < savingRig.skeleton->joints[cJ]->AnimCurvesIDs.length(); aN++)
+                        if (needID.indexOf(savingRig.skeleton->joints[cJ]->AnimCurvesIDs[aN]) == 0){
+                            rewriteAnimNodes = 4;
+                            rewriteAnimNodeJointIndex = cJ;
+                        }
             }
-
-            if (writeType == 1){
-                // a LclTrans
-                newLine = "\t\t\tP: \"Lcl Translation\", \"Lcl Translation\", \"\", \"A+\",";
-                newLine += DeriveVectorToString(savingRig.skeleton->joints[jointIndex]->localTranslation);
-                if (savingRig.skeleton->joints[jointIndex]->pater == NULL)
-                    newLine = line;
-                //qDebug() << "------" << line;
-                //qDebug() << "++++++" << newLine;
+        }
+        else
+        {
+            if (rewriteAnimNodes > 0)
+            {
+                rewriteAnimNodes --;
+                if (rewriteAnimNodes < 3){
+            //          P: "d|X", "Number", "", "A",1
+            //			P: "d|Y", "Number", "", "A",1
+            //			P: "d|Z", "Number", "", "A",1
+                    //QString newLine = "@@@@ For joint " + QString::number(rewriteAnimNodeJointIndex) + " " + savingRig.skeleton->joints[rewriteAnimNodeJointIndex]->name;
+                    QString newLine = "\t\t\tP: \"d|"+ coords[2 - rewriteAnimNodes] +"\", \"Number\", \"\", \"A\","
+                            + QString::number(savingRig.skeleton->joints[rewriteAnimNodeJointIndex]->localTranslation(0, 2 - rewriteAnimNodes).getValue());
+                    stwrite << newLine << endl;
+                }else
+                    stwrite << line << endl;
             }
+            else
+            {
+                //P: "Lcl Translation", "Lcl Translation", "", "A",0.111782073974609,-40.173641204834,-5.70924186706543
+                //stwrite << "@@@@ " << changeLineIndexes[currentIndex] << " @@@@" << vertexAreWroten << "vertex are wroten _____ now is " << writeType << endl;
+                int jointCount = savingRig.skeleton->joints.length(), jointIndex = wrotenCount % jointCount;
+                QString newLine = "@@@@ For joint " + QString::number(jointIndex) + " index for "+ QString::number(writeType);
 
-            if (writeType == 2){
-                //qDebug() << ">> ID" << lastID;
-                int needIndex = -1;
-                for (int cj = 0; cj < jointCount; cj++)//, //qDebug() << cj << savingRig.skeleton->joints[cj - 1]->ID << lastID )
-                    if (savingRig.skeleton->joints[cj]->ID == lastID) needIndex = cj;
-                if (needIndex >= 0){
-                    Matrix<Derivable,1,3> globCoordOfJoint =
-                            savingRig.skeleton->joints[needIndex]->currentTranslation
-                            //- savingRig.skeleton->joints[needIndex]->localTranslation
-                            + savingRig.skeleton->rootTransate
-                            + offset;
-                    newLine = "\t\t\t\ta: " + DeriveMatrixToString(MakeDeriveTranslationMatrix( globCoordOfJoint, true)) /*+ "   " + savingRig.skeleton->joints[needIndex]->name*/ ;// + " bindpose";
+                if (!vertexAreWroten){
+                    newLine = (!currentIndex)? "\t\t\ta: " : "";
+                    //newLine = "vertexes" + QString::number(currentIndex) + "/"+QString::number(vertexOnlyLines);
+                    for (int v = currentIndex * modelVertexPerLine; v < (currentIndex + 1) * modelVertexPerLine; v++)
+                        if (v < savingRig.bindMesh->vertexes.length())
+                            newLine += QString::number(savingRig.bindMesh->vertexes[v](0,0).getValue() + meshOffset.x()) + "," +
+                                       QString::number(savingRig.bindMesh->vertexes[v](0,1).getValue() + meshOffset.y()) + "," +
+                                       QString::number(savingRig.bindMesh->vertexes[v](0,2).getValue() + meshOffset.z()) + ((v < savingRig.bindMesh->vertexes.length() - 1)? "," : "");
+
                 }
-            }
 
-            if (writeType == 3 || writeType == 4){
-                Derivable isLink = Derivable(((writeType - 3) * jointCount + jointIndex) % 2 * 2 - 1);
-                jointIndex =  ((writeType - 3) * jointCount + jointIndex) / 2;
-                jointIndex = savingRig.skin->clusterAttends[jointIndex].jointIndex;
-                Matrix<Derivable,1,3> globCoordOfJoint = savingRig.skeleton->joints[ jointIndex ]->currentTranslation+ offset;
+                if (writeType == 1){
+                    // a LclTrans
+                    newLine = "\t\t\tP: \"Lcl Translation\", \"Lcl Translation\", \"\", \"A+\",";
+                    newLine += DeriveVectorToString(savingRig.skeleton->joints[jointIndex]->localTranslation);
+                    if (savingRig.skeleton->joints[jointIndex]->pater == NULL)
+                        newLine = line;
+                    //qDebug() << "------" << line;
+                    //qDebug() << "++++++" << newLine;
+                }
 
-                //newLine = savingRig.skeleton->joints[ jointIndex ]->name;
-                newLine = "\t\t\t\ta: " + DeriveMatrixToString(MakeDeriveTranslationMatrix( globCoordOfJoint * isLink, true));//+ " cluster trans " + QString::number(jointIndex);
-                qDebug() << savingRig.skeleton->joints[ jointIndex ]->name<< "       " << DeriveMatrixToString(MakeDeriveTranslationMatrix( globCoordOfJoint * isLink, true));
-            }
+                if (writeType == 2){
 
-            stwrite << newLine/* << "    << ! << "*/ << endl;
+                    // BIND MATRIXES
 
-            currentIndex++;
-            if (vertexAreWroten) {
-                wrotenCount ++;
-                if (wrotenCount % jointCount == 0) writeType ++;
+                    int needIndex = -1;
+                    for (int cj = 0; cj < jointCount; cj++)//, //qDebug() << cj << savingRig.skeleton->joints[cj - 1]->ID << lastID )
+                        if (savingRig.skeleton->joints[cj]->ID == lastID) needIndex = cj;
+                    if (needIndex >= 0){
+                        Matrix<Derivable,1,3> globCoordOfJoint =
+                                savingRig.skeleton->joints[needIndex]->currentTranslation
+                                //- savingRig.skeleton->joints[needIndex]->localTranslation
+                                + savingRig.skeleton->rootTransate
+                                + offset;
+                        newLine = "\t\t\t\ta: " + DeriveMatrixToString(MakeDeriveTranslationMatrix( globCoordOfJoint, true)) /*+ "   " + savingRig.skeleton->joints[needIndex]->name*/ ;// + " bindpose";
+                        //newLine += "   " + savingRig.skeleton->joints[needIndex]->AnimCurvesIDs[0];
+                    }
+                }
+
+                if (writeType == 3 || writeType == 4){
+
+                    // CLUSTER PROBLEMS
+
+                    Derivable isLink = Derivable(((writeType - 3) * jointCount + jointIndex) % 2 * 2 - 1);
+                    jointIndex =  ((writeType - 3) * jointCount + jointIndex) / 2;
+                    jointIndex = savingRig.skin->clusterAttends[jointIndex].jointIndex;
+                    Matrix<Derivable,1,3> globCoordOfJoint = savingRig.skeleton->joints[ jointIndex ]->currentTranslation+ offset;
+
+                    //newLine = savingRig.skeleton->joints[ jointIndex ]->name;
+                    newLine = "\t\t\t\ta: " + DeriveMatrixToString(MakeDeriveTranslationMatrix( globCoordOfJoint * isLink, true));//+ " cluster trans " + QString::number(jointIndex);
+                    qDebug() << savingRig.skeleton->joints[ jointIndex ]->name<< "       " << DeriveMatrixToString(MakeDeriveTranslationMatrix( globCoordOfJoint * isLink, true));
+                }
+
+                stwrite << newLine/* << "    << ! << "*/ << endl;
+
+                currentIndex++;
+                if (vertexAreWroten) {
+                    wrotenCount ++;
+                    if (wrotenCount % jointCount == 0) writeType ++;
+                }
             }
         }
     }
