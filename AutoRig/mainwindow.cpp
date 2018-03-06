@@ -31,7 +31,8 @@ QVector<QString> names = {
     //"hand"
     //"!guard yelling exported"
     //"humanoid"
-    "!IvanSergeich0"
+    //"Quarterback Pass"
+    //"!IvanSergeich0"
     //"plane"
 };
 TestAutoRig tar;
