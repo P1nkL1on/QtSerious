@@ -149,13 +149,13 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
                     currentParseSplited = currentParse.remove(0, currentParse.indexOf("{") + 1).split(',');
                     for (int parsedID = 0; parsedID < currentParseSplited.length(); parsedID ++)
                         parsedIDs0 << QStringToInt(currentParseSplited[parsedID]);
-                    loadedClusterVertIndexes << parsedIDs0;
+                    loadedClusterVertIndexes[loadedClusterVertIndexes.length() - 1] =  parsedIDs0;
                     break;
                 case 10:
                     currentParseSplited = currentParse.remove(0, currentParse.indexOf("{") + 1).split(',');
                     for (int parsedWei = 0; parsedWei < currentParseSplited.length(); parsedWei ++)
                         parsedWeight0 << QStringToFloat(currentParseSplited[parsedWei]);
-                    loadedClusterVertWeightes << parsedWeight0;
+                    loadedClusterVertWeightes[loadedClusterVertWeightes.length() -1] = parsedWeight0;
                     break;
                 default:
                     break;
@@ -239,8 +239,11 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
                     // IGNORE THIS
                 //qDebug() << lastJointCreated.ID << lastJointCreated.name;
             }
-        if (line.indexOf("\"Cluster\"") > 0)
+        if (line.indexOf("\"Cluster\"") > 0){
             loadedClusterID << currentID;
+            loadedClusterVertIndexes << QVector<int>();
+            loadedClusterVertWeightes << QVector<float>();
+        }
         // checking bindpose loler
         // now we know the index of joint, which will be bindmatrixed next
         if (parseType == 11 && line.indexOf("Node: ") == 0){
@@ -484,7 +487,7 @@ QString loaderFBX::loadMeshOBJ(QTextStream &textStream, Mesh &loadedMesh)
 
     Matrix<Derivable,1,3> trans = Matrix<Derivable,1,3>(0,0,0);
     for (int i = 0; i < loadedVertexes.length(); i++){
-        Derivable scale = (i % 50 != 0)? .8 : .84;
+        Derivable scale = Derivable(1);//(i % 50 != 0)? .8 : .84;
         loadedDerV3s << Matrix<Derivable,1,3>(
                     scale * Derivable(loadedVertexes[i].x()) + trans(0,0),
                     scale * Derivable(loadedVertexes[i].y()) + trans(0,1),
