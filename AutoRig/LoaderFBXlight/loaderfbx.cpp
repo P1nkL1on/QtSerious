@@ -484,7 +484,7 @@ QString loaderFBX::loadMeshOBJ(QTextStream &textStream, Mesh &loadedMesh)
 
     Matrix<Derivable,1,3> trans = Matrix<Derivable,1,3>(0,0,0);
     for (int i = 0; i < loadedVertexes.length(); i++){
-        Derivable scale = 1;//.6;//(i % 100 == 0)? .6 : .6;
+        Derivable scale = (i % 50 != 0)? .8 : .84;
         loadedDerV3s << Matrix<Derivable,1,3>(
                     scale * Derivable(loadedVertexes[i].x()) + trans(0,0),
                     scale * Derivable(loadedVertexes[i].y()) + trans(0,1),
