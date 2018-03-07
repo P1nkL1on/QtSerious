@@ -19,6 +19,8 @@ public:
     Eigen::Matrix<DerOperations::Derivable,1,3> currentTranslation;
     Eigen::Matrix<DerOperations::Derivable,1,3> endCurrentTranslation;
     Eigen::Matrix<DerOperations::Derivable,1,3> currentRotation;
+    Eigen::Matrix<DerOperations::Derivable,1,3> preRotation;
+    Eigen::Matrix<DerOperations::Derivable,1,3> localRotation;
     Eigen::Matrix<DerOperations::Derivable,4,4> bindMatrix;
     Eigen::Matrix<DerOperations::Derivable,1,3> bindTransform;
 
