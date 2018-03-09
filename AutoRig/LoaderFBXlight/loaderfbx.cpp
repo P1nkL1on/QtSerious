@@ -631,10 +631,16 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
                     jointIndex = savingRig.skin->clusterAttends[jointIndex].jointIndex;
                     Matrix<Derivable,1,3> globCoordOfJoint = savingRig.skeleton->joints[ jointIndex ]->currentTranslation+ offset;
 
-                    //newLine = savingRig.skeleton->joints[ jointIndex ]->name;
-                    newLine = "\t\t\t\ta: " + DeriveMatrixToString(MakeDeriveTranslationMatrix( globCoordOfJoint * isLink, true));//+ " cluster trans " + QString::number(jointIndex);
-
-                    //qDebug() << savingRig.skeleton->joints[ jointIndex ]->name<< "       " << DeriveMatrixToString(MakeDeriveTranslationMatrix( globCoordOfJoint * isLink, true));
+                    if (isLink.getValue() < 0)
+                    {
+                        newLine = "\t\t\t\ta: " + DeriveMatrixToString(savingRig.skeleton->joints[jointIndex]->bindMatrix * MakeDeriveTranslationMatrix( globCoordOfJoint, true));
+                    }
+                    else
+                    {
+                        newLine = "\t\t\t\ta: "
+                                + DeriveMatrixToString(
+                                    MakeDeriveTranslationMatrix( globCoordOfJoint * isLink, true));
+                    }
 
                     qDebug() << "--CLS-" << line;
                     qDebug() << "++++++" << newLine;
