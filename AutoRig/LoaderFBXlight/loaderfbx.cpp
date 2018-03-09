@@ -233,7 +233,7 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
                                            Derivable(QStringToFloat(currentParseSplited[currentParseSplited.length() - 1])));
                 // redirect it to new limbs
                 if (line.indexOf(" Translation") >= 0){
-                    lastJointCreated->currentTranslation = lastJointCreated->originalLocalTransform = parsedVect;
+                    lastJointCreated->currentTranslation = lastJointCreated->localTranslationLoaded = parsedVect;
                     saveIndexes << lineNumber;
                 }
                 if (line.indexOf(" Rotation") >= 0)
@@ -425,53 +425,6 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
     loadedRig = Rig(resMesh, resSkeleton, resSkin);
     loadedRig.changeLines = saveIndexes;
 
-
-    Matrix<Derivable,1,3> offs = Matrix<Derivable,1,3>(meshOffset.x(), meshOffset.y(), meshOffset.z());
-    for (int i = 0; i < /*resSkeleton->joints.length()*/ 10; i++){
-        qDebug() << "";
-        qDebug() << ">   " << resSkeleton->joints[i]->name << resSkeleton->joints[i]->ID;
-        resSkeleton->joints[i]->originalLocalTransform = Matrix<Derivable,1,3>(5,0,0);
-        resSkeleton->joints[i]->localTranslation = Matrix<Derivable,1,3>(3,4,0);
-
-        TraceVector(( resSkeleton->joints[i]->originalLocalTransform));
-        TraceVector(( resSkeleton->joints[i]->localTranslation));
-
-
-
-        Matrix<Derivable,4,4> R =
-                MakeDeriveTranslationMatrix(resSkeleton->joints[i]->originalLocalTransform, true).inverse()
-                //*
-                //MakeDeriveTranslationMatrix(resSkeleton->joints[i]->localTranslation, true)
-                ;
-        TraceMatrix(R);
-//        double b = acos(rotat(2,2).getValue());
-//        double a = asin(rotat(0,2).getValue() / ::sin(b));
-//        double c = asin(rotat(2,0).getValue() / ::sin(b));
-
-        double sy = sqrt(R(0,0).getValue() * R(0,0).getValue() + R(1,0).getValue() * R(1,0).getValue()), x,y,z;
-        bool singular = sy < 1e-6;
-
-        if (!singular){
-            x = atan2(R(2,1).getValue(), R(2,2).getValue());
-            y = atan2(-R(2,0).getValue(), sy);
-            z = atan2(R(1,0).getValue(), R(0,0).getValue());
-        }else{
-            x = atan2(R(1,2).getValue(), R(2,2).getValue());
-            y = atan2(-R(2,0).getValue(), sy);
-            z = 0;
-        }
-
-//        qDebug() << b/ M_PI * 180.0 << ::sin(b);
-        QVector3D ang(x,y,z);
-        ang = ang / M_PI * 180.0;
-        qDebug() << ang;
-
-//        Matrix<Derivable,1,4> tmp =
-//                MakeVector4From3(resSkeleton->joints[i]->originalLocalTransform, 1)
-//                * MakeDeriveRotationMatrix(-Matrix<Derivable,1,3>(ang.x(), ang.y(), ang.z()));
-//        TraceVector(Matrix<Derivable,1,3>(tmp(0,0), tmp(0,1), tmp(0,2)));
-    }
-
     return QString();
 }
 
@@ -616,7 +569,7 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
             //			P: "d|Z", "Number", "", "A",1
                     //QString newLine = "@@@@ For joint " + QString::number(rewriteAnimNodeJointIndex) + " " + savingRig.skeleton->joints[rewriteAnimNodeJointIndex]->name;
                     QString newLine = "\t\t\tP: \"d|"+ coords[2 - rewriteAnimNodes] +"\", \"Number\", \"\", \"A\","
-                            + QString::number(savingRig.skeleton->joints[rewriteAnimNodeJointIndex]->localTranslation(0, 2 - rewriteAnimNodes).getValue());
+                            + QString::number(savingRig.skeleton->joints[rewriteAnimNodeJointIndex]->localTranslationLoaded(0, 2 - rewriteAnimNodes).getValue());
                     stwrite << newLine << endl;
                 }else
                     stwrite << line << endl;
@@ -642,11 +595,11 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
                 if (writeType == 1){
                     // a LclTrans
                     newLine = "\t\t\tP: \"Lcl Translation\", \"Lcl Translation\", \"\", \"A+\",";
-                    newLine += DeriveVectorToString(savingRig.skeleton->joints[jointIndex]->localTranslation);
+                    newLine += DeriveVectorToString(savingRig.skeleton->joints[jointIndex]->localTranslationLoaded);
                     if (savingRig.skeleton->joints[jointIndex]->pater == NULL)
                         newLine = line;
-                    //qDebug() << "------" << line;
-                    //qDebug() << "++++++" << newLine;
+                    qDebug() << "--LCL-" << line;
+                    qDebug() << "++++++" << newLine;
                 }
 
                 if (writeType == 2){
@@ -665,6 +618,8 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
                         newLine = "\t\t\t\ta: " + DeriveMatrixToString(savingRig.skeleton->joints[needIndex]->bindMatrix * MakeDeriveTranslationMatrix( globCoordOfJoint, true)) /*+ "   " + savingRig.skeleton->joints[needIndex]->name*/ ;// + " bindpose";
                         //newLine += "   " + savingRig.skeleton->joints[needIndex]->AnimCurvesIDs[0];
                     }
+                    qDebug() << "--BND-" << line;
+                    qDebug() << "++++++" << newLine;
                 }
 
                 if (writeType == 3 || writeType == 4){
@@ -680,6 +635,9 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
                     newLine = "\t\t\t\ta: " + DeriveMatrixToString(MakeDeriveTranslationMatrix( globCoordOfJoint * isLink, true));//+ " cluster trans " + QString::number(jointIndex);
 
                     //qDebug() << savingRig.skeleton->joints[ jointIndex ]->name<< "       " << DeriveMatrixToString(MakeDeriveTranslationMatrix( globCoordOfJoint * isLink, true));
+
+                    qDebug() << "--CLS-" << line;
+                    qDebug() << "++++++" << newLine;
                 }
 
                 stwrite << newLine/* << "    << ! << "*/ << endl;
@@ -693,24 +651,11 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
         }
     }
 
-    for (int i = 0; i < savingRig.skeleton->joints.length(); i++){
-        qDebug() << "Joint" << i << "  " << savingRig.skeleton->joints[i]->ID;
-        Matrix<Derivable,1,3> globCoordOfJoint = savingRig.skeleton->joints[i]->currentTranslation + savingRig.skeleton->rootTransate + offset;
-        TraceVector(globCoordOfJoint);
-    }
+//    for (int i = 0; i < savingRig.skeleton->joints.length(); i++){
+//        qDebug() << "Joint" << i << "  " << savingRig.skeleton->joints[i]->ID;
+//        Matrix<Derivable,1,3> globCoordOfJoint = savingRig.skeleton->joints[i]->currentTranslation + savingRig.skeleton->rootTransate + offset;
+//        TraceVector(globCoordOfJoint);
+//    }
     qDebug() << "Successfully saved :3";
     return QString();
 }
-
-////qDebug() << isLink.getValue();
-////newLine = line + " " + QString::number();
-//Matrix<Derivable,1,3> globCoordOfJoint =
-//        (/*clusterUsingGuys[jointIndex]*/
-//         savingRig.skeleton->joints[jointIndex]->endCurrentTranslation
-//         + savingRig.skeleton->rootTransate
-//         + offset);
-////                for (int c = 0; c < 3; c++)
-////                    globCoordOfJoint(0,c) = globCoordOfJoint(0,c) +
-////globCoordOfJoint = globCoordOfJoint + Matrix<Derivable,1,3>(1,-1,0);
-
-////TraceMatrix(MakeDeriveTranslationMatrix( globCoordOfJoint * isLink, true));
