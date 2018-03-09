@@ -9,6 +9,9 @@
 #include "Derivable/derivable.h"
 #include "Derivable/dermatops.h"
 
+#include "Eigen/Dense"
+#include "cmath"
+
 using Eigen::Matrix;
 using namespace DerOperations;
 using namespace DerivableVectorMatrixes;
@@ -230,7 +233,7 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
                                            Derivable(QStringToFloat(currentParseSplited[currentParseSplited.length() - 1])));
                 // redirect it to new limbs
                 if (line.indexOf(" Translation") >= 0){
-                    lastJointCreated->currentTranslation = parsedVect;
+                    lastJointCreated->currentTranslation = lastJointCreated->originalLocalTransform = parsedVect;
                     saveIndexes << lineNumber;
                 }
                 if (line.indexOf(" Rotation") >= 0)
@@ -424,12 +427,49 @@ QString loaderFBX::loadModelFBX (QTextStream &textStream, Rig &loadedRig){
 
 
     Matrix<Derivable,1,3> offs = Matrix<Derivable,1,3>(meshOffset.x(), meshOffset.y(), meshOffset.z());
-    for (int i = 0; i < resSkeleton->joints.length(); i++){
-        qDebug() << "@@@@   " << resSkeleton->joints[i]->name;
-        Matrix<Derivable,1,3> res = (offs + resSkeleton->joints[i]->currentTranslation)*Derivable(-1);
-        //TraceMatrix(MakeDeriveTranslationMatrix( res, true));
-        //TraceVector(( res));
-        TraceMatrix( resSkeleton->joints[i]->bindMatrix * MakeDeriveTranslationMatrix( - res, true));
+    for (int i = 0; i < /*resSkeleton->joints.length()*/ 10; i++){
+        qDebug() << "";
+        qDebug() << ">   " << resSkeleton->joints[i]->name << resSkeleton->joints[i]->ID;
+        resSkeleton->joints[i]->originalLocalTransform = Matrix<Derivable,1,3>(5,0,0);
+        resSkeleton->joints[i]->localTranslation = Matrix<Derivable,1,3>(3,4,0);
+
+        TraceVector(( resSkeleton->joints[i]->originalLocalTransform));
+        TraceVector(( resSkeleton->joints[i]->localTranslation));
+
+
+
+        Matrix<Derivable,4,4> R =
+                MakeDeriveTranslationMatrix(resSkeleton->joints[i]->originalLocalTransform, true).inverse()
+                //*
+                //MakeDeriveTranslationMatrix(resSkeleton->joints[i]->localTranslation, true)
+                ;
+        TraceMatrix(R);
+//        double b = acos(rotat(2,2).getValue());
+//        double a = asin(rotat(0,2).getValue() / ::sin(b));
+//        double c = asin(rotat(2,0).getValue() / ::sin(b));
+
+        double sy = sqrt(R(0,0).getValue() * R(0,0).getValue() + R(1,0).getValue() * R(1,0).getValue()), x,y,z;
+        bool singular = sy < 1e-6;
+
+        if (!singular){
+            x = atan2(R(2,1).getValue(), R(2,2).getValue());
+            y = atan2(-R(2,0).getValue(), sy);
+            z = atan2(R(1,0).getValue(), R(0,0).getValue());
+        }else{
+            x = atan2(R(1,2).getValue(), R(2,2).getValue());
+            y = atan2(-R(2,0).getValue(), sy);
+            z = 0;
+        }
+
+//        qDebug() << b/ M_PI * 180.0 << ::sin(b);
+        QVector3D ang(x,y,z);
+        ang = ang / M_PI * 180.0;
+        qDebug() << ang;
+
+//        Matrix<Derivable,1,4> tmp =
+//                MakeVector4From3(resSkeleton->joints[i]->originalLocalTransform, 1)
+//                * MakeDeriveRotationMatrix(-Matrix<Derivable,1,3>(ang.x(), ang.y(), ang.z()));
+//        TraceVector(Matrix<Derivable,1,3>(tmp(0,0), tmp(0,1), tmp(0,2)));
     }
 
     return QString();

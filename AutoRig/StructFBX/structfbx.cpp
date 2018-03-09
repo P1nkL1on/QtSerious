@@ -17,6 +17,7 @@ Joint::Joint()
     currentRotation = Matrix<Derivable,1,3>();
     bindMatrix = SetDeriveMatrix();
     bindTransform = Matrix<Derivable,1,3>();
+
     localScale =  Matrix<Derivable,1,3>(1,1,1);
     AnimCurvesIDs = {"-","-","-"};
 }
