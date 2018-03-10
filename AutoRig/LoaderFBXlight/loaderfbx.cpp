@@ -628,16 +628,18 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
 
                     Derivable isLink = Derivable(((writeType - 3) * jointCount + jointIndex) % 2 * 2 - 1);
                     jointIndex =  ((writeType - 3) * jointCount + jointIndex) / 2;
+                    newLine = QString::number(jointIndex);
                     jointIndex = savingRig.skin->clusterAttends[jointIndex].jointIndex;
                     Matrix<Derivable,1,3> globCoordOfJoint = savingRig.skeleton->joints[ jointIndex ]->currentTranslation+ offset;
+                    newLine += "  " + QString::number(jointIndex);//savingRig.skeleton->joints[jointIndex]->name + " " + savingRig.skeleton->joints[jointIndex]->ID;
 
                     if (isLink.getValue() < 0)
                     {
-                        newLine = "\t\t\t\ta: " + DeriveMatrixToString(savingRig.skeleton->joints[jointIndex]->bindMatrix * MakeDeriveTranslationMatrix( globCoordOfJoint, true));
+                        newLine += "\t\t\t\ta: " + DeriveMatrixToString(savingRig.skeleton->joints[jointIndex]->bindMatrix * MakeDeriveTranslationMatrix( globCoordOfJoint, true));
                     }
                     else
                     {
-                        newLine = "\t\t\t\ta: "
+                        newLine += "\t\t\t\ta: "
                                 + DeriveMatrixToString(
                                     MakeDeriveTranslationMatrix( globCoordOfJoint * isLink, true));
                     }
@@ -646,7 +648,7 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
                     qDebug() << "++++++" << newLine;
                 }
 
-                stwrite << newLine/* << "    << ! << "*/ << endl;
+                stwrite << newLine << "    << ! << " << endl;
 
                 currentIndex++;
                 if (vertexAreWroten) {
@@ -657,7 +659,9 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
         }
     }
 
-//    for (int i = 0; i < savingRig.skeleton->joints.length(); i++){
+    for (int i = 0; i < savingRig.skeleton->joints.length(); i++)
+        qDebug() << i << savingRig.skin->clusterAttends[i].jointIndex;
+//    {
 //        qDebug() << "Joint" << i << "  " << savingRig.skeleton->joints[i]->ID;
 //        Matrix<Derivable,1,3> globCoordOfJoint = savingRig.skeleton->joints[i]->currentTranslation + savingRig.skeleton->rootTransate + offset;
 //        TraceVector(globCoordOfJoint);
