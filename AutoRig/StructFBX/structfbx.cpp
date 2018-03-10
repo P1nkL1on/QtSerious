@@ -88,7 +88,7 @@ AttendedCluster::AttendedCluster()
     vertexIndex = {};
     weights = {};
     boneBindCoord = SetDeriveMatrix();
-    jointIndex = 0;
+    jointIndex = -1;
 }
 
 AttendedCluster::AttendedCluster(Matrix<Derivable,4,4> bindMatrix, int JointIndex)
