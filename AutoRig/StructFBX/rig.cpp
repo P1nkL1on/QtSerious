@@ -169,45 +169,45 @@ QString Rig::ApplyDrawToCanvas(QPainter *painter, const QMatrix4x4 view, const Q
     }
     // draw a mf polygons
     // ..................................................................................................................................
-    Mesh* drawMesh = (bendedMesh == NULL)? bindMesh : bendedMesh;
+//    Mesh* drawMesh = (bendedMesh == NULL)? bindMesh : bendedMesh;
 
-    QVector<QPainterPath> polygonDrawArray;
-    QVector<QColor> polygonColorArray;
-    //QVector<float> distFromPolygonCentersToCamera;
+//    QVector<QPainterPath> polygonDrawArray;
+//    QVector<QColor> polygonColorArray;
+//    //QVector<float> distFromPolygonCentersToCamera;
 
-    for (int currentPolygon = 0; currentPolygon < drawMesh->polygonStartIndexes.length() - 1; currentPolygon++){
-        QPolygon poly;
+//    for (int currentPolygon = 0; currentPolygon < drawMesh->polygonStartIndexes.length() - 1; currentPolygon++){
+//        QPolygon poly;
 
-        QVector<int> selectedIndexes;
-        Matrix<Derivable, 1, 3> VertexInPolygonSumm = Matrix<Derivable, 1, 3>();
-        int totalVertexInPolygonCount = 0;
-        for (int selecInd = drawMesh->polygonStartIndexes[currentPolygon]; selecInd < drawMesh->polygonStartIndexes[currentPolygon + 1]; selecInd++){
-            totalVertexInPolygonCount ++;
-            VertexInPolygonSumm = VertexInPolygonSumm + drawMesh->vertexes[drawMesh->polygonIndexes[selecInd]];
-            selectedIndexes << drawMesh->polygonIndexes[selecInd];
+//        QVector<int> selectedIndexes;
+//        Matrix<Derivable, 1, 3> VertexInPolygonSumm = Matrix<Derivable, 1, 3>();
+//        int totalVertexInPolygonCount = 0;
+//        for (int selecInd = drawMesh->polygonStartIndexes[currentPolygon]; selecInd < drawMesh->polygonStartIndexes[currentPolygon + 1]; selecInd++){
+//            totalVertexInPolygonCount ++;
+//            VertexInPolygonSumm = VertexInPolygonSumm + drawMesh->vertexes[drawMesh->polygonIndexes[selecInd]];
+//            selectedIndexes << drawMesh->polygonIndexes[selecInd];
 
-            poly << ((drawMesh == bindMesh)? appliedToScreenCoords/*Bended*/[drawMesh->polygonIndexes[selecInd]]
-                     : appliedToScreenCoordsBended[drawMesh->polygonIndexes[selecInd]]);
-        }
-        //
-        //int colorIntenese = (int)(((double)currentPolygon * 254.0)/(bindMesh->polygonStartIndexes.length() - 1));
+//            poly << ((drawMesh == bindMesh)? appliedToScreenCoords/*Bended*/[drawMesh->polygonIndexes[selecInd]]
+//                     : appliedToScreenCoordsBended[drawMesh->polygonIndexes[selecInd]]);
+//        }
+//        //
+//        //int colorIntenese = (int)(((double)currentPolygon * 254.0)/(bindMesh->polygonStartIndexes.length() - 1));
 
-        QPainterPath newPolyg; newPolyg.addPolygon(poly);
-        polygonDrawArray << newPolyg;
-        polygonColorArray << modelColor;//(QColor(colorIntenese,colorIntenese,colorIntenese));
+//        QPainterPath newPolyg; newPolyg.addPolygon(poly);
+//        polygonDrawArray << newPolyg;
+//        polygonColorArray << modelColor;//(QColor(colorIntenese,colorIntenese,colorIntenese));
 
-        //distFromPolygonCentersToCamera << (QfromDer3( VertexInPolygonSumm )* (1.0 / totalVertexInPolygonCount)).distanceToPoint(*cameraCenter);
-    }
-    QBrush brush;
-    painter->setPen(QPen(conturColor));
+//        //distFromPolygonCentersToCamera << (QfromDer3( VertexInPolygonSumm )* (1.0 / totalVertexInPolygonCount)).distanceToPoint(*cameraCenter);
+//    }
+//    QBrush brush;
+//    painter->setPen(QPen(conturColor));
 
-    //QVector<int> needPolygonInds = GetSortedIndex(distFromPolygonCentersToCamera);
-    for (int cPath = 0, index = 0; cPath < polygonDrawArray.length(); cPath ++){
-        index =  cPath;//needPolygonInds[cPath];
-        brush = QBrush(polygonColorArray[index]);
-        painter->fillPath(polygonDrawArray[index], brush);
-        //painter->drawPath(polygonDrawArray[index]);
-    }
+//    //QVector<int> needPolygonInds = GetSortedIndex(distFromPolygonCentersToCamera);
+//    for (int cPath = 0, index = 0; cPath < polygonDrawArray.length(); cPath ++){
+//        index =  cPath;//needPolygonInds[cPath];
+//        brush = QBrush(polygonColorArray[index]);
+//        painter->fillPath(polygonDrawArray[index], brush);
+//        //painter->drawPath(polygonDrawArray[index]);
+//    }
     // ..................................................................................................................................
 
     if (skeleton == NULL)
