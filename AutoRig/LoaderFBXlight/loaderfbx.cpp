@@ -30,10 +30,10 @@ QString loaderFBX::loadModelFBXAdress(QString path, Rig &loadedRig)
     QString err = loadModelFBX(stream, loadedRig);
     //return error with file adress | return emptystring == success
     if (err.isEmpty())
-        qDebug() << "    @    " + path.remove(0,path.lastIndexOf('/') + 1) + " was loaded;";
+        qDebug() << "    @    7" + path.remove(0,path.lastIndexOf('/') + 1) + " was loaded;";
 
-    //loadedRig.bendedMesh = loadedRig.bindMesh;
-    //saveModelFBX(origPath, loadedRig);
+    loadedRig.bendedMesh = loadedRig.bindMesh;
+    saveModelFBX(origPath, loadedRig);
 
     return ((!err.isEmpty())? errMessage + ": " + err : QString());
 }
@@ -638,30 +638,20 @@ QString loaderFBX::saveModelFBX(QString path, Rig &savingRig)
                     newLine = line; //savingRig.skeleton->joints[jIndex]->name + "  " + savingRig.skeleton->joints[jIndex]->ID;
                     bool isLink = (wrotenCount - linesWroten)%2 != 0;
 
+                    Matrix<Derivable,1,3> globCoordOfJoint =
+                            savingRig.skeleton->joints[jIndex]->currentTranslation
+                            + offset;
+                    Matrix<Derivable,4,4> writeLink =
+                            savingRig.skeleton->joints[jIndex]->bindMatrix * MakeDeriveTranslationMatrix( globCoordOfJoint, true);
+
                     if (isLink){
-                        Matrix<Derivable,1,3> globCoordOfJoint =
-                                savingRig.skeleton->joints[jIndex]->currentTranslation
-                                + offset;
-                        newLine = "\t\t\t\ta: " + DeriveMatrixToString(savingRig.skeleton->joints[jIndex]->bindMatrix * MakeDeriveTranslationMatrix( globCoordOfJoint, true));
+                        newLine = "\t\t\t\ta: " + DeriveMatrixToString(writeLink);
+                    }else{
+                        writeLink = writeLink.inverse().eval();
+                        newLine = "\t\t\t\ta: " + DeriveMatrixToString(writeLink);
                     }
 
-//                    Derivable isLink = Derivable(((writeType - 3) * jointCount + jointIndex) % 2 * 2 - 1);
-//                    jointIndex =  ((writeType - 3) * jointCount + jointIndex) / 2;
-//                    newLine = QString::number(jointIndex);
-//                    jointIndex = savingRig.skin->clusterAttends[jointIndex].jointIndex;
-//                    Matrix<Derivable,1,3> globCoordOfJoint = savingRig.skeleton->joints[ jointIndex ]->currentTranslation+ offset;
-//                    newLine += "  " + QString::number(jointIndex);//savingRig.skeleton->joints[jointIndex]->name + " " + savingRig.skeleton->joints[jointIndex]->ID;
-
-//                    if (isLink.getValue() < 0)
-//                    {
-//                        newLine += "\t\t\t\ta: " + DeriveMatrixToString(savingRig.skeleton->joints[jointIndex]->bindMatrix * MakeDeriveTranslationMatrix( globCoordOfJoint, true));
-//                    }
-//                    else
-//                    {
-//                        newLine += "\t\t\t\ta: "
-//                                + DeriveMatrixToString(
-//                                    MakeDeriveTranslationMatrix( globCoordOfJoint * isLink, true));
-//                    }
+//
 
                     qDebug() << "--CLS-" << line;
                     qDebug() << "++++++" << newLine;
