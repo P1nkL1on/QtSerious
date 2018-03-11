@@ -59,8 +59,17 @@ void Joint::RecaulculateLocalTransformMatrix()
 
     if (pater != NULL)
          ScaleDeriveMatrix(localTransformMatrix,
-                           Matrix<Derivable,1,3>(Derivable(1) / pater->localScale(0,0), Derivable(1) / pater->localScale(0,1), Derivable(1) / pater->localScale(0,2)));
+                           Matrix<Derivable,1,3>(Derivable(1) / pater->localScale(0,0),
+                                                 Derivable(1) / pater->localScale(0,1),
+                                                 Derivable(1) / pater->localScale(0,2)));
     ScaleDeriveMatrix(localTransformMatrix, localScale);    // scale self
+
+//    if (pater != NULL)
+//        ScaleDeriveMatrix(localTransformMatrix, Matrix<Derivable,1,3>(Derivable(1) / pater->localScale(0,0),Derivable(1) / pater->localScale(0,0),Derivable(1) / pater->localScale(0,0)) );
+//    ScaleDeriveMatrix(localTransformMatrix, Matrix<Derivable,1,3>(localScale(0,0),localScale(0,0),localScale(0,0)));
+//    localScale(0,1) = localScale(0,2) = localScale(0,0);
+
+
     TranslateDeriveMatrix(localTransformMatrix, localTranslation);
     RotateDeriveMatrix(localTransformMatrix, currentRotation2);
 

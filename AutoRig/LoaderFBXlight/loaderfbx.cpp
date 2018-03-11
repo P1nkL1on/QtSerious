@@ -32,8 +32,8 @@ QString loaderFBX::loadModelFBXAdress(QString path, Rig &loadedRig)
     if (err.isEmpty())
         qDebug() << "    @    7" + path.remove(0,path.lastIndexOf('/') + 1) + " was loaded;";
 
-    loadedRig.bendedMesh = loadedRig.bindMesh;
-    saveModelFBX(origPath, loadedRig);
+    //loadedRig.bendedMesh = loadedRig.bindMesh;
+    //saveModelFBX(origPath, loadedRig);
 
     return ((!err.isEmpty())? errMessage + ": " + err : QString());
 }
