@@ -1,0 +1,4 @@
+now bindpose matrix == accrods to cluster tranform link
+	cluster tranform has some different angle of matrix
+	
+	bind pose are also another
