@@ -25,11 +25,9 @@ QVector<float> TestAutoRig::BendSkeletonIntoMesh(bool isGaussNewton)
     for (int c = 3 + bendingRig->skeleton->joints.length() * 3; c < parameters.length(); c++)
         parameters[c] = 1;
 
-    QVector<float> resParams = OptimiseMethods::GaussNewtonMethod(loss, callback, parameters, eps, maxSteps, !isGaussNewton);
-    qDebug() << "Bend success;";
-//    for (int c = 3 +resParams.length() * 3; c < resParams.length(); c+= 3)
-//        resParams[c + 1] = resParams[c + 2] = resParams[c];
-    qDebug() << resParams;
+    QVector<float> resParams =
+            OptimiseMethods::GaussNewtonMethod(loss, callback, parameters, eps, maxSteps, !isGaussNewton);
+
     return resParams;
 }
 

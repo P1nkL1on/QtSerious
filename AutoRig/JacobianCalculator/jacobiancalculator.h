@@ -88,10 +88,11 @@ namespace JacobianCalculator {
     }
 
     template <typename Function>
-    bool CalculateForFunction (QVector<float> currentParams, Matrix<float, -1, -1>& resJacobian, Matrix<float,-1,-1>& F, Function &loss, int times){
-        //return CalculateNumerical(currentParams, resJacobian, F, loss);
+    bool CalculateForFunction (QVector<float> currentParams,
+                               Matrix<float, -1, -1>& resJacobian,
+                               Matrix<float,-1,-1>& F,
+                               Function &loss){
         QVector<Derivable> derCurParams; derCurParams.clear();
-        //= currentParams;
         for (int i = 0; i < currentParams.length(); i++)
             derCurParams << Derivable(currentParams[i]);
 
@@ -102,30 +103,19 @@ namespace JacobianCalculator {
 
         resJacobian = Matrix<float,-1,-1>(vertCount, angCount);
         F = Matrix<float,-1,-1>(vertCount, 1);
-        //Eigen::MatrixXd F = Eigen::MatrixXd(vertCount, 1);
         jacobColumn = loss(derCurParams);
 
         for (int i = 0; i < jacobColumn.length(); i++)
             F(i,0) = .5 * jacobColumn[i].getValue();
 
-        for (int curParam = 0; curParam < ((times > 0)? times : derCurParams.length()); curParam ++)
+        for (int curParam = 0; curParam < derCurParams.length(); curParam ++)
         {
-            //qDebug() << curParam << "/" << derCurParams.length();
-            //if (curParam < ((derCurParams.length() - 3) / 4 * 3 + 3)){
-                derCurParams[curParam].setPrValue(1);
-                jacobColumn = loss(derCurParams);
-                for (int i = 0; i < jacobColumn.length(); i++)
-                    resJacobian(i, curParam) = jacobColumn[i].getProiz();
-                derCurParams[curParam].setPrValue(0);
-            //}
+            derCurParams[curParam].setPrValue(1);
+            jacobColumn = loss(derCurParams);
+            for (int i = 0; i < jacobColumn.length(); i++)
+                resJacobian(i, curParam) = jacobColumn[i].getDer();
+            derCurParams[curParam].setPrValue(0);
         }
-//        int scales = (derCurParams.length() - 3) / 4;
-//        Eigen::VectorXf lastCol = resJacobian.col(resJacobian.cols() - 1);
-//        for (int i = scales - 2; i >= 0; i--){
-//            int Ind = 3 + scales * 3 + i;
-//            resJacobian.col(Ind) -= lastCol * 2;
-//            lastCol += resJacobian.col(Ind);
-//        }
         return true;
     }
 

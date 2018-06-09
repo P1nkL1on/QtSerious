@@ -36,45 +36,43 @@ void Rig::BendSkinToSkeleton()
     if (!skeleton->CalculateGlobalCoordForEachJointMatrix())
         return;
 
-    //skin->GenerateProizAttends(bindMesh->vertexes, skeleton->getJointsGlobalTranslationsForSkin());
-
     Mesh* newMesh = new Mesh();
     newMesh->polygonIndexes = bindMesh->polygonIndexes;
     newMesh->polygonStartIndexes = bindMesh->polygonStartIndexes;
 
-    //int vertexesTransformed = 0;
-    //QVector<int> failedIndexes;
-
     QVector<Matrix<Derivable,4,4>> jointsTransMatrixes;
     for (int i = 0; i < skeleton->joints.length(); i++)
-        jointsTransMatrixes << MakeDeriveRotationMatrix(skeleton->joints[i]->currentRotation) * skeleton->joints[i]->globalTransformMatrix;
+        jointsTransMatrixes <<
+            MakeDeriveRotationMatrix(skeleton->joints[i]->currentRotation)
+                               * skeleton->joints[i]->globalTransformMatrix;
     QVector<Matrix<Derivable,1,3>> finalVertexes;
-    QVector<float> summWeightes;
-    for (int i = 0; i < bindMesh->vertexes.length(); i++){
+    for (int i = 0; i < bindMesh->vertexes.length(); i++)
         finalVertexes << Matrix<Derivable,1,3> (0,0,0);
-        summWeightes << 0;
-    }
+
 
     for (int clusterInd = 0; clusterInd < skin->clusterAttends.length(); clusterInd++){
         int jointInd = skin->clusterAttends[clusterInd].jointIndex;
-        //
-        for (int vertexInCluster = 0; vertexInCluster < skin->clusterAttends[clusterInd].vertexIndex.length(); vertexInCluster++){
-            // vertex index
+
+        for (int vertexInCluster = 0;
+             vertexInCluster < skin->clusterAttends[clusterInd].vertexIndex.length();
+             vertexInCluster++)
+        {
             int currentVertexInd = skin->clusterAttends[clusterInd].vertexIndex[vertexInCluster];
+
             Matrix<Derivable,1,4> tmp =
                     MakeVector4From3(bindMesh->vertexes[currentVertexInd], Derivable(1))
                     * skin->clusterAttends[clusterInd].boneBindCoord
                     * jointsTransMatrixes[jointInd];
+
             float weight = skin->clusterAttends[clusterInd].weights[vertexInCluster];
-            finalVertexes[currentVertexInd] = finalVertexes[currentVertexInd] + Matrix<Derivable,1,3>(tmp(0,0) * weight,tmp(0,1) * weight,tmp(0,2) * weight);
-            summWeightes[currentVertexInd] += weight;
-            //weightes << skin->clusterAttends[clusterInd].weights[vertexInClusterIndex];
+
+            finalVertexes[currentVertexInd] =
+                    finalVertexes[currentVertexInd]
+                    + Matrix<Derivable,1,3>(tmp(0,0) * weight,tmp(0,1) * weight,tmp(0,2) * weight);
         }
     }
 
-    //qDebug() << summWeightes;
     newMesh->vertexes = finalVertexes;
-
 
     if (bendedMesh != NULL)
         delete bendedMesh;

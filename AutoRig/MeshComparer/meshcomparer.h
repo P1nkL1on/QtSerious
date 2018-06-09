@@ -43,9 +43,21 @@ public:
             newRotations << Matrix<Derivable,1,3>(params[i * 3], params[i * 3 + 1], params[i * 3 + 2]);
         for (int i = 1 + currentRig->skeleton->joints.length(); i * 3 < params.length(); i++)
             newScales << Matrix<Derivable,1,3>(params[i * 3], params[i * 3 + 1], params[i * 3 + 2]);
-        //qDebug() << "rot count " << newRotations.length() << "    scal count" << newScales.length();
         return true;
     }
+    float operator()(const QVector<float> params) const
+    {
+        QVector<Derivable> derParams; derParams.clear();
+        for (int i = 0; i < params.length(); i++)
+            derParams << Derivable(params[i]);
+        QVector<Matrix<Derivable,1,3>> newRotations;
+        QVector<Matrix<Derivable,1,3>> newScales;
+        Matrix<Derivable,1,3> rootTrans;
+
+        DistributeToParams(derParams, rootTrans, newRotations, newScales);
+        return currentRig->CompareWithMeshOnRotates(rootTrans, newRotations, newScales, targetMesh).getValue();
+    }
+
     MeshComparer(Rig* rig, Mesh* mesh): currentRig(rig), targetMesh(mesh)
     {
         qDebug() << "Distance calculkator aka LossFunction contructed!";
@@ -61,18 +73,7 @@ public:
         DistributeToParams(params, rootTrans, newRotations, newScales);
         return currentRig->CompareWithMeshOnRotatesCoord(rootTrans, newRotations, newScales, targetMesh);
     }
-    float operator()(const QVector<float> params) const
-    {
-        QVector<Derivable> derParams; derParams.clear();
-        for (int i = 0; i < params.length(); i++)
-            derParams << Derivable(params[i]);
-        QVector<Matrix<Derivable,1,3>> newRotations;
-        QVector<Matrix<Derivable,1,3>> newScales;
-        Matrix<Derivable,1,3> rootTrans;
 
-        DistributeToParams(derParams, rootTrans, newRotations, newScales);
-        return currentRig->CompareWithMeshOnRotates(rootTrans, newRotations, newScales, targetMesh).getValue();
-    }
 
 };
 
