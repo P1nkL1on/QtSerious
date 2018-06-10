@@ -113,7 +113,7 @@ namespace JacobianCalculator {
             derCurParams[curParam].setPrValue(1);
             jacobColumn = loss(derCurParams);
             for (int i = 0; i < jacobColumn.length(); i++)
-                resJacobian(i, curParam) = jacobColumn[i].getDer();
+                resJacobian(i, curParam) = jacobColumn[i].getProiz();
             derCurParams[curParam].setPrValue(0);
         }
         return true;

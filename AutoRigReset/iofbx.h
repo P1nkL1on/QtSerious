@@ -11,6 +11,12 @@ static QVector<QString> parseBlockNames = {"Geometry Mesh Vertices",
                                            "Object Model Limb Node info",
                                            "Object Pose Node Id",
                                            "Object Pose Node Bind Matrix",
+                                           "Cluster info",
+//                                           "Cluster Indexes",
+//                                           "Cluster Weightes",
+//                                           "Cluster Transform",
+//                                           "Cluster Link Transform",
+                                           "Connection",
                                            "???"};
 enum class ParseType
 {
@@ -20,6 +26,20 @@ enum class ParseType
     FbxObjectModelLimbNodeProperty = 2,
     FbxObjectPoseNodeID = 3,
     FbxObjectPoseNodeMatrix = 4,
+    FbxObjectDeformerCluster = 5,
+//    FbxObjectDeformerClusterIndexes = 6,
+//    FbxObjectDeformerClusterWeightes = 7,
+//    FbxObjectDeformerClusterTransform = 8,
+//    FbxObjectDeformerClusterLinkTransform = 9
+    FbxConnection = 6,
+
+};
+enum class ConnectionType
+{
+    None = -1,
+    BoneToBone = 0,
+    ModelToSubDeformer = 1,
+    Other = 2
 };
 
 class FbxNode
@@ -33,6 +53,7 @@ public:
     void setNameAndID (const QString name, const QString ID);
     bool hasNameAndID () const;
     virtual void traceInfo() const;
+    virtual bool isEmpty() const;
 protected:
     QString id;
     QString name;
@@ -70,6 +91,58 @@ private:
     QVector<double> transformMatrixArray;
 };
 
+class FbxSubDeformerCluster : public FbxNode
+{
+public:
+    FbxSubDeformerCluster();
+    QString parse(QStringList S, const int param) override;
+    bool isEmpty() const override;
+private:
+    QVector<int> indexes;
+    QVector<double> weights;
+    QVector<double> transformMatrix;
+    QVector<double> transformLinkMatrix;
+};
+
+class FbxConnection : public FbxNode
+{
+public:
+    FbxConnection();
+    QString parse(QStringList S, const int param) override;
+    QString getIdLeft() const;
+    QString getIdRight() const;
+    ConnectionType getType() const;
+    bool setIds (const QString left, const QString right);
+    void setType(const ConnectionType &value);
+private:
+    QString idLeft;
+    QString idRight;
+    ConnectionType type;
+};
+
+class FbxParsedContainer
+{
+public:
+    FbxParsedContainer(FbxGeometryMesh* mesh,
+                       QVector<FbxModelJoint>* joints,
+                       QVector<FbxPoseNode>* posenodes,
+                       QVector<FbxSubDeformerCluster>* clusters,
+                       QVector<FbxConnection>* connections);
+    ~FbxParsedContainer();
+    FbxGeometryMesh *getMesh() const;
+    QVector<FbxModelJoint> *getJoints() const;
+    QVector<FbxPoseNode> *getPosenodes() const;
+    QVector<FbxSubDeformerCluster> *getClusters() const;
+    QVector<FbxConnection> *getConnections() const;
+    void traceInfo () const;
+private:
+    FbxGeometryMesh* mesh;
+    QVector<FbxModelJoint>* joints;
+    QVector<FbxPoseNode>* posenodes;
+    QVector<FbxSubDeformerCluster>* clusters;
+    QVector<FbxConnection>* connections;
+};
+
 // _-_-_-_-_-_-_-_-_-_-PARSER-_-_-_-_-_-_-_-_-_-_-_-_
 
 
@@ -78,7 +151,7 @@ ParseType pushHeader(const QString fromLine);
 int indexOfHeaders (const QVector<QString> tags);
 
 // the method of loading
-QString loadFromPath(const QString path);
+FbxParsedContainer *loadFromPath(const QString path, QString &error);
 void findIdAndNameInLine (const QString line, QString& id, QString& name, QString &subName);
 }
 
