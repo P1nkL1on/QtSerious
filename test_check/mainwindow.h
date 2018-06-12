@@ -3,7 +3,6 @@
 
 #include <QMainWindow>
 
-
 namespace Ui {
 class MainWindow;
 }
@@ -15,17 +14,10 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
-private slots:
-    void on_actionLoad_Rig_triggered();
-    void on_actionLoad_Guad_triggered();
-    void on_actionEnable_debug_info_triggered();
+    void runTests();
 
 private:
     Ui::MainWindow *ui;
-    void loadRigByAdress (QString path);
-    void loadRigGuardYelling ();
-    void runTests();
 };
 
 #endif // MAINWINDOW_H

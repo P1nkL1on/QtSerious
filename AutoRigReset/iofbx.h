@@ -6,6 +6,9 @@
 
 namespace IOfbx {
 
+static bool showWarningsAndErrors = false;
+void turnOnWarnings();
+
 static QVector<QString> parseBlockNames = {"Geometry Mesh Vertices",
                                            "Geometry Mesh Polygon Indexes",
                                            "Object Model Limb Node info",
@@ -123,6 +126,7 @@ private:
 class FbxParsedContainer
 {
 public:
+    FbxParsedContainer();
     FbxParsedContainer(FbxGeometryMesh* mesh,
                        QVector<FbxModelJoint>* joints,
                        QVector<FbxPoseNode>* posenodes,
@@ -153,6 +157,7 @@ int indexOfHeaders (const QVector<QString> tags);
 // the method of loading
 FbxParsedContainer *loadFromPath(const QString path, QString &error);
 void findIdAndNameInLine (const QString line, QString& id, QString& name, QString &subName);
+void traceMessage (const QString mess);
 }
 
 #endif // IOFBX_H

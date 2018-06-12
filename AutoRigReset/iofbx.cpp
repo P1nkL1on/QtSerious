@@ -36,7 +36,7 @@ QString IOfbx::FbxGeometryMesh::parse(QStringList S, const int param)
     }
     if (!error.isEmpty())
         return error;
-    qDebug() << QString("v   Success parsed geometry mesh values;");
+    traceMessage (QString("v   Success parsed geometry mesh values;"));
     return error;
 }
 QString IOfbx::FbxModelJoint::parse(QStringList S, const int param)
@@ -56,7 +56,7 @@ QString IOfbx::FbxModelJoint::parse(QStringList S, const int param)
                 this->localScaling = values;
         }
     }
-    qDebug() << QString("v   Success parsed joint " + this->name);
+    traceMessage (QString("v   Success parsed joint " + this->name));
     return QString();
 }
 
@@ -76,7 +76,7 @@ QString IOfbx::FbxPoseNode::parse(QStringList S, const int param)
                 return "Error in parsing 16 values in matrix of posenode, error in line: " + S[i] + "; " + error;
         }
     }
-    qDebug() << QString("v   Success parsed posenode " + this->id);
+    traceMessage (QString("v   Success parsed posenode " + this->id));
     return QString();
 }
 
@@ -104,7 +104,16 @@ QString IOfbx::FbxSubDeformerCluster::parse(QStringList S, const int param)
                 transformLinkMatrix = parsed;
         }
     }
-    qDebug() << QString("v   Success parsed subdeformer " + this->id);
+    if (transformMatrix.length() > 0 && transformMatrix.length() < 16)
+        error = "Incorrrect transform matrix vector size: " + QString::number(transformMatrix.length()) + ", not 16;";
+
+    if (transformLinkMatrix.length() > 0 && transformLinkMatrix.length() < 16)
+        error = "Incorrrect link transform matrix vector size: " + QString::number(transformLinkMatrix.length()) + ", not 16;";
+
+    if (!error.isEmpty())
+        return "Error in parsing cluster: " + error;
+
+    traceMessage (QString("v   Success parsed subdeformer " + this->id));
     return QString();
 }
 
@@ -144,6 +153,7 @@ IOfbx::FbxParsedContainer* IOfbx::loadFromPath(const QString path,  QString& err
 
     // read a file line by line
     QString line = "";
+    int lineNumber = 0;
     QString conLine = "";
     QString nodeId = "noneID";
     QString nodeName = "unknown";
@@ -153,6 +163,9 @@ IOfbx::FbxParsedContainer* IOfbx::loadFromPath(const QString path,  QString& err
     ParseType lastParsingType = ParseType::None;
 
     while (!textStream.atEnd()){
+        ++lineNumber;
+        error = "( line "+QString::number(lineNumber)+" ) ";    // adress of exception in case of fire
+
         line = textStream.readLine();
         ParseType detectedTypeHeader = pushHeader(line);
 
@@ -170,9 +183,9 @@ IOfbx::FbxParsedContainer* IOfbx::loadFromPath(const QString path,  QString& err
             // trace an info of name of parsed block
             int lpt = (int)lastParsingType;
             if (lpt >= 0)
-                qDebug() << "v   Success: "
+                traceMessage ( "v   Success: "
                             + ((lpt < parseBlockNames.length())? parseBlockNames[lpt] : "???")
-                            + " buffer ( " + QString::number(nodeBuffer.length()) + " lines ) read;";
+                            + " buffer ( " + QString::number(nodeBuffer.length()) + " lines ) read;");
 
             // then just finished to
             QString err = QString();
@@ -184,12 +197,12 @@ IOfbx::FbxParsedContainer* IOfbx::loadFromPath(const QString path,  QString& err
                         // call a parser of mesh
                         err = fbxMesh->parse(nodeBuffer, 0);
                         if (!err.isEmpty())
-                        {error = "x   Error in parsing a mesh vertices: " + err; return nullptr;}
+                        {error += "x   Error in parsing a mesh vertices: " + err; return nullptr;}
                         break;
                     case ParseType::FbxGeometryMeshPolygonIndexes:
                         err = fbxMesh->parse(nodeBuffer,1);
                         if (!err.isEmpty())
-                        {error = "x   Error in parsing a mesh polygon idnexes: " + err; return nullptr;}
+                        {error += "x   Error in parsing a mesh polygon idnexes: " + err; return nullptr;}
                         break;
                     case ParseType::FbxObjectModelLimbNodeProperty:
                         if (!fbxJoints->last().hasNameAndID())
@@ -198,13 +211,13 @@ IOfbx::FbxParsedContainer* IOfbx::loadFromPath(const QString path,  QString& err
                         fbxJoints->last().addSubName(nodeSubName);
 
                         if (!err.isEmpty())
-                        {error = "x   Error in parsing a joint: " + err; return nullptr;}
+                        {error += "x   Error in parsing a joint: " + err; return nullptr;}
                         fbxJoints->append(FbxModelJoint());
                         break;
                     case ParseType::FbxObjectPoseNodeID:
                         err = fbxPoseNodes->last().parse(nodeBuffer, 0);
                         if (!err.isEmpty())
-                        {error = "x   Error in parsing a posenode: " + err; return nullptr;}
+                        {error += "x   Error in parsing a posenode: " + err; return nullptr;}
                         fbxPoseNodes->append(FbxPoseNode());
                         break;
                     case ParseType::FbxObjectDeformerCluster:
@@ -213,7 +226,7 @@ IOfbx::FbxParsedContainer* IOfbx::loadFromPath(const QString path,  QString& err
                         err = fbxClusters->last().parse(nodeBuffer, 0);
 
                         if (!err.isEmpty())
-                        {error = "x   Error in parsing a subdeformer cluster: " + err; return nullptr;}
+                        {error += "x   Error in parsing a subdeformer cluster: " + err; return nullptr;}
                         fbxClusters->append(FbxSubDeformerCluster());
                         break;
                     case ParseType::FbxConnection:
@@ -227,7 +240,7 @@ IOfbx::FbxParsedContainer* IOfbx::loadFromPath(const QString path,  QString& err
                                 fbxConnections->append(FbxConnection());
                                 err = fbxConnections->last().parse(maybeConnection, 0);
                                 if (!err.isEmpty())
-                                {error = "x   Error in parsing connection: " + err; return nullptr;}
+                                {error += "x   Error in parsing connection: " + err; return nullptr;}
                                 maybeConnection.clear();
                             }
                         }
@@ -243,13 +256,23 @@ IOfbx::FbxParsedContainer* IOfbx::loadFromPath(const QString path,  QString& err
         lastParsingType = detectedTypeHeader;
     }
     // post makes
+    error = "";
     fbxJoints->removeAt(fbxJoints->length() - 1);
     fbxPoseNodes->removeAt(fbxPoseNodes->length() - 1);
     fbxClusters->removeAt(fbxClusters->length() - 1);
-    if (fbxClusters[0].isEmpty())
+    if (fbxClusters->length() > 0 && fbxClusters[0].isEmpty())
         fbxClusters->remove(0,1);
+
+    if (fbxJoints->length() == 0 && fbxPoseNodes->length() == 0 && fbxClusters->length() == 0 && fbxConnections->length() == 0){
+        if (fbxMesh->hasNameAndID())
+        {error = "x   File contains only mesh!"; return nullptr;}
+        else
+        {error = "x   File does not contain any rigs!"; return nullptr;}
+    }
+
+
     // v   Success and exit
-    qDebug() << "v   File was succesfully loaded : " + fileName;
+    traceMessage ( "!v   File was succesfully loaded : " + fileName);
     error = "";
 
     return new FbxParsedContainer(fbxMesh, fbxJoints, fbxPoseNodes, fbxClusters, fbxConnections);
@@ -261,7 +284,7 @@ void TracePath (const QVector<QString> pathSt){
     QString res = "";
     for (int i = 0; i < pathSt.length(); i++)
         res += pathSt[i] + " : ";
-    qDebug() << res;
+    IOfbx::traceMessage (res);
 }
 IOfbx::ParseType IOfbx::pushHeader(const QString fromLine)
 {
@@ -319,12 +342,12 @@ int IOfbx::indexOfHeaders(const QVector<QString> tags)
 template<typename T>
 QVector<T> IOfbx::FbxNode::parseFbxArray(QStringList S, QString &error)
 {
-    qDebug() << QString("o   Message: Called array parser");
+    traceMessage (QString("o   Message: Called array parser"));
     error = QString();
     QVector<T> readenNumbers = QVector<T>();
 
     if (S[0].indexOf("a: ") < 0)
-        qDebug() << "+   Warning: array parser is using for non-array value.";
+        traceMessage ("+   Warning: array parser is using for non-array value.");
 
     for (int lineIndex = 0; lineIndex < S.length(); lineIndex++){
         S[lineIndex] = S[lineIndex].trimmed();                                  // remove tabs
@@ -337,8 +360,8 @@ QVector<T> IOfbx::FbxNode::parseFbxArray(QStringList S, QString &error)
         for (int valInd = 0; valInd < fromLine.length(); valInd++)
             readenNumbers << fromLine[valInd];
     }
-    qDebug() << "v   Success: array parser read "
-                +QString::number( readenNumbers.length()) + " values;";
+    traceMessage ( "v   Success: array parser read "
+                +QString::number( readenNumbers.length()) + " values;");
     return readenNumbers;
 }
 
@@ -392,7 +415,7 @@ bool IOfbx::FbxNode::hasNameAndID() const
 
 void IOfbx::FbxNode::traceInfo() const
 {
-    qDebug() << "Name: " + name + ";   ID: " + id + ";";
+    traceMessage ( "Name: " + name + ";   ID: " + id + ";");
 }
 
 bool IOfbx::FbxNode::isEmpty() const
@@ -477,7 +500,7 @@ QString IOfbx::FbxConnection::parse(QStringList S, const int param)
     QStringList ids = S[1].split(',');
     if (names.length() != 2 || ids.length() < 3){
         for (int i = 0; i < S.length(); i++)
-            qDebug() << S[i];
+            traceMessage ( S[i]);
         return "Unusuall connection format!";
     }
     idLeft = ids[1];
@@ -519,6 +542,15 @@ void IOfbx::FbxConnection::setType(const IOfbx::ConnectionType &value)
     type = value;
 }
 
+IOfbx::FbxParsedContainer::FbxParsedContainer()
+{
+    this->mesh = nullptr;
+    this->joints = nullptr;
+    this->posenodes = nullptr;
+    this->clusters = nullptr;
+    this->connections = nullptr;
+}
+
 IOfbx::FbxParsedContainer::FbxParsedContainer(IOfbx::FbxGeometryMesh *mesh,
                                               QVector<IOfbx::FbxModelJoint> *joints,
                                               QVector<IOfbx::FbxPoseNode> *posenodes,
@@ -534,11 +566,16 @@ IOfbx::FbxParsedContainer::FbxParsedContainer(IOfbx::FbxGeometryMesh *mesh,
 
 IOfbx::FbxParsedContainer::~FbxParsedContainer()
 {
-    delete mesh;
-    delete joints;
-    delete posenodes;
-    delete clusters;
-    delete connections;
+    if (mesh != nullptr)
+        delete mesh;
+    if (joints != nullptr)
+        delete joints;
+    if (posenodes != nullptr)
+        delete posenodes;
+    if (clusters != nullptr)
+        delete clusters;
+    if (connections != nullptr)
+        delete connections;
 }
 
 QVector<IOfbx::FbxConnection> *IOfbx::FbxParsedContainer::getConnections() const
@@ -549,10 +586,10 @@ QVector<IOfbx::FbxConnection> *IOfbx::FbxParsedContainer::getConnections() const
 void IOfbx::FbxParsedContainer::traceInfo() const
 {
     mesh->traceInfo();
-    qDebug() << "Loaded joints: " << joints->length();
-    qDebug() << "Loaded posenodes: " << posenodes->length();
-    qDebug() << "Loaded clusters: " << clusters->length();
-    qDebug() << "Loaded connections: " << connections->length();
+    traceMessage ( "!Loaded joints: " + QString::number(joints->length()));
+    traceMessage ( "!Loaded posenodes: " +  QString::number(posenodes->length()));
+    traceMessage ( "!Loaded clusters: " +  QString::number(clusters->length()));
+    traceMessage ( "!Loaded connections: " +  QString::number(connections->length()));
 }
 
 QVector<IOfbx::FbxSubDeformerCluster> *IOfbx::FbxParsedContainer::getClusters() const
@@ -573,4 +610,15 @@ QVector<IOfbx::FbxModelJoint> *IOfbx::FbxParsedContainer::getJoints() const
 IOfbx::FbxGeometryMesh *IOfbx::FbxParsedContainer::getMesh() const
 {
     return mesh;
+}
+
+void IOfbx::traceMessage(const QString mess)
+{
+    if (IOfbx::showWarningsAndErrors || mess.indexOf('!') == 0)
+        qDebug() << mess;
+}
+
+void IOfbx::turnOnWarnings()
+{
+    showWarningsAndErrors = true;
 }

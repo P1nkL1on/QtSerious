@@ -3,8 +3,8 @@
 
 
 #include "QFileDialog"
-#include "iofbx.h"
 #include "QDebug"
+#include "iofbxtests.h"
 
 using namespace IOfbx;
 
@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    this->runTests();
     ui->setupUi(this);
 }
 
@@ -23,20 +24,37 @@ FbxParsedContainer* parsed = nullptr;
 
 void MainWindow::on_actionLoad_Rig_triggered()
 {
+    loadRigByAdress(QFileDialog::getOpenFileName(this, "Load Rig", "@/../Models/FBX/", "FBX files (*.FBX)"));
+}
+
+void MainWindow::on_actionLoad_Guad_triggered()
+{
+    loadRigGuardYelling();
+}
+
+void MainWindow::on_actionEnable_debug_info_triggered()
+{
+    IOfbx::turnOnWarnings ();
+    qDebug() << "Warning and erros tracing is ON;";
+}
+
+void MainWindow::loadRigByAdress(QString path)
+{
     QString err = "";
-    parsed = loadFromPath(QFileDialog::getOpenFileName(this, "Load Rig", "@/../Models/FBX/", "FBX files (*.FBX)"), err);
+    parsed = loadFromPath(path, err);
     if (!err.isEmpty())
         qDebug() << err;
     else
         parsed->traceInfo();
 }
 
-void MainWindow::on_actionLoad_Guad_triggered()
+void MainWindow::loadRigGuardYelling()
 {
-    QString err = "";
-    parsed = loadFromPath("D:/QT-serious/Models/FBX/!guard yelling exported.FBX", err);
-    if (!err.isEmpty())
-        qDebug() << err;
-    else
-        parsed->traceInfo();
+    loadRigByAdress("D:/QT-serious/Models/FBX/!guard yelling exported.FBX");
+}
+
+void MainWindow::runTests()
+{
+    IOfbx::IOfbxTests fbxTests;
+    QTest::qExec(&fbxTests);
 }

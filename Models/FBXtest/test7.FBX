@@ -1,0 +1,99 @@
+
+
+
+Objects:  {
+
+	Geometry: 1111, "Geometry::", "Mesh" {
+		Vertices: *9 {
+			a: 5.766,8.999,10.222,-0.444,0.0000000001,-0.000000001,
+			1.0222,15,11
+		}
+		PolygonVertexIndex: *3 {
+			a: 0,1,-1
+		}
+	}
+
+	Model: 15, "Model::FirstBone", "LimbNode" {
+		Properties70:  {
+			P: "Lcl Translation", "Lcl Translation", "", "A",3.83023834228516,-0.0980415344238281,0.0583972930908203
+			P: "Lcl Rotation", "Lcl Rotation", "", "A+",0.0631501791164892,0.19745114660924,-10.2607178280316
+			P: "Lcl Scaling", "Lcl Scaling", "", "A",0.999999940395355,1.00000011920929,1
+		}
+	}
+	Model: 16, "Model::SecondBone", "LimbNode" {
+		Properties70:  {
+			P: "Lcl Translation", "Lcl Translation", "", "A",6.27397918701172,-3.2070198059082,3.85941123962402
+			P: "Lcl Rotation", "Lcl Rotation", "", "A+",10.6959490904312,10.7092587084808,7.90711230736104
+			P: "Lcl Scaling", "Lcl Scaling", "", "A",1.00000023841858,1,1.00000023841858
+		}
+	}
+	Model: 17, , "Model::Mesh", "Mesh" {
+		Properties70:  {
+			P: "Lcl Translation", "Lcl Translation", "", "A",5.80909729003906,-3.35383605957031,3.35390853881836
+			P: "Lcl Rotation", "Lcl Rotation", "", "A+",2.37425866781515,11.0297852857742,3.29606808537293
+		}
+	}
+	Pose: а, "Pose::BIND_POSES", "BindPose" {
+		Type: "BindPose"
+		Version: 100
+		NbPoseNodes: 3
+		PoseNode:  {
+			Node: 15
+			Matrix: *16 {
+				a: 0.393700778484344,0,0,0,0,0.393700778484344,1.7209208280633e-008,0,0
+			} 
+		}
+		PoseNode:  {
+			Node: 16
+			Matrix: *16 {
+				a: 0.393700778484344,0,0,0,0,0.393700778484344,1.7209208280633e-008,0,0,-1.7209208280633e-008
+			} 
+		}
+		PoseNode:  {
+			Node: 17
+			Matrix: *16 {
+				a: 0.393700778484344,0,0,0,0,0.393700778484344,1.7209208280633e-008,0,0,-1.7209208280633e-008,0.393700778484344,0,0,0,0,1
+			} 
+		}
+	}
+	Deformer: 22, "SubDeformer::", "Cluster" {
+		Indexes: *3 {
+			a: 1,2,3
+		} 
+		Weights: *3 {
+			a: 0.5,0.25,0.25
+		} 
+		Transform: *16 {
+			a: 1,0,0,0,0,1,0,0,0,0,1,0,0.00100000001892448,-135.181964878268,0.139127768683107,1
+		} 
+		TransformLink: *16 {
+			a: 0.393700778484344,0,0,0,-0,0.393700778484344,1.7209208272366e-008,0,0
+		} 
+	}
+	Deformer: 23, "SubDeformer::", "Cluster" {
+		Indexes: *3 {
+			a: 2,3
+		} 
+		Weights: *3 {
+			a: 0.5,0.5
+		} 
+		Transform: *16 {
+			a: 1,0,0,0,0,1,0,0,0,0,1,0,0.00100000001892448,-135.181964878268,0.139127768683107,1
+		} 
+		TransformLink: *16 {
+			a: 0.393700778484344,0,0,0,-0,0.393700778484344,1.7209208272366e-008,0,0,-1.7209208272366e-008,0.393700778484344,0,-0.000393700785934925,53.2212448120117,-0.0547723844647408,1
+		} 
+	}
+}
+Connections:  {
+
+	;Model::FirstBone, Model::SecondBone
+	C: "OO",15,16
+
+	;Model::FirstBone, SubDeformer::
+	C: "OO",15,22
+
+	;Model::SecondBone, SubDeformer::
+	C: "OO",16,23
+	
+}
