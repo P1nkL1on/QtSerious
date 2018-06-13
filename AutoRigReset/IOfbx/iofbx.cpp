@@ -16,6 +16,8 @@ const QVector<QString> parseBlockNames = {
     "Connection",
     "???"
 };
+
+
 //  "Cluster info",
 //  "Cluster Indexes",
 //  "Cluster Weightes",
@@ -30,8 +32,21 @@ const QVector<QString> parseBlockNames = {
 
 
 
+int IOfbx::indexOfHeaders(const QVector<QString> tags, QVector<QString> &stackHeaders)
+{
+    if (stackHeaders.length() < tags.length())
+        return -1;
+
+    // check for last tags are completely equals
+    for (int i = stackHeaders.length() - tags.length(), j = 0; i < stackHeaders.length(); i++, j++)
+        if (stackHeaders[i] != tags[j])
+            return -1;
+
+    return stackHeaders.length() - tags.length();
+}
 IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString path,  QString &error)
 {
+    QVector<QString> stackHeaders;
     // get a file name to debug a process more shortly
     QString fileName = path;
     fileName = fileName.remove(0,path.lastIndexOf('/') + 1);
@@ -74,7 +89,7 @@ IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString path,  QString &err
         error = "( line "+QString::number(lineNumber)+" ) ";    // adress of exception in case of fire
 
         line = textStream.readLine();
-        ParseType detectedTypeHeader = pushHeader(line);
+        ParseType detectedTypeHeader = pushHeader(line, stackHeaders);
 
         // there is sometimes a need to remember an ID of node, you are currently parsing
         findIdAndNameInLine(line, nodeId, nodeName, nodeSubName);
@@ -91,71 +106,71 @@ IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString path,  QString &err
             int lpt = (int)lastParsingType;
             if (lpt >= 0)
                 traceMessage ( "v   Success: "
-                            + ((lpt < parseBlockNames.length())? parseBlockNames[lpt] : "???")
-                            + " buffer ( " + QString::number(nodeBuffer.length()) + " lines ) read;");
+                               + ((lpt < parseBlockNames.length())? parseBlockNames[lpt] : "???")
+                               + " buffer ( " + QString::number(nodeBuffer.length()) + " lines ) read;");
 
             // then just finished to
             QString err = QString();
-                switch (lastParsingType)
-                {
-                    case ParseType::FbxGeometryMeshVertices:
-                        if (!fbxMesh.hasNameAndID())
-                            fbxMesh.setNameAndID(nodeName, nodeId);
-                        // call a parser of mesh
-                        err = fbxMesh.parse(nodeBuffer, 0);
-                        if (!err.isEmpty())
-                        {error += "x   Error in parsing a mesh vertices: " + err; return nullptr;}
-                        break;
-                    case ParseType::FbxGeometryMeshPolygonIndexes:
-                        err = fbxMesh.parse(nodeBuffer,1);
-                        if (!err.isEmpty())
-                        {error += "x   Error in parsing a mesh polygon idnexes: " + err; return nullptr;}
-                        break;
-                    case ParseType::FbxObjectModelLimbNodeProperty:
-                        if (!fbxJoints.last().hasNameAndID())
-                            fbxJoints.last().setNameAndID(nodeName, nodeId);
-                        err = fbxJoints.last().parse(nodeBuffer, 0);
-                        fbxJoints.last().addSubName(nodeSubName);
+            switch (lastParsingType)
+            {
+            case ParseType::FbxGeometryMeshVertices:
+                if (!fbxMesh.hasNameAndID())
+                    fbxMesh.setNameAndID(nodeName, nodeId);
+                // call a parser of mesh
+                err = fbxMesh.parse(nodeBuffer, 0);
+                if (!err.isEmpty())
+                {error += "x   Error in parsing a mesh vertices: " + err; return nullptr;}
+                break;
+            case ParseType::FbxGeometryMeshPolygonIndexes:
+                err = fbxMesh.parse(nodeBuffer,1);
+                if (!err.isEmpty())
+                {error += "x   Error in parsing a mesh polygon idnexes: " + err; return nullptr;}
+                break;
+            case ParseType::FbxObjectModelLimbNodeProperty:
+                if (!fbxJoints.last().hasNameAndID())
+                    fbxJoints.last().setNameAndID(nodeName, nodeId);
+                err = fbxJoints.last().parse(nodeBuffer, 0);
+                fbxJoints.last().addSubName(nodeSubName);
 
-                        if (!err.isEmpty())
-                        {error += "x   Error in parsing a joint: " + err; return nullptr;}
-                        fbxJoints.append(FbxModelJoint());
-                        break;
-                    case ParseType::FbxObjectPoseNodeID:
-                        err = fbxPoseNodes.last().parse(nodeBuffer, 0);
-                        if (!err.isEmpty())
-                        {error += "x   Error in parsing a posenode: " + err; return nullptr;}
-                        fbxPoseNodes.append(FbxPoseNode());
-                        break;
-                    case ParseType::FbxObjectDeformerCluster:
-                        if (!fbxClusters.last().hasNameAndID())
-                            fbxClusters.last().setNameAndID(nodeName, nodeId);
-                        err = fbxClusters.last().parse(nodeBuffer, 0);
+                if (!err.isEmpty())
+                {error += "x   Error in parsing a joint: " + err; return nullptr;}
+                fbxJoints.append(FbxModelJoint());
+                break;
+            case ParseType::FbxObjectPoseNodeID:
+                err = fbxPoseNodes.last().parse(nodeBuffer, 0);
+                if (!err.isEmpty())
+                {error += "x   Error in parsing a posenode: " + err; return nullptr;}
+                fbxPoseNodes.append(FbxPoseNode());
+                break;
+            case ParseType::FbxObjectDeformerCluster:
+                if (!fbxClusters.last().hasNameAndID())
+                    fbxClusters.last().setNameAndID(nodeName, nodeId);
+                err = fbxClusters.last().parse(nodeBuffer, 0);
 
+                if (!err.isEmpty())
+                {error += "x   Error in parsing a subdeformer cluster: " + err; return nullptr;}
+                fbxClusters.append(FbxSubDeformerCluster());
+                break;
+            case ParseType::FbxConnection:
+                maybeConnection = QStringList();
+                for (int lineInd = 1; lineInd < nodeBuffer.length(); lineInd ++){
+                    conLine = nodeBuffer[lineInd].trimmed();
+                    if (!conLine.isEmpty())
+                        maybeConnection << conLine;
+                    if (maybeConnection.length() == 2)
+                    {
+                        fbxConnections.append(FbxConnection());
+                        err = fbxConnections.last().parse(maybeConnection, 0);
                         if (!err.isEmpty())
-                        {error += "x   Error in parsing a subdeformer cluster: " + err; return nullptr;}
-                        fbxClusters.append(FbxSubDeformerCluster());
-                        break;
-                    case ParseType::FbxConnection:
-                        maybeConnection = QStringList();
-                        for (int lineInd = 1; lineInd < nodeBuffer.length(); lineInd ++){
-                            conLine = nodeBuffer[lineInd].trimmed();
-                            if (!conLine.isEmpty())
-                                maybeConnection << conLine;
-                            if (maybeConnection.length() == 2)
-                            {
-                                fbxConnections.append(FbxConnection());
-                                err = fbxConnections.last().parse(maybeConnection, 0);
-                                if (!err.isEmpty())
-                                {error += "x   Error in parsing connection: " + err; return nullptr;}
-                                maybeConnection.clear();
-                            }
-                        }
-
-                        break;
-                    default:
-                        break;
+                        {error += "x   Error in parsing connection: " + err; return nullptr;}
+                        maybeConnection.clear();
+                    }
                 }
+
+                break;
+            default:
+                break;
+            }
             if (!nodeBuffer.isEmpty())
                 nodeBuffer.clear();
         }
@@ -193,15 +208,15 @@ void TracePath (const QVector<QString> pathSt){
         res += pathSt[i] + " : ";
     IOfbx::traceMessage (res);
 }
-IOfbx::ParseType IOfbx::pushHeader(const QString fromLine)
+IOfbx::ParseType IOfbx::pushHeader(const QString fromLine, QVector<QString> &stackHeaders)
 {
     int stackLengthWas = stackHeaders.length();
 
     QString lineTrimmed= fromLine.trimmed(),
             lineName = lineTrimmed.mid(0, lineTrimmed.indexOf(':'));
     if (lineTrimmed.indexOf(':') < lineTrimmed.indexOf(' ') && lineName.length() > 0 && lineTrimmed[lineTrimmed.length() - 1] == "{")
-    //              space is later then : (not "asdasd aass:"), name is not null,           line ends with {
-            stackHeaders << lineName;
+        //              space is later then : (not "asdasd aass:"), name is not null,           line ends with {
+        stackHeaders << lineName;
     if (lineTrimmed == "}")
         stackHeaders.removeAt(stackHeaders.length() - 1);
 
@@ -211,40 +226,28 @@ IOfbx::ParseType IOfbx::pushHeader(const QString fromLine)
     // _-_-_- Check -_-_-_-_
     //
 
-    if (indexOfHeaders({"Connections"}) >= 0)
+    if (indexOfHeaders({"Connections"}, stackHeaders) >= 0)
         return ParseType::FbxConnection;
-    if (indexOfHeaders({"Geometry", "Vertices"}) > 0)
-         return ParseType::FbxGeometryMeshVertices;
-    if (indexOfHeaders({"Geometry", "PolygonVertexIndex"}) > 0)
+    if (indexOfHeaders({"Geometry", "Vertices"}, stackHeaders) > 0)
+        return ParseType::FbxGeometryMeshVertices;
+    if (indexOfHeaders({"Geometry", "PolygonVertexIndex"}, stackHeaders) > 0)
         return ParseType::FbxGeometryMeshPolygonIndexes;
 
-    if (indexOfHeaders({"Model","Properties70"}) > 0)
+    if (indexOfHeaders({"Model","Properties70"}, stackHeaders) > 0)
         return ParseType::FbxObjectModelLimbNodeProperty;
 
-    if (indexOfHeaders({"Pose","PoseNode"}) > 0)
+    if (indexOfHeaders({"Pose","PoseNode"}, stackHeaders) > 0)
         return ParseType::FbxObjectPoseNodeID;
-    if (indexOfHeaders({"Pose","PoseNode","Matrix"}) > 0)
+    if (indexOfHeaders({"Pose","PoseNode","Matrix"}, stackHeaders) > 0)
         return ParseType::FbxObjectPoseNodeMatrix;
 
-    if (indexOfHeaders({"Deformer"}) > 0
+    if (indexOfHeaders({"Deformer"}, stackHeaders) > 0
             || (stackHeaders.length() >= 2 && stackHeaders[stackHeaders.length() - 2] == "Deformer"))
         return ParseType::FbxObjectDeformerCluster;
 
     return ParseType::  None;
 }
 
-int IOfbx::indexOfHeaders(const QVector<QString> tags)
-{
-    if (stackHeaders.length() < tags.length())
-        return -1;
-
-    // check for last tags are completely equals
-    for (int i = stackHeaders.length() - tags.length(), j = 0; i < stackHeaders.length(); i++, j++)
-        if (stackHeaders[i] != tags[j])
-            return -1;
-
-    return stackHeaders.length() - tags.length();
-}
 
 void IOfbx::findIdAndNameInLine(const QString line, QString &id, QString &name, QString &subName)
 {

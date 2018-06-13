@@ -16,11 +16,11 @@ enum class ParseType
     FbxObjectDeformerCluster = 5,
     FbxConnection = 6,
 };
-// _-_-_-_-_-_-_-_-_-_-PARSER-_-_-_-_-_-_-_-_-_-_-_-_
 
-static QVector<QString> stackHeaders = QVector<QString>();
-ParseType pushHeader(const QString fromLine);
-int indexOfHeaders (const QVector<QString> tags);
+//#warning REMOVE THIS CRAP!!!
+//static QVector<QString> stackHeaders = QVector<QString>();
+ParseType pushHeader(const QString fromLine, QVector<QString> &stackHeaders);
+int indexOfHeaders (const QVector<QString> tags, QVector<QString> &stackHeaders);
 
 // the method of loading
 FbxParsedContainer *loadFromPath(const QString path, QString &error);
