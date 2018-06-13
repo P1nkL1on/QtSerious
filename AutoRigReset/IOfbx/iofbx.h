@@ -17,14 +17,12 @@ enum class ParseType
     FbxConnection = 6,
 };
 
-//#warning REMOVE THIS CRAP!!!
-//static QVector<QString> stackHeaders = QVector<QString>();
 ParseType pushHeader(const QString fromLine, QVector<QString> &stackHeaders);
 int indexOfHeaders (const QVector<QString> tags, QVector<QString> &stackHeaders);
 
 // the method of loading
-FbxParsedContainer *loadFromPath(const QString path, QString &error);
-void findIdAndNameInLine (const QString line, QString& id, QString& name, QString &subName);
+FbxParsedContainer *loadFromPath(const QString &path, QString &error);
+void findIdAndNameInLine(const QString line, QString& id, QString& name, QString &subName);
 
 }
 

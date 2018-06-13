@@ -44,23 +44,26 @@ int IOfbx::indexOfHeaders(const QVector<QString> tags, QVector<QString> &stackHe
 
     return stackHeaders.length() - tags.length();
 }
-IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString path,  QString &error)
+
+IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString &path,  QString &error)
 {
     QVector<QString> stackHeaders;
-    // get a file name to debug a process more shortly
-    QString fileName = path;
-    fileName = fileName.remove(0,path.lastIndexOf('/') + 1);
-    // open stream, check for readable
+    const QString fileName = path.split("/").last();
+
+#warning create constant strings for errors
+
     QFile file(path);
-    if (!file.open(QIODevice::ReadOnly))
-        // instant return if incorrect path
-    { error = QString("The path of readable file is incorrect : " + path); return nullptr;}
+    if (!file.open(QIODevice::ReadOnly)){
+        error = QString("The path of readable file is incorrect : " + path);
+        return nullptr;
+    }
 
     QTextStream textStream(&file);
 
-    // if filepath is empty, then do nothing
-    if (textStream.atEnd())
-    {error = "The file is empty : " + path; return nullptr;}
+    if (textStream.atEnd()){
+        error = "The file is empty : " + path;
+        return nullptr;
+    }
 
     // initialise a struct for save parsed data
     FbxGeometryMesh fbxMesh;   // a readen date of mesh
@@ -74,22 +77,22 @@ IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString path,  QString &err
     fbxClusters.append(FbxSubDeformerCluster());
 
     // read a file line by line
-    QString line = "";
     int lineNumber = 0;
-    QString conLine = "";
-    QString nodeId = "noneID";
-    QString nodeName = "unknown";
-    QString nodeSubName = "unknown";
-    QStringList nodeBuffer = QStringList();
-    QStringList maybeConnection = QStringList();
+    QString conLine;
+    QString nodeId;
+    QString nodeName;
+    QString nodeSubName;
+    QStringList nodeBuffer;
+    QStringList maybeConnection;
     ParseType lastParsingType = ParseType::None;
 
     while (!textStream.atEnd()){
         ++lineNumber;
-        error = "( line "+QString::number(lineNumber)+" ) ";    // adress of exception in case of fire
+        // adress of exception in case of fire
+        error = QString("(line #%1)").arg(lineNumber);
 
-        line = textStream.readLine();
-        ParseType detectedTypeHeader = pushHeader(line, stackHeaders);
+        const QString line = textStream.readLine();
+        const ParseType detectedTypeHeader = pushHeader(line, stackHeaders);
 
         // there is sometimes a need to remember an ID of node, you are currently parsing
         findIdAndNameInLine(line, nodeId, nodeName, nodeSubName);
@@ -103,28 +106,31 @@ IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString path,  QString &err
             nodeBuffer.append(line);
         }else{
             // trace an info of name of parsed block
-            int lpt = (int)lastParsingType;
-            if (lpt >= 0)
+            const int lpt = (int)lastParsingType;
+            if(lpt >= 0)
                 traceMessage ( "v   Success: "
                                + ((lpt < parseBlockNames.length())? parseBlockNames[lpt] : "???")
                                + " buffer ( " + QString::number(nodeBuffer.length()) + " lines ) read;");
 
             // then just finished to
             QString err = QString();
-            switch (lastParsingType)
-            {
+            switch (lastParsingType){
             case ParseType::FbxGeometryMeshVertices:
                 if (!fbxMesh.hasNameAndID())
                     fbxMesh.setNameAndID(nodeName, nodeId);
                 // call a parser of mesh
                 err = fbxMesh.parse(nodeBuffer, 0);
-                if (!err.isEmpty())
-                {error += "x   Error in parsing a mesh vertices: " + err; return nullptr;}
+                if (!err.isEmpty()){
+                    error += "x   Error in parsing a mesh vertices: " + err;
+                    return nullptr;
+                }
                 break;
             case ParseType::FbxGeometryMeshPolygonIndexes:
                 err = fbxMesh.parse(nodeBuffer,1);
-                if (!err.isEmpty())
-                {error += "x   Error in parsing a mesh polygon idnexes: " + err; return nullptr;}
+                if (!err.isEmpty()){
+                    error += "x   Error in parsing a mesh polygon idnexes: " + err;
+                    return nullptr;
+                }
                 break;
             case ParseType::FbxObjectModelLimbNodeProperty:
                 if (!fbxJoints.last().hasNameAndID())
@@ -132,14 +138,18 @@ IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString path,  QString &err
                 err = fbxJoints.last().parse(nodeBuffer, 0);
                 fbxJoints.last().addSubName(nodeSubName);
 
-                if (!err.isEmpty())
-                {error += "x   Error in parsing a joint: " + err; return nullptr;}
+                if (!err.isEmpty()){
+                    error += "x   Error in parsing a joint: " + err;
+                    return nullptr;
+                }
                 fbxJoints.append(FbxModelJoint());
                 break;
             case ParseType::FbxObjectPoseNodeID:
                 err = fbxPoseNodes.last().parse(nodeBuffer, 0);
-                if (!err.isEmpty())
-                {error += "x   Error in parsing a posenode: " + err; return nullptr;}
+                if (!err.isEmpty()){
+                    error += "x   Error in parsing a posenode: " + err;
+                    return nullptr;
+                }
                 fbxPoseNodes.append(FbxPoseNode());
                 break;
             case ParseType::FbxObjectDeformerCluster:
@@ -147,8 +157,10 @@ IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString path,  QString &err
                     fbxClusters.last().setNameAndID(nodeName, nodeId);
                 err = fbxClusters.last().parse(nodeBuffer, 0);
 
-                if (!err.isEmpty())
-                {error += "x   Error in parsing a subdeformer cluster: " + err; return nullptr;}
+                if (!err.isEmpty()){
+                    error += "x   Error in parsing a subdeformer cluster: " + err;
+                    return nullptr;
+                }
                 fbxClusters.append(FbxSubDeformerCluster());
                 break;
             case ParseType::FbxConnection:
@@ -157,8 +169,7 @@ IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString path,  QString &err
                     conLine = nodeBuffer[lineInd].trimmed();
                     if (!conLine.isEmpty())
                         maybeConnection << conLine;
-                    if (maybeConnection.length() == 2)
-                    {
+                    if (maybeConnection.length() == 2){
                         fbxConnections.append(FbxConnection());
                         err = fbxConnections.last().parse(maybeConnection, 0);
                         if (!err.isEmpty())
@@ -186,12 +197,14 @@ IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString path,  QString &err
         fbxClusters.remove(0,1);
 
     if (fbxJoints.length() == 0 && fbxPoseNodes.length() == 0 && fbxClusters.length() == 0 && fbxConnections.length() == 0){
-        if (fbxMesh.hasNameAndID())
-        {error = "x   File contains only mesh!"; return nullptr;}
-        else
-        {error = "x   File does not contain any rigs!"; return nullptr;}
+        if (fbxMesh.hasNameAndID()){
+            error = "x   File contains only mesh!";
+            return nullptr;
+        }else{
+            error = "x   File does not contain any rigs!";
+            return nullptr;
+        }
     }
-
 
     // v   Success and exit
     traceMessage ( "!v   File was succesfully loaded : " + fileName);
@@ -248,7 +261,7 @@ IOfbx::ParseType IOfbx::pushHeader(const QString fromLine, QVector<QString> &sta
     return ParseType::  None;
 }
 
-
+#warning make tests
 void IOfbx::findIdAndNameInLine(const QString line, QString &id, QString &name, QString &subName)
 {
     QString ableIdCharacters = "1234567890";
