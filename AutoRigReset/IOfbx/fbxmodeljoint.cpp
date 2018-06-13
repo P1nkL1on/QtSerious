@@ -25,3 +25,12 @@ void IOfbx::FbxModelJoint::addSubName(const QString &subName)
 {
     this->subName = subName;
 }
+
+
+IOfbx::FbxModelJoint::FbxModelJoint()
+{
+    localTranslation = QVector<double>();
+    localRotation = QVector<double>();
+    localScaling = QVector<double>();
+}
+

@@ -52,3 +52,11 @@ void IOfbx::FbxConnection::setType(const IOfbx::ConnectionType &value)
 {
     type = value;
 }
+
+IOfbx::FbxConnection::FbxConnection()
+{
+    id = ""; name = "";
+    idLeft = "";
+    idRight = "";
+    type = ConnectionType::None;
+}

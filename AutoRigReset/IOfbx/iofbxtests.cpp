@@ -48,11 +48,11 @@ void IOfbxTests::testTooMuchTabs07()
     res = loadFromPath(makePathFromName("test5"), err);
 
     QVERIFY(err.isEmpty());
-    QVERIFY( res->getClusters()->length() == 2);
-    QVERIFY( res->getMesh() != nullptr);
-    QVERIFY( res->getJoints()->length() == 3);
-    QVERIFY( res->getPosenodes()->length() == 3);
-    QVERIFY( res->getConnections()->length() == 3);
+    QVERIFY( res->getClusters().length() == 2);
+    QVERIFY( !res->getMesh().isEmpty());
+    QVERIFY( res->getJoints().length() == 3);
+    QVERIFY( res->getPosenodes().length() == 3);
+    QVERIFY( res->getConnections().length() == 3);
 }
 
 void IOfbxTests::testCorruptedNumbers08()
@@ -71,10 +71,10 @@ void IOfbxTests::testTheMostEasyExample06()
     res = loadFromPath(makePathFromName("test3"), err);
 
     QVERIFY(err.isEmpty());
-    QVERIFY( res->getClusters()->length() == 2);
-    QVERIFY( res->getMesh() != nullptr);
-    QVERIFY( res->getJoints()->length() == 3);
-    QVERIFY( res->getPosenodes()->length() == 3);
-    QVERIFY( res->getConnections()->length() == 3);
+    QVERIFY( res->getClusters().length() == 2);
+    QVERIFY( !res->getMesh().isEmpty());
+    QVERIFY( res->getJoints().length() == 3);
+    QVERIFY( res->getPosenodes().length() == 3);
+    QVERIFY( res->getConnections().length() == 3);
 }
 

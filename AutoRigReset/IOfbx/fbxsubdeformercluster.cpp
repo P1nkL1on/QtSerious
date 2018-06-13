@@ -41,3 +41,12 @@ bool IOfbx::FbxSubDeformerCluster::isEmpty() const
 {
     return (indexes.length() == 0);
 }
+
+
+IOfbx::FbxSubDeformerCluster::FbxSubDeformerCluster()
+{
+    indexes = QVector<int>();
+    weights = QVector<double>();
+    transformMatrix = QVector<double>();
+    transformLinkMatrix = QVector<double>();
+}

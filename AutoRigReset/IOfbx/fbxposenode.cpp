@@ -19,3 +19,9 @@ QString IOfbx::FbxPoseNode::parse(QStringList S, const int param)
     traceMessage (QString("v   Success parsed posenode " + this->id));
     return QString();
 }
+
+
+IOfbx::FbxPoseNode::FbxPoseNode()
+{
+    transformMatrixArray = QVector<double>();
+}

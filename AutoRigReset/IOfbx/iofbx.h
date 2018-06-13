@@ -1,11 +1,7 @@
 #ifndef IOFBX_IOFBX_H
 #define IOFBX_IOFBX_H
 
-#include "fbxconnection.h"
-#include "fbxgeometrymesh.h"
-#include "fbxmodeljoint.h"
-#include "fbxposenode.h"
-#include "fbxsubdeformercluster.h"
+#include "fbxparsedcontainer.h"
 
 namespace IOfbx {
 
@@ -20,35 +16,7 @@ enum class ParseType
     FbxObjectDeformerCluster = 5,
     FbxConnection = 6,
 };
-
-class FbxParsedContainer
-{
-public:
-    FbxParsedContainer();
-    FbxParsedContainer(FbxGeometryMesh mesh,
-                       QVector<FbxModelJoint> joints,
-                       QVector<FbxPoseNode> posenodes,
-                       QVector<FbxSubDeformerCluster> clusters,
-                       QVector<FbxConnection> connections);
-    ~FbxParsedContainer();
-
-    FbxGeometryMesh getMesh() const;
-    QVector<FbxModelJoint> getJoints() const;
-    QVector<FbxPoseNode> getPosenodes() const;
-    QVector<FbxSubDeformerCluster> getClusters() const;
-    QVector<FbxConnection> getConnections() const;
-    void traceInfo() const;
-
-private:
-    FbxGeometryMesh mesh;
-    QVector<FbxModelJoint> joints;
-    QVector<FbxPoseNode> posenodes;
-    QVector<FbxSubDeformerCluster> clusters;
-    QVector<FbxConnection> connections;
-};
-
 // _-_-_-_-_-_-_-_-_-_-PARSER-_-_-_-_-_-_-_-_-_-_-_-_
-
 
 static QVector<QString> stackHeaders = QVector<QString>();
 ParseType pushHeader(const QString fromLine);

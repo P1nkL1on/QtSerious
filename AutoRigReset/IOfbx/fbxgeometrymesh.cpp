@@ -30,3 +30,8 @@ QString IOfbx::FbxGeometryMesh::parse(QStringList S, const int param)
     traceMessage (QString("v   Success parsed geometry mesh values;"));
     return error;
 }
+
+bool IOfbx::FbxGeometryMesh::isEmpty() const
+{
+    return vertices.length() == 0 && polygonVertexIndex.length() == 0;
+}
