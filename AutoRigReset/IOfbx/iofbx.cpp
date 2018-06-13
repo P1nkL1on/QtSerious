@@ -107,10 +107,11 @@ IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString &path,  QString &er
         }else{
             // trace an info of name of parsed block
             const int lpt = (int)lastParsingType;
+#warning Rewrite with .arg()
             if(lpt >= 0)
-                traceMessage ( "v   Success: "
-                               + ((lpt < parseBlockNames.length())? parseBlockNames[lpt] : "???")
-                               + " buffer ( " + QString::number(nodeBuffer.length()) + " lines ) read;");
+                traceMessage( "v   Success: "
+                              + ((lpt < parseBlockNames.length())? parseBlockNames[lpt] : "???")
+                              + " buffer ( " + QString::number(nodeBuffer.length()) + " lines ) read;");
 
             // then just finished to
             QString err = QString();
@@ -225,19 +226,20 @@ IOfbx::ParseType IOfbx::pushHeader(const QString fromLine, QVector<QString> &sta
 {
     int stackLengthWas = stackHeaders.length();
 
-    QString lineTrimmed= fromLine.trimmed(),
-            lineName = lineTrimmed.mid(0, lineTrimmed.indexOf(':'));
-    if (lineTrimmed.indexOf(':') < lineTrimmed.indexOf(' ') && lineName.length() > 0 && lineTrimmed[lineTrimmed.length() - 1] == "{")
-        //              space is later then : (not "asdasd aass:"), name is not null,           line ends with {
+    const QString lineTrimmed = fromLine.trimmed();
+    const QString lineName = lineTrimmed.mid(0, lineTrimmed.indexOf(':'));
+
+    const bool isNameNotNull = !lineName.isEmpty();
+    const bool isLineEndsWithBracket = isNameNotNull && lineTrimmed[lineTrimmed.length() - 1] == "{";
+    const bool isSpaceBeforeTwoPoints = lineTrimmed.indexOf(':') < lineTrimmed.indexOf(' ');
+    const bool isLineABlockOpener = isSpaceBeforeTwoPoints && isLineEndsWithBracket;
+    if(isLineABlockOpener)
         stackHeaders << lineName;
     if (lineTrimmed == "}")
         stackHeaders.removeAt(stackHeaders.length() - 1);
 
     if (stackLengthWas != stackHeaders.length())
         TracePath(stackHeaders);
-    //
-    // _-_-_- Check -_-_-_-_
-    //
 
     if (indexOfHeaders({"Connections"}, stackHeaders) >= 0)
         return ParseType::FbxConnection;
@@ -246,58 +248,56 @@ IOfbx::ParseType IOfbx::pushHeader(const QString fromLine, QVector<QString> &sta
     if (indexOfHeaders({"Geometry", "PolygonVertexIndex"}, stackHeaders) > 0)
         return ParseType::FbxGeometryMeshPolygonIndexes;
 
-    if (indexOfHeaders({"Model","Properties70"}, stackHeaders) > 0)
+    if (indexOfHeaders({"Model", "Properties70"}, stackHeaders) > 0)
         return ParseType::FbxObjectModelLimbNodeProperty;
 
     if (indexOfHeaders({"Pose","PoseNode"}, stackHeaders) > 0)
         return ParseType::FbxObjectPoseNodeID;
-    if (indexOfHeaders({"Pose","PoseNode","Matrix"}, stackHeaders) > 0)
+    if (indexOfHeaders({"Pose", "PoseNode", "Matrix"}, stackHeaders) > 0)
         return ParseType::FbxObjectPoseNodeMatrix;
 
+#warning make line shorter
     if (indexOfHeaders({"Deformer"}, stackHeaders) > 0
             || (stackHeaders.length() >= 2 && stackHeaders[stackHeaders.length() - 2] == "Deformer"))
         return ParseType::FbxObjectDeformerCluster;
 
-    return ParseType::  None;
+    return ParseType::None;
 }
 
 #warning make tests
 void IOfbx::findIdAndNameInLine(const QString line, QString &id, QString &name, QString &subName)
 {
-    QString ableIdCharacters = "1234567890";
-    if (line.indexOf("{") > line.indexOf(",")
+    const QString ableIdCharacters = "1234567890";
+
+#warning Rename it
+    const bool isSomeBooleanVal = line.indexOf("{") > line.indexOf(",")
             && line.indexOf(",") > line.indexOf(":")
-            && line.indexOf(":") >= 0){
-        QString canBeNodeId =
-                line.mid(line.indexOf(":") + 2, line.indexOf(",") - line.indexOf(":") - 2);
-        bool isTrueId = true;
-        for (int i = 0; i < canBeNodeId.length(); i++)
-            if (ableIdCharacters.indexOf( canBeNodeId[i] ) < 0)
-                isTrueId = false;
-        if (isTrueId){
-            // set a true, beautiful ID
-            id = canBeNodeId;
-            //  Model: 1852460320, "Model::RightToe_End", "LimbNode" {
-            QStringList s = line.split(',');
-            if (s.length() >= 3){
-                for (int i = 1; i < 3; i++){
-                    s[s.length() - i] = s[s.length() - i].trimmed();
-                }
-                subName = s[s.length() - 1];
-                subName.remove(0,1);
-                subName.remove(subName.length() - 3, 3);
-                name = s[s.length() - 2];
-                name.remove(0,1);
-                name.remove(name.length() - 1, 1);
-            }
+            && line.indexOf(":") >= 0;
+    if(!isSomeBooleanVal)
+        return;
+
+#warning Rename it
+    const QString canBeNodeId = line.mid(line.indexOf(":") + 2, line.indexOf(",") - line.indexOf(":") - 2);
+    bool isTrueId = true;
+    for (int i = 0; i < canBeNodeId.length(); i++)
+        if (ableIdCharacters.indexOf(canBeNodeId[i]) < 0)
+            isTrueId = false;
+    if (!isTrueId)
+        return;
+
+    // set a true, beautiful ID
+    id = canBeNodeId;
+    //  Model: 1852460320, "Model::RightToe_End", "LimbNode" {
+    QStringList s = line.split(',');
+    if (s.length() >= 3){
+        for (int i = 1; i < 3; i++){
+            s[s.length() - i] = s[s.length() - i].trimmed();
         }
+        subName = s[s.length() - 1];
+        subName.remove(0,1);
+        subName.remove(subName.length() - 3, 3);
+        name = s[s.length() - 2];
+        name.remove(0,1);
+        name.remove(name.length() - 1, 1);
     }
-    //
 }
-
-
-
-
-
-
-
