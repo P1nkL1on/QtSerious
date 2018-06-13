@@ -1,0 +1,2 @@
+#include "fbxstruct.h"
+

@@ -16,6 +16,7 @@ public:
     QVector<QString> AnimCurvesIDs;
     Eigen::Matrix<DerOperations::Derivable,1,3> localScale;
     Eigen::Matrix<DerOperations::Derivable,1,3> localTranslation;
+    Eigen::Matrix<DerOperations::Derivable,1,3> localTranslationLoaded;
     Eigen::Matrix<DerOperations::Derivable,1,3> currentTranslation;
     Eigen::Matrix<DerOperations::Derivable,1,3> endCurrentTranslation;
     Eigen::Matrix<DerOperations::Derivable,1,3> currentRotation;
@@ -35,7 +36,6 @@ public:
     void CalculateGlobalTransformMatrix();
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
-
 
 struct AttendedCluster{
 public:

@@ -17,6 +17,7 @@ Joint::Joint()
     currentRotation = Matrix<Derivable,1,3>();
     bindMatrix = SetDeriveMatrix();
     bindTransform = Matrix<Derivable,1,3>();
+
     localScale =  Matrix<Derivable,1,3>(1,1,1);
     AnimCurvesIDs = {"-","-","-"};
 }
@@ -58,8 +59,17 @@ void Joint::RecaulculateLocalTransformMatrix()
 
     if (pater != NULL)
          ScaleDeriveMatrix(localTransformMatrix,
-                           Matrix<Derivable,1,3>(Derivable(1) / pater->localScale(0,0), Derivable(1) / pater->localScale(0,1), Derivable(1) / pater->localScale(0,2)));
+                           Matrix<Derivable,1,3>(Derivable(1) / pater->localScale(0,0),
+                                                 Derivable(1) / pater->localScale(0,1),
+                                                 Derivable(1) / pater->localScale(0,2)));
     ScaleDeriveMatrix(localTransformMatrix, localScale);    // scale self
+
+//    if (pater != NULL)
+//        ScaleDeriveMatrix(localTransformMatrix, Matrix<Derivable,1,3>(Derivable(1) / pater->localScale(0,0),Derivable(1) / pater->localScale(0,0),Derivable(1) / pater->localScale(0,0)) );
+//    ScaleDeriveMatrix(localTransformMatrix, Matrix<Derivable,1,3>(localScale(0,0),localScale(0,0),localScale(0,0)));
+//    localScale(0,1) = localScale(0,2) = localScale(0,0);
+
+
     TranslateDeriveMatrix(localTransformMatrix, localTranslation);
     RotateDeriveMatrix(localTransformMatrix, currentRotation2);
 
@@ -87,7 +97,7 @@ AttendedCluster::AttendedCluster()
     vertexIndex = {};
     weights = {};
     boneBindCoord = SetDeriveMatrix();
-    jointIndex = 0;
+    jointIndex = -1;
 }
 
 AttendedCluster::AttendedCluster(Matrix<Derivable,4,4> bindMatrix, int JointIndex)

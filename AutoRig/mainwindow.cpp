@@ -29,9 +29,10 @@ QVector<QString> names = {
     //"!Samba exported",
     //"!bboy exported",
     //"hand"
-    //"!guard yelling exported"
+    "!guard yelling exported"
+    //"Pointing"
     //"humanoid"
-    "Quarterback Pass"
+    //"Quarterback Pass"
     //"!IvanSergeich0"
     //"plane"
 };

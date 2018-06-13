@@ -18,11 +18,14 @@ public:
 
 private slots:
     void on_actionLoad_Rig_triggered();
-
     void on_actionLoad_Guad_triggered();
+    void on_actionEnable_debug_info_triggered();
 
 private:
     Ui::MainWindow *ui;
+    void loadRigByAdress (QString path);
+    void loadRigGuardYelling ();
+    void runTests();
 };
 
 #endif // MAINWINDOW_H

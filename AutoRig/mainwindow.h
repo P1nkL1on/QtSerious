@@ -20,7 +20,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    QString modelsAdress = "D:/QT-serious/Models/";
+    QString modelsAdress ="D:/QT-serious/Models/" ;// "C:/Users/Prohor/QT-serious/Models/";
 
     //"D:/QT-serious/Models/";///"/home/daiver/coding/QT-serious/Models/";  ///home/daiver/coding/QT-serious/Models
 
