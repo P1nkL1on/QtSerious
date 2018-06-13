@@ -450,7 +450,6 @@ void IOfbx::findIdAndNameInLine(const QString line, QString &id, QString &name, 
                 name = s[s.length() - 2];
                 name.remove(0,1);
                 name.remove(name.length() - 1, 1);
-                int X = 10;
             }
         }
     }
@@ -535,6 +534,7 @@ bool IOfbx::FbxConnection::setIds(const QString left, const QString right)
 {
     idLeft = left;
     idRight = right;
+    return true;
 }
 
 void IOfbx::FbxConnection::setType(const IOfbx::ConnectionType &value)
