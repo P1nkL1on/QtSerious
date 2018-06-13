@@ -30,9 +30,6 @@
     <addaction name="actionLoad_Rig"/>
     <addaction name="actionLoad_Guad"/>
    </widget>
-<<<<<<< HEAD
-   <addaction name="menuFile"/>
-=======
    <widget class="QMenu" name="menuEdit">
     <property name="title">
      <string>Edit</string>
@@ -41,7 +38,6 @@
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
->>>>>>> 7c16cd06266917fbc28f572c4fc4ab09aa605e80
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -71,8 +67,6 @@
     <string>Ctrl+G</string>
    </property>
   </action>
-<<<<<<< HEAD
-=======
   <action name="actionEnable_debug_info">
    <property name="text">
     <string>Enable debug info</string>
@@ -81,7 +75,6 @@
     <string>Ctrl+E</string>
    </property>
   </action>
->>>>>>> 7c16cd06266917fbc28f572c4fc4ab09aa605e80
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

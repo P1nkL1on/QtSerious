@@ -4,11 +4,7 @@
 #
 #-------------------------------------------------
 
-<<<<<<< HEAD
-QT       += core gui
-=======
 QT       += core gui testlib
->>>>>>> 7c16cd06266917fbc28f572c4fc4ab09aa605e80
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -26,29 +22,19 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-<<<<<<< HEAD
-=======
-include (IOfbx/IOfbx.pri);
+include (IOfbx/IOfbx.pri)
+include (IOfbx/IOfbxTests.pri)
+include (FbxStruct/FbxStruct.pri)
+include (DerStruct/DerStruct.pri)
 include(../modules/Eigen/Eigen.pri)
-
->>>>>>> 7c16cd06266917fbc28f572c4fc4ab09aa605e80
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp \
-<<<<<<< HEAD
-    iofbx.cpp
+        mainwindow.cpp
 
 HEADERS += \
-        mainwindow.h \
-    iofbx.h
-=======
-    fbxstruct.cpp
+        mainwindow.h
 
-HEADERS += \
-        mainwindow.h \
-    fbxstruct.h
->>>>>>> 7c16cd06266917fbc28f572c4fc4ab09aa605e80
 
 FORMS += \
         mainwindow.ui

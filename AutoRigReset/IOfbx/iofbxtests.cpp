@@ -2,53 +2,50 @@
 
 using namespace IOfbx;
 
-void IOfbx::IOfbxTests::clearContainer()
+QString IOfbxTests::loadAndReturnError(const QString &fileName)
 {
+    QString err = "";
+    const FbxParsedContainer *res = loadFromPath(makePathFromName(fileName), err);
     if (res != nullptr){
         delete res;
     }
-    res = nullptr;
-}
-
-
-QString IOfbxTests::testLoading(const QString fileName, FbxParsedContainer *&res)
-{
-    clearContainer();
-    QString err = "";
-
-    res = loadFromPath(testFolder + fileName + ".FBX", err);
-
     return err;
 }
 
-void IOfbxTests::testIncorrectFilePath01()
+QString IOfbxTests::makePathFromName(const QString fileName) const
 {
-    QVERIFY(testLoading("test-1", res).indexOf("The path of readable file is incorrect : ") == 0);
+    return testFolder + fileName + ".FBX";
+}
+
+void IOfbxTests::testIncorrectFilePath01()
+{    
+    QVERIFY(loadAndReturnError("test-1").indexOf("The path of readable file is incorrect : ") == 0);
 }
 
 void IOfbx::IOfbxTests::testEmptyFile02()
 {
-    QVERIFY(testLoading("test0", res).indexOf("The file is empty : ") == 0);
+    QVERIFY(loadAndReturnError("test0").indexOf("The file is empty : ") == 0);
 }
 
 void IOfbxTests::testStrangeFileContaned03()
 {
-    QVERIFY(testLoading("test1", res).indexOf("File does not contain any rigs") >= 0);
+    QVERIFY(loadAndReturnError("test1").indexOf("File does not contain any rigs") >= 0);
 }
 
 void IOfbxTests::testStrangeFileContaned04()
 {
-    QVERIFY(testLoading("test2", res).indexOf("File does not contain any rigs") >= 0);
+    QVERIFY(loadAndReturnError("test2").indexOf("File does not contain any rigs") >= 0);
 }
 
 void IOfbxTests::testOnlyMeshContaints05()
 {
-    QVERIFY(testLoading("test4", res).indexOf("File contains only mesh!") >= 0);
+    QVERIFY(loadAndReturnError("test4").indexOf("File contains only mesh!") >= 0);
 }
 
 void IOfbxTests::testTooMuchTabs07()
 {
-    QString err = testLoading("test5", res);
+    QString err;
+    res = loadFromPath(makePathFromName("test5"), err);
 
     QVERIFY(err.isEmpty());
     QVERIFY( res->getClusters()->length() == 2);
@@ -60,17 +57,18 @@ void IOfbxTests::testTooMuchTabs07()
 
 void IOfbxTests::testCorruptedNumbers08()
 {
-    QVERIFY(!testLoading("test6", res).isEmpty());
+    QVERIFY(!loadAndReturnError("test6").isEmpty());
 }
 
 void IOfbxTests::testIncorrectMatrixCount09()
 {
-    QVERIFY(!testLoading("test7", res).isEmpty());
+    QVERIFY(!loadAndReturnError("test7").isEmpty());
 }
 
 void IOfbxTests::testTheMostEasyExample06()
 {
-    QString err = testLoading("test3", res);
+    QString err;
+    res = loadFromPath(makePathFromName("test3"), err);
 
     QVERIFY(err.isEmpty());
     QVERIFY( res->getClusters()->length() == 2);

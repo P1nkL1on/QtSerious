@@ -2,9 +2,9 @@
 #include "ui_mainwindow.h"
 
 
-#include "QFileDialog"
-#include "QDebug"
-#include "iofbxtests.h"
+#include <QFileDialog>
+#include <QDebug>
+#include "IOfbx/iofbxtests.h"
 
 using namespace IOfbx;
 
@@ -24,7 +24,7 @@ FbxParsedContainer* parsed = nullptr;
 
 void MainWindow::on_actionLoad_Rig_triggered()
 {
-    loadRigByAdress(QFileDialog::getOpenFileName(this, "Load Rig", "@/../Models/FBX/", "FBX files (*.FBX)"));
+    loadRigByAdress(QFileDialog::getOpenFileName(this, "Load Rig", "../Models/FBX/", "FBX files (*.FBX)"));
 }
 
 void MainWindow::on_actionLoad_Guad_triggered()
