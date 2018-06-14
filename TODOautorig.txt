@@ -2,4 +2,5 @@
 
 		1. fix all warnings
 		2. вынести большой свитч в отдельную фнцию
-		3. 
+		3. вынести свитч
+		4. поменять inxOf с int на bool and make it call isStackCotainHeaders

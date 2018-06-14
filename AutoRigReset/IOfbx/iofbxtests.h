@@ -12,10 +12,11 @@ public:
 
 private:
     QString loadAndReturnError(const QString &fileName);
+    QVector<QString> findIdAndName (const QString &S);
     FbxParsedContainer *res = nullptr;
 #warning Make it relative
-    const QString testFolder = "D:/QT-serious/Models/FBXtest/";
-//    const QString testFolder = "../FBXtest/";
+    const QString testFolder = "../Models/FBXtest/";
+
     QString makePathFromName(const QString fileName) const;
 private slots:
     void testIncorrectFilePath01();
@@ -27,6 +28,13 @@ private slots:
     void testTooMuchTabs07();
     void testCorruptedNumbers08();
     void testIncorrectMatrixCount09();
+
+    void testFinderUsuallCase01();
+    void testFinderIdOnly02();
+    void testFinderIdName03();
+    void testFinderEmptyLine04();
+    void testFinderIdSkipper05();
+    void testFinderErrored06();
 };
 }
 

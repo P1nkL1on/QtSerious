@@ -26,6 +26,19 @@ const QVector<QPair<QStringList, ParseType>> fbxBlockSignatures = {
     {{"Pose","PoseNode"}, ParseType::FbxObjectPoseNodeID},
     {{"Pose", "PoseNode", "Matrix"}, ParseType::FbxObjectPoseNodeMatrix}
 };
+
+const QString errMessageIncorrectFilePath = "The path of readable file is incorrect : ";
+const QString errMessageFileEmpty       = "The file is empty : ";
+const QString errMessageMeshVert        = "x   Error in parsing a mesh vertices: ";
+const QString errMessageMeshPolygons    = "x   Error in parsing a mesh polygon idnexes: ";
+const QString errMessageJoint           = "x   Error in parsing a joint: ";
+const QString errMessagePoseNode        = "x   Error in parsing a posenode: ";
+const QString errMessageCluster         = "x   Error in parsing a subdeformer cluster: ";
+const QString errMessageConnection      = "x   Error in parsing connection: ";
+const QString errMessageOnlyMesh        = "x   File contains only mesh!";
+const QString errMessageNoRigs          = "x   File does not contain any rigs!";
+
+
 }
 
 //  "Cluster info",
@@ -61,14 +74,14 @@ IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString &path,  QString &er
 
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly)){
-        error = QString("The path of readable file is incorrect : " + path);
+        error = QString(IOfbx::errMessageIncorrectFilePath + path);
         return nullptr;
     }
 
     QTextStream textStream(&file);
 
     if (textStream.atEnd()){
-        error = "The file is empty : " + path;
+        error = IOfbx::errMessageFileEmpty + path;
         return nullptr;
     }
 
@@ -117,8 +130,7 @@ IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString &path,  QString &er
             if(lpt >= 0)
                 traceMessage(
                             QString("v   Success: %1 buffer is copyed; It containts #2 lines;")
-                            .arg((lpt < parseBlockNames.length())? parseBlockNames[lpt] : "???")
-                            .arg(nodeBuffer.length()));
+                            .arg((lpt < parseBlockNames.length())? parseBlockNames[lpt] : "???", nodeBuffer.length()));
 
             // then just finished to
             QString err = QString();
@@ -129,14 +141,14 @@ IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString &path,  QString &er
                 // call a parser of mesh
                 err = fbxMesh.parse(nodeBuffer, 0);
                 if (!err.isEmpty()){
-                    error += "x   Error in parsing a mesh vertices: " + err;
+                    error += IOfbx::errMessageMeshVert + err;
                     return nullptr;
                 }
                 break;
             case ParseType::FbxGeometryMeshPolygonIndexes:
                 err = fbxMesh.parse(nodeBuffer,1);
                 if (!err.isEmpty()){
-                    error += "x   Error in parsing a mesh polygon idnexes: " + err;
+                    error += IOfbx::errMessageMeshPolygons + err;
                     return nullptr;
                 }
                 break;
@@ -147,7 +159,7 @@ IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString &path,  QString &er
                 fbxJoints.last().addSubName(nodeSubName);
 
                 if (!err.isEmpty()){
-                    error += "x   Error in parsing a joint: " + err;
+                    error += IOfbx::errMessageJoint + err;
                     return nullptr;
                 }
                 fbxJoints.append(FbxModelJoint());
@@ -155,7 +167,7 @@ IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString &path,  QString &er
             case ParseType::FbxObjectPoseNodeID:
                 err = fbxPoseNodes.last().parse(nodeBuffer, 0);
                 if (!err.isEmpty()){
-                    error += "x   Error in parsing a posenode: " + err;
+                    error += IOfbx::errMessagePoseNode + err;
                     return nullptr;
                 }
                 fbxPoseNodes.append(FbxPoseNode());
@@ -166,7 +178,7 @@ IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString &path,  QString &er
                 err = fbxClusters.last().parse(nodeBuffer, 0);
 
                 if (!err.isEmpty()){
-                    error += "x   Error in parsing a subdeformer cluster: " + err;
+                    error += IOfbx::errMessageCluster + err;
                     return nullptr;
                 }
                 fbxClusters.append(FbxSubDeformerCluster());
@@ -181,7 +193,7 @@ IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString &path,  QString &er
                         fbxConnections.append(FbxConnection());
                         err = fbxConnections.last().parse(maybeConnection, 0);
                         if (!err.isEmpty())
-                        {error += "x   Error in parsing connection: " + err; return nullptr;}
+                        {error += IOfbx::errMessageConnection + err; return nullptr;}
                         maybeConnection.clear();
                     }
                 }
@@ -206,10 +218,10 @@ IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString &path,  QString &er
 
     if (fbxJoints.length() == 0 && fbxPoseNodes.length() == 0 && fbxClusters.length() == 0 && fbxConnections.length() == 0){
         if (fbxMesh.hasNameAndID()){
-            error = "x   File contains only mesh!";
+            error = IOfbx::errMessageOnlyMesh;
             return nullptr;
         }else{
-            error = "x   File does not contain any rigs!";
+            error = IOfbx::errMessageNoRigs;
             return nullptr;
         }
     }
@@ -268,7 +280,7 @@ void IOfbx::findIdAndNameInLine(const QString line, QString &id, QString &name, 
     const QString ableIdCharacters = "1234567890";
 
     const bool isColonExist = line.indexOf(":") >= 0;
-    const bool isCommaEarlierThanColon = isColonExist && (line.indexOf(",") < line.indexOf(":"));
+    const bool isCommaEarlierThanColon = isColonExist && (line.indexOf(",") > line.indexOf(":"));
     const bool isBracketEarlierThanComma = isCommaEarlierThanColon && line.indexOf("{") > line.indexOf(",");
 
     if(!isBracketEarlierThanComma)
@@ -286,15 +298,26 @@ void IOfbx::findIdAndNameInLine(const QString line, QString &id, QString &name, 
     id = linePartForId;
     //  Model: 1852460320, "Model::RightToe_End", "LimbNode" {
     QStringList s = line.split(',');
+    if (s.length() == 2){
+        s[1].remove(s[1].length() - 1, 1);  // remove {
+        s[1] = s[1].trimmed();
+        name = s[1];
+        name.remove(0,1);
+        name.remove(name.length() - 1, 1);
+        return;
+    }
     if (s.length() >= 3){
         for (int i = 1; i < 3; i++)
             s[s.length() - i] = s[s.length() - i].trimmed();    // trim all parts
 
         subName = s[s.length() - 1];
         subName.remove(0,1);
-        subName.remove(subName.length() - 3, 3);
+        subName.remove(subName.length() - 1, 1);    // {
+        subName = subName.trimmed();                // _ _ _
+        subName.remove(subName.length() - 1, 1);    // "
         name = s[s.length() - 2];
         name.remove(0,1);
         name.remove(name.length() - 1, 1);
+        return;
     }
 }

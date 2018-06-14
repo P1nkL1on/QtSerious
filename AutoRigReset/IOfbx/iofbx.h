@@ -5,6 +5,7 @@
 
 namespace IOfbx {
 
+
 enum class ParseType
 {
     None = -1,
