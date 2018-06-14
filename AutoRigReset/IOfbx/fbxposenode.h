@@ -8,7 +8,7 @@ namespace IOfbx{
 class FbxPoseNode : public FbxNode
 {
 public:
-    FbxPoseNode();
+    FbxPoseNode() = default;
     QString parse(const QStringList &S, const int param) override;
 private:
     QVector<double> transformMatrixArray;

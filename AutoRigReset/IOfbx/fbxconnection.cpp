@@ -2,6 +2,7 @@
 
 QString IOfbx::FbxConnection::parse(const QStringList &S, const int param)
 {
+    Q_UNUSED(param);
     if (S.length() != 2)
         return "Incomplete connection type!";
     if (S[0].indexOf(',') < 0 || S[1].indexOf(',') < 0)

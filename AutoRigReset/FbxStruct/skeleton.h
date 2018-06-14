@@ -15,7 +15,7 @@ public:
     Joint(const IOfbx::FbxModelJoint &parsedJoint);
     const Matrix4<DerStruct::Derivable> &calculateLocalTransformMatrix();
     const Matrix4<DerStruct::Derivable> &calculateGlobalTransformMatrix();
-    const Matrix4<DerStruct::Derivable>& getGlobalTransform() const;
+    const Matrix4<DerStruct::Derivable> &getGlobalTransform() const;
 private:
     Vector3<DerStruct::Derivable> localTranslation;
     Vector3<DerStruct::Derivable> localRotation;

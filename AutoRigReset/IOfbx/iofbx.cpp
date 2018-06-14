@@ -114,12 +114,12 @@ IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString &path,  QString &er
 
         if (detectedTypeHeader != ParseType::None){
             // if it is first detected, then clear buffer and start copying
-            if (lastParsingType == ParseType::None){
+            if(lastParsingType == ParseType::None){
                 nodeBuffer.clear();
             }
             // start to copy to buffer
             nodeBuffer.append(line);
-        }else{
+        } else {
             // trace an info of name of parsed block
             const int lpt = (int)lastParsingType;
             if(lpt >= 0)
@@ -131,8 +131,7 @@ IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString &path,  QString &er
             QString err = selectParserForBuffer(nodeId, nodeName, nodeSubName,
                                                 lastParsingType, nodeBuffer,
                                                 fbxMesh, fbxJoints, fbxPoseNodes, fbxClusters, fbxConnections);
-            if (!err.isEmpty())
-            {
+            if (!err.isEmpty()){
                 error += err;
                 return nullptr;
             }
@@ -151,7 +150,10 @@ IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString &path,  QString &er
     if (fbxClusters.length() > 0 && fbxClusters[0].isEmpty())
         fbxClusters.remove(0,1);
 
-    if (fbxJoints.length() == 0 && fbxPoseNodes.length() == 0 && fbxClusters.length() == 0 && fbxConnections.length() == 0){
+    if (fbxJoints.isEmpty()
+            && fbxPoseNodes.isEmpty()
+            && fbxClusters.isEmpty()
+            && fbxConnections.isEmpty()){
         if (fbxMesh.hasNameAndID()){
             error = IOfbx::errMessageOnlyMesh;
             return nullptr;
@@ -165,7 +167,7 @@ IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString &path,  QString &er
     traceMessage ( "!v   File was succesfully loaded : " + fileName);
     error = "";
 
-    return new FbxParsedContainer(fbxMesh, fbxJoints, fbxPoseNodes, fbxClusters, fbxConnections);
+    return new FbxParsedContainer({fbxMesh}, fbxJoints, fbxPoseNodes, fbxClusters, fbxConnections);
 }
 
 

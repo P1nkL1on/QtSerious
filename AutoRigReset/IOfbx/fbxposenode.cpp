@@ -1,15 +1,13 @@
 #include "fbxposenode.h"
 
 QString IOfbx::FbxPoseNode::parse(const QStringList &S, const int param)
-{
-    QStringList arrayContainer = QStringList();
+{    
     for (int i = 0; i < S.length(); i++){
         // retrieving of id
         if (S[i].indexOf("Node:") >= 0)
             setNameAndID("posenodeBindMatrix", S[i].trimmed().mid(6, S[i].trimmed().length() - 6));
         // the exactly 16 values
-        if (S[i].indexOf("Matrix:") >= 0)
-        {
+        if (S[i].indexOf("Matrix:") >= 0){
             QString error = "";
             transformMatrixArray = parseFbxArray<double>(QStringList(S[i + 1]), error);
             if (!error.isEmpty())
@@ -21,7 +19,3 @@ QString IOfbx::FbxPoseNode::parse(const QStringList &S, const int param)
 }
 
 
-IOfbx::FbxPoseNode::FbxPoseNode()
-{
-    transformMatrixArray = QVector<double>();
-}

@@ -9,9 +9,10 @@ namespace IOfbx{
 class FbxSubDeformerCluster : public FbxNode
 {
 public:
-    FbxSubDeformerCluster();
+    FbxSubDeformerCluster() = default;
     QString parse(const QStringList &S, const int param) override;
     bool isEmpty() const override;
+
 private:
     QVector<int> indexes;
     QVector<double> weights;

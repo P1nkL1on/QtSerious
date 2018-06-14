@@ -13,14 +13,14 @@ class FbxParsedContainer
 {
 public:
     FbxParsedContainer() = default;
-    FbxParsedContainer(const FbxGeometryMesh &mesh,
+    FbxParsedContainer(const QVector<FbxGeometryMesh> &meshes,
                        const QVector<FbxModelJoint> &joints,
                        const QVector<FbxPoseNode> &posenodes,
                        const QVector<FbxSubDeformerCluster> &clusters,
                        const QVector<FbxConnection> &connections);
     ~FbxParsedContainer();
 
-    const FbxGeometryMesh &getMesh() const;
+    const QVector<FbxGeometryMesh> &getMesh() const;
     const QVector<FbxModelJoint> &getJoints() const;
     const QVector<FbxPoseNode> &getPosenodes() const;
     const QVector<FbxSubDeformerCluster> &getClusters() const;
@@ -28,7 +28,7 @@ public:
     void traceInfo() const;
 
 private:
-    FbxGeometryMesh mesh;
+    QVector<FbxGeometryMesh> meshes;
     QVector<FbxModelJoint> joints;
     QVector<FbxPoseNode> posenodes;
     QVector<FbxSubDeformerCluster> clusters;

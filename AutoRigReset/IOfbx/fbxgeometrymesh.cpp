@@ -1,11 +1,5 @@
 #include "fbxgeometrymesh.h"
 
-IOfbx::FbxGeometryMesh::FbxGeometryMesh()
-{
-    name = id = "";
-    vertices = QVector<double>();
-    polygonVertexIndex = QVector<int>();
-}
 
 
 QString IOfbx::FbxGeometryMesh::parse(const QStringList &S, const int param)

@@ -70,26 +70,19 @@ QVector<T> IOfbx::FbxNode::parseFbxArray(QStringList S, QString &error)
     return readenNumbers;
 }
 
-#warning Move to namespace
 template<typename Numerical>
 Numerical fromString(const QString &string, bool &isOk);
 
 template<>
-inline int fromString<int>(const QString &string, bool &isOk)
+int fromString<int>(const QString &string, bool &isOk)
 {
     return string.toInt(&isOk);
 }
 
 template<>
-inline float fromString<float>(const QString &string, bool &isOk)
+float fromString<float>(const QString &string, bool &isOk)
 {
     return string.toFloat(&isOk);
-}
-
-template<>
-inline double fromString<double>(const QString &string, bool &isOk)
-{
-    return string.toDouble(&isOk);
 }
 
 template<typename T>
@@ -115,7 +108,7 @@ QVector<T> IOfbx::FbxNode::parseLastXValues(const QString S, const int X, QStrin
     }
 
     // okay, the line is splited, so it is time to parse
-    bool isNumberParsedCorrectly = false;
+    bool numberParsedCorrectly = false;
     int count = X;
     if (count < 0)
         count = splitedNumbers.length();
@@ -123,8 +116,8 @@ QVector<T> IOfbx::FbxNode::parseLastXValues(const QString S, const int X, QStrin
         // remove different tabs and spaces
         splitedNumbers[numIndex] = splitedNumbers[numIndex].trimmed();
         if (splitedNumbers[numIndex] != ""){
-            const auto parsedValue = fromString<T>(splitedNumbers[numIndex], isNumberParsedCorrectly);
-            if (!isNumberParsedCorrectly){
+            const auto parsedValue = fromString(splitedNumbers[numIndex])//T(splitedNumbers[numIndex].toDouble(&numberParsedCorrectly));
+            if (!numberParsedCorrectly){
                 error = "Can not parse a value from  \""
                      +splitedNumbers[numIndex] + "\"!" ;
                 return readenNumbers;

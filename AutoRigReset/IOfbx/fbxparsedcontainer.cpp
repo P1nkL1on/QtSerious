@@ -1,11 +1,11 @@
 #include "fbxparsedcontainer.h"
 
-IOfbx::FbxParsedContainer::FbxParsedContainer(const FbxGeometryMesh &mesh,
+IOfbx::FbxParsedContainer::FbxParsedContainer(const QVector<FbxGeometryMesh> &mesh,
                                               const QVector<FbxModelJoint> &joints,
                                               const QVector<FbxPoseNode> &posenodes,
                                               const QVector<FbxSubDeformerCluster> &clusters,
                                               const QVector<FbxConnection> &connections):
-    mesh(mesh),
+    meshes(mesh),
     joints(joints),
     posenodes(posenodes),
     clusters(clusters),
@@ -21,7 +21,8 @@ IOfbx::FbxParsedContainer::~FbxParsedContainer()
 
 void IOfbx::FbxParsedContainer::traceInfo() const
 {
-    mesh.traceInfo();
+    for (int ind = 0; ind < meshes.length(); ++ind)
+        meshes[ind].traceInfo();
     traceMessage( "!Loaded joints: " + QString::number(joints.length()));
     traceMessage( "!Loaded posenodes: " +  QString::number(posenodes.length()));
     traceMessage( "!Loaded clusters: " +  QString::number(clusters.length()));
@@ -48,7 +49,7 @@ const QVector<IOfbx::FbxModelJoint> &IOfbx::FbxParsedContainer::getJoints() cons
     return joints;
 }
 
-const IOfbx::FbxGeometryMesh &IOfbx::FbxParsedContainer::getMesh() const
+const QVector<IOfbx::FbxGeometryMesh> &IOfbx::FbxParsedContainer::getMesh() const
 {
-    return mesh;
+    return meshes;
 }

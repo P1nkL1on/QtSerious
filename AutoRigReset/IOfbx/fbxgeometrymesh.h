@@ -8,7 +8,7 @@ namespace IOfbx{
 class FbxGeometryMesh : public FbxNode
 {
 public:
-    FbxGeometryMesh();
+    FbxGeometryMesh() = default;
     QString parse(const QStringList &S, const int param) override;
     bool isEmpty() const override;
 private:
