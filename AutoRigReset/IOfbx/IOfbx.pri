@@ -24,3 +24,6 @@ SOURCES += \
     $$PWD/fbxmodeljoint.cpp\
     $$PWD/fbxparsedcontainer.cpp
 }
+
+HEADERS += \
+    $$PWD/fbxmessages.h

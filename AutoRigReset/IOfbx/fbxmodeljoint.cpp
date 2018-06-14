@@ -1,6 +1,6 @@
 #include "fbxmodeljoint.h"
 
-QString IOfbx::FbxModelJoint::parse(QStringList S, const int param)
+QString IOfbx::FbxModelJoint::parse(const QStringList &S, const int param)
 {
     QString error = QString();
     for (int lineInd = 0; lineInd < S.length(); lineInd++){

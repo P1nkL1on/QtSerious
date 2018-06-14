@@ -1,0 +1,4 @@
+#ifndef FBXMESSAGES_H
+#define FBXMESSAGES_H
+
+#endif // FBXMESSAGES_H

@@ -16,8 +16,8 @@ enum class ConnectionType
 class FbxConnection : public FbxNode
 {
 public:
-    FbxConnection();
-    QString parse(QStringList S, const int param) override;
+    FbxConnection() = default;
+    QString parse(const QStringList &S, const int param) override;
     QString getIdLeft() const;
     QString getIdRight() const;
     ConnectionType getType() const;
@@ -26,7 +26,7 @@ public:
 private:
     QString idLeft;
     QString idRight;
-    ConnectionType type;
+    ConnectionType type = ConnectionType::None;
 };
 
 void traceMessage (const QString mess);

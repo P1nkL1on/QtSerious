@@ -5,7 +5,6 @@
 
 namespace IOfbx {
 
-
 enum class ParseType
 {
     None = -1,
@@ -19,11 +18,21 @@ enum class ParseType
 };
 
 ParseType pushHeader(const QString fromLine, QVector<QString> &stackHeaders);
-int indexOfHeaders (const QStringList &tags, QVector<QString> &stackHeaders);
+bool isStackContainsHeaders(const QStringList &tags, QVector<QString> &stackHeaders);
 
 // the method of loading
 FbxParsedContainer *loadFromPath(const QString &path, QString &error);
 void findIdAndNameInLine(const QString line, QString& id, QString& name, QString &subName);
+QString selectParserForBuffer(const QString &nodeId,
+                              const QString &nodeName,
+                              const QString &nodeSubName,
+                              const ParseType &lastParsingType,
+                              const QStringList &nodeBuffer,
+                              FbxGeometryMesh &fbxMesh,
+                              QVector<FbxModelJoint> &fbxJoints,
+                              QVector<FbxPoseNode> &fbxPoseNodes,
+                              QVector<FbxSubDeformerCluster> &fbxClusters,
+                              QVector<FbxConnection> &fbxConnections);
 
 }
 

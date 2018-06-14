@@ -1,6 +1,6 @@
 #include "fbxconnection.h"
 
-QString IOfbx::FbxConnection::parse(QStringList S, const int param)
+QString IOfbx::FbxConnection::parse(const QStringList &S, const int param)
 {
     if (S.length() != 2)
         return "Incomplete connection type!";
@@ -53,10 +53,3 @@ void IOfbx::FbxConnection::setType(const IOfbx::ConnectionType &value)
     type = value;
 }
 
-IOfbx::FbxConnection::FbxConnection()
-{
-    id = ""; name = "";
-    idLeft = "";
-    idRight = "";
-    type = ConnectionType::None;
-}

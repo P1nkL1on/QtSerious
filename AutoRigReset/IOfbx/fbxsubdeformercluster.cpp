@@ -1,6 +1,6 @@
 #include "fbxsubdeformercluster.h"
 
-QString IOfbx::FbxSubDeformerCluster::parse(QStringList S, const int param)
+QString IOfbx::FbxSubDeformerCluster::parse(const QStringList &S, const int param)
 {
     QString error = "";
     for (int i = 0; i < S.length(); i++){

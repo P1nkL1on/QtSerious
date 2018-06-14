@@ -14,7 +14,7 @@ private:
     QString loadAndReturnError(const QString &fileName);
     QVector<QString> findIdAndName (const QString &S);
     FbxParsedContainer *res = nullptr;
-#warning Make it relative
+
     const QString testFolder = "../Models/FBXtest/";
 
     QString makePathFromName(const QString fileName) const;

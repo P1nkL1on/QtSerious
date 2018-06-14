@@ -120,7 +120,7 @@ QString IOfbx::loadFromPath(const QString path)
     return QString();
 }
 
-void TracePath (const QVector<QString> pathSt){
+void tracePath (const QVector<QString> pathSt){
     return;
     QString res = "";
     for (int i = 0; i < pathSt.length(); i++)
@@ -141,22 +141,22 @@ IOfbx::ParseType IOfbx::pushHeader(const QString fromLine)
         stackHeaders.removeAt(stackHeaders.length() - 1);
 
     if (stackLengthWas != stackHeaders.length())
-        TracePath(stackHeaders);
+        tracePath(stackHeaders);
     //
     // _-_-_- Check -_-_-_-_
     //
-    if (indexOfHeaders({"Geometry", "Vertices"}) > 0)
+    if (isStackContainsHeaders({"Geometry", "Vertices"}) > 0)
          return ParseType::FbxGeometryMeshVertices;
-    if (indexOfHeaders({"Geometry", "PolygonVertexIndex"}) > 0)
+    if (isStackContainsHeaders({"Geometry", "PolygonVertexIndex"}) > 0)
         return ParseType::FbxGeometryMeshPolygonIndexes;
 
-    if (indexOfHeaders({"Model","Properties70"}) && fromLine.indexOf("LimbNode") > 0)
+    if (isStackContainsHeaders({"Model","Properties70"}) && fromLine.indexOf("LimbNode") > 0)
         return ParseType::FbxObjectModelLimbNodeProperty;
 
     return ParseType::None;
 }
 
-int IOfbx::indexOfHeaders(const QVector<QString> tags)
+int IOfbx::isStackContainsHeaders(const QVector<QString> tags)
 {
     if (stackHeaders.length() < tags.length())
         return -1;

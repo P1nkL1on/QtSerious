@@ -9,7 +9,7 @@ class FbxPoseNode : public FbxNode
 {
 public:
     FbxPoseNode();
-    QString parse(QStringList S, const int param) override;
+    QString parse(const QStringList &S, const int param) override;
 private:
     QVector<double> transformMatrixArray;
 };

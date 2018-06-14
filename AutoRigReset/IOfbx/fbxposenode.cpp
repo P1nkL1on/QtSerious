@@ -1,6 +1,6 @@
 #include "fbxposenode.h"
 
-QString IOfbx::FbxPoseNode::parse(QStringList S, const int param)
+QString IOfbx::FbxPoseNode::parse(const QStringList &S, const int param)
 {
     QStringList arrayContainer = QStringList();
     for (int i = 0; i < S.length(); i++){

@@ -8,20 +8,21 @@ IOfbx::FbxGeometryMesh::FbxGeometryMesh()
 }
 
 
-QString IOfbx::FbxGeometryMesh::parse(QStringList S, const int param)
+QString IOfbx::FbxGeometryMesh::parse(const QStringList &S, const int param)
 {
     QString error = QString();
 
-    S.removeFirst(); // -Vertices: *7122 {
+    auto readyBuffer = S;
+    readyBuffer.removeFirst(); // -Vertices: *7122 {
 
     switch (param) {
     // 0 == vertices
     // 1 == PolygonVertexIndex
     case 0:
-        vertices = parseFbxArray<double>(S, error);
+        vertices = parseFbxArray<double>(readyBuffer, error);
         break;
     case 1:
-        polygonVertexIndex = parseFbxArray<int>(S,error);
+        polygonVertexIndex = parseFbxArray<int>(readyBuffer,error);
     default:
         break;
     }

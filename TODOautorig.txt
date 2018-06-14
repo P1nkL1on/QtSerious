@@ -4,3 +4,5 @@
 		2. вынести большой свитч в отдельную фнцию
 		3. вынести свитч
 		4. поменять inxOf с int на bool and make it call isStackCotainHeaders
+		
+		5. ++i (everywhere in for-s)

@@ -10,7 +10,7 @@ class FbxSubDeformerCluster : public FbxNode
 {
 public:
     FbxSubDeformerCluster();
-    QString parse(QStringList S, const int param) override;
+    QString parse(const QStringList &S, const int param) override;
     bool isEmpty() const override;
 private:
     QVector<int> indexes;

@@ -58,7 +58,7 @@ private:
 
 static QVector<QString> stackHeaders = QVector<QString>();
 ParseType pushHeader(const QString fromLine);
-int indexOfHeaders (const QVector<QString> tags);
+int isStackContainsHeaders (const QVector<QString> tags);
 
 // the method of loading
 QString loadFromPath(const QString path);
