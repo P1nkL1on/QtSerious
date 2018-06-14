@@ -1,17 +1,17 @@
 #include "fbxposenode.h"
 
-QString IOfbx::FbxPoseNode::parse(const QStringList &S, const int param)
+QString IOfbx::FbxPoseNode::parse(const QStringList &buffer)
 {    
-    for (int i = 0; i < S.length(); i++){
+    for (int i = 0; i < buffer.length(); ++i){
         // retrieving of id
-        if (S[i].indexOf("Node:") >= 0)
-            setNameAndID("posenodeBindMatrix", S[i].trimmed().mid(6, S[i].trimmed().length() - 6));
+        if (buffer[i].indexOf("Node:") >= 0)
+            setNameAndID("posenodeBindMatrix", buffer[i].trimmed().mid(6, buffer[i].trimmed().length() - 6));
         // the exactly 16 values
-        if (S[i].indexOf("Matrix:") >= 0){
+        if (buffer[i].indexOf("Matrix:") >= 0){
             QString error = "";
-            transformMatrixArray = parseFbxArray<double>(QStringList(S[i + 1]), error);
+            transformMatrixArray = parseFbxArray<double>(QStringList(buffer[i + 1]), error);
             if (!error.isEmpty())
-                return "Error in parsing 16 values in matrix of posenode, error in line: " + S[i] + "; " + error;
+                return "Error in parsing 16 values in matrix of posenode, error in line: " + buffer[i] + "; " + error;
         }
     }
     traceMessage (QString("v   Success parsed posenode " + this->id));

@@ -1,26 +1,27 @@
 #include "fbxsubdeformercluster.h"
 
-QString IOfbx::FbxSubDeformerCluster::parse(const QStringList &S, const int param)
+QString IOfbx::FbxSubDeformerCluster::parse(const QStringList &buffer)
 {
     QString error = "";
-    for (int i = 0; i < S.length(); i++){
+    for (int i = 0; i < buffer.length(); ++i){
         // retrieving of inds
-        if (S[i].indexOf("Indexes:") >= 0){
-            indexes = parseFbxArray<int>(QStringList(S[i + 1]), error);
+        if (buffer[i].indexOf("Indexes:") >= 0){
+            indexes = parseFbxArray<int>(QStringList(buffer[i + 1]), error);
             if (!error.isEmpty())
-                error = "Error in parsing point indexes values, error in line: " + S[i] + "; " + error;
+                error = "Error in parsing point indexes values, error in line: " + buffer[i] + "; " + error;
         }
-        if (S[i].indexOf("Weights:") >= 0
-            || S[i].indexOf("Transform:") >= 0
-            ||S[i].indexOf("TransformLink:") >= 0){
-            QVector<double> parsed = parseFbxArray<double>(QStringList(S[i + 1]), error);
+        if (buffer[i].indexOf("Weights:") >= 0
+            || buffer[i].indexOf("Transform:") >= 0
+            || buffer[i].indexOf("TransformLink:") >= 0){
+
+            QVector<double> parsed = parseFbxArray<double>(QStringList(buffer[i + 1]), error);
             if (!error.isEmpty())
-                error = "Error in parsing point double values, error in line: " + S[i] + "; " + error;
-            if (S[i].indexOf("Weights:") >= 0)
+                error = "Error in parsing point double values, error in line: " + buffer[i] + "; " + error;
+            if (buffer[i].indexOf("Weights:") >= 0)
                 weights = parsed;
-            if (S[i].indexOf("Transform:") >= 0)
+            if (buffer[i].indexOf("Transform:") >= 0)
                 transformMatrix = parsed;
-            if (S[i].indexOf("TransformLink:") >= 0)
+            if (buffer[i].indexOf("TransformLink:") >= 0)
                 transformLinkMatrix = parsed;
         }
     }

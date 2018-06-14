@@ -1,17 +1,16 @@
 #include "fbxconnection.h"
 
-QString IOfbx::FbxConnection::parse(const QStringList &S, const int param)
+QString IOfbx::FbxConnection::parse(const QStringList &buffer)
 {
-    Q_UNUSED(param);
-    if (S.length() != 2)
+    if (buffer.length() != 2)
         return "Incomplete connection type!";
-    if (S[0].indexOf(',') < 0 || S[1].indexOf(',') < 0)
+    if (buffer[0].indexOf(',') < 0 || buffer[1].indexOf(',') < 0)
         return "Not pairable connection! (Required: a,b)";
-    QStringList names = S[0].split(',');
-    QStringList ids = S[1].split(',');
+    QStringList names = buffer[0].split(',');
+    QStringList ids = buffer[1].split(',');
     if (names.length() != 2 || ids.length() < 3){
-        for (int i = 0; i < S.length(); i++)
-            traceMessage ( S[i]);
+        for (int i = 0; i < buffer.length(); ++i)
+            traceMessage ( buffer[i]);
         return "Unusuall connection format!";
     }
     idLeft = ids[1];
@@ -42,7 +41,7 @@ IOfbx::ConnectionType IOfbx::FbxConnection::getType() const
 }
 
 
-bool IOfbx::FbxConnection::setIds(const QString left, const QString right)
+bool IOfbx::FbxConnection::setIds(const QString &left, const QString &right)
 {
     idLeft = left;
     idRight = right;

@@ -10,7 +10,7 @@ class FbxSubDeformerCluster : public FbxNode
 {
 public:
     FbxSubDeformerCluster() = default;
-    QString parse(const QStringList &S, const int param) override;
+    QString parse(const QStringList &buffer) override;
     bool isEmpty() const override;
 
 private:

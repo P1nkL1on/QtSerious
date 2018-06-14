@@ -17,19 +17,17 @@ class FbxConnection : public FbxNode
 {
 public:
     FbxConnection() = default;
-    QString parse(const QStringList &S, const int param) override;
+    QString parse(const QStringList &buffer) override;
     QString getIdLeft() const;
     QString getIdRight() const;
     ConnectionType getType() const;
-    bool setIds (const QString left, const QString right);
+    bool setIds (const QString &left, const QString &right);
     void setType(const ConnectionType &value);
 private:
     QString idLeft;
     QString idRight;
     ConnectionType type = ConnectionType::None;
 };
-
-void traceMessage (const QString mess);
 
 }
 

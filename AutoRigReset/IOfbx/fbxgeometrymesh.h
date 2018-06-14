@@ -9,8 +9,9 @@ class FbxGeometryMesh : public FbxNode
 {
 public:
     FbxGeometryMesh() = default;
-    QString parse(const QStringList &S, const int param) override;
+    QString parse(const QStringList &buffer) override;
     bool isEmpty() const override;
+    bool isComplete() const;
 private:
     QVector<double> vertices;
     QVector<int> polygonVertexIndex;

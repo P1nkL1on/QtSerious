@@ -8,20 +8,31 @@ namespace IOfbx {
 
 const bool showWarningsAndErrors = false;
 
-void traceMessage(const QString mess);
+void traceMessage(const QString &mess);
+
+
+template<typename Numerical>
+Numerical fromString(const QString &string, bool &isOk);
+
+template<>
+int fromString<int>(const QString &string, bool &isOk);
+template<>
+float fromString<float>(const QString &string, bool &isOk);
+template<>
+double fromString<double>(const QString &string, bool &isOk);
 
 class FbxNode
 {
 public:
-    virtual QString parse(const QStringList &buffer, const int param) = 0;
+    virtual QString parse(const QStringList &buffer) = 0;
 
     template<typename T>
-    static QVector<T> parseFbxArray(QStringList S, QString &error);
+    static QVector<T> parseFbxArray(const QStringList &buffer, QString &error);
 
     template<typename T>
-    static QVector<T> parseLastXValues(const QString S, const int X, QString &error);
+    static QVector<T> parseLastXValues(const QString &line, const int X, QString &error);
 
-    void setNameAndID(const QString name, const QString ID);
+    void setNameAndID(const QString &name, const QString &ID);
     bool hasNameAndID() const;
     virtual void traceInfo() const;
     virtual bool isEmpty() const;
@@ -34,30 +45,24 @@ protected:
 }
 
 
-
-
-
-
-
-
 //IMPLEMENTATIONS
 
 template<typename T>
-QVector<T> IOfbx::FbxNode::parseFbxArray(QStringList S, QString &error)
+QVector<T> IOfbx::FbxNode::parseFbxArray(const QStringList &buffer, QString &error)
 {
     traceMessage(QString("o   Message: Called array parser"));
     error = QString();
     QVector<T> readenNumbers;
 
-    if (S[0].indexOf("a: ") < 0)
+    if (buffer[0].indexOf("a: ") < 0)
         traceMessage("+   Warning: array parser is using for non-array value.");
 
-    for (int lineIndex = 0; lineIndex < S.length(); lineIndex++){
-        S[lineIndex] = S[lineIndex].trimmed();                                  // remove tabs
-        if (S[lineIndex].indexOf("a: ") == 0) S[lineIndex] = S[lineIndex].remove(0,3);  // remove a:
-        if (S[lineIndex][S[lineIndex].length() - 1] == ',') S[lineIndex].remove(S[lineIndex].length() - 2, 1) ;
+    for (int lineIndex = 0; lineIndex < buffer.length(); lineIndex++){
+        QString line = buffer[lineIndex].trimmed();                                  // remove tabs
+        if (line.indexOf("a: ") == 0) line = line.remove(0,3);  // remove a:
+        if (line[line.length() - 1] == ',') line.remove(line.length() - 2, 1) ;
 
-        QVector<T> fromLine = parseLastXValues<T>(S[lineIndex], -1, error);
+        QVector<T> fromLine = parseLastXValues<T>(line, -1, error);
         if (!error.isEmpty())
             return readenNumbers;
 
@@ -70,47 +75,45 @@ QVector<T> IOfbx::FbxNode::parseFbxArray(QStringList S, QString &error)
     return readenNumbers;
 }
 
-#warning Move to namespace
-template<typename Numerical>
-Numerical fromString(const QString &string, bool &isOk);
-
 template<>
-inline int fromString<int>(const QString &string, bool &isOk)
+inline int IOfbx::fromString<int>(const QString &string, bool &isOk)
 {
     return string.toInt(&isOk);
 }
 
 template<>
-inline float fromString<float>(const QString &string, bool &isOk)
+inline float IOfbx::fromString<float>(const QString &string, bool &isOk)
 {
     return string.toFloat(&isOk);
 }
 
 template<>
-inline double fromString<double>(const QString &string, bool &isOk)
+inline double IOfbx::fromString<double>(const QString &string, bool &isOk)
 {
     return string.toDouble(&isOk);
 }
 
 template<typename T>
-QVector<T> IOfbx::FbxNode::parseLastXValues(const QString S, const int X, QString &error)
+QVector<T> IOfbx::FbxNode::parseLastXValues(const QString &line, const int X, QString &error)
 {
     QVector<T> readenNumbers;
     error = "";
-    if (S.indexOf(',') < 0){
+    if (line.indexOf(',') < 0){
         error = "Line does not have any \",\"";
         return readenNumbers;
     }
 
-    QStringList splitedNumbers = S.split(',');
+    QStringList splitedNumbers = line.split(',');
     // case of incorrect format
     if (splitedNumbers.length() <= 0){
-        error = "Line " + S + " does not contain any T values!";
+        error = "Line " + line + " does not contain any T values!";
         return readenNumbers;
     }
     if (splitedNumbers.length() < X){
-#warning format .arg
-        error = "Line " + S + " does not contain at least "+X+" values! ( it only contains " + splitedNumbers.length() + " )";
+        error = QString("Line %1 does not contain at least %2 values! ( it only contains %3 )")
+                .arg(line)
+                .arg(X)
+                .arg(splitedNumbers.length());
         return readenNumbers;
     }
 

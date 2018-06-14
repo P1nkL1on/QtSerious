@@ -11,7 +11,7 @@ class FbxModelJoint : public FbxNode
 public:
     FbxModelJoint() = default;
     void addSubName (const QString &subName);
-    QString parse(const QStringList &S, const int param) override;
+    QString parse(const QStringList &buffer) override;
     const QVector<double> &getLocalTranslation() const;
     const QVector<double> &getLocalRotation() const;
     const QVector<double> &getLocalScaling() const;

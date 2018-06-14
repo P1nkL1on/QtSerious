@@ -1,10 +1,10 @@
 #include "fbxmodeljoint.h"
 
-QString IOfbx::FbxModelJoint::parse(const QStringList &S, const int param)
+QString IOfbx::FbxModelJoint::parse(const QStringList &buffer)
 {
     QString error = QString();
-    for (int lineInd = 0; lineInd < S.length(); lineInd++){
-        QString line = S[lineInd];
+    for (int lineInd = 0; lineInd < buffer.length(); ++lineInd){
+        QString line = buffer[lineInd];
         if (line.indexOf("\"Lcl") > 0){
             QVector<double> values = parseLastXValues<double>(line, 3, error);
             if (!error.isEmpty())

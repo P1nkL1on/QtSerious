@@ -2,24 +2,23 @@
 
 
 
-QString IOfbx::FbxGeometryMesh::parse(const QStringList &S, const int param)
+QString IOfbx::FbxGeometryMesh::parse(const QStringList &buffer)
 {
     QString error = QString();
 
-    auto readyBuffer = S;
+    if (buffer.length() < 2)
+        return QString ("Incorrect mesh buffer size - line count : " + buffer.length() );
+
+    auto readyBuffer = buffer;
+    QString type = readyBuffer.first();
+    readyBuffer.removeFirst();  // vertices | polygons
     readyBuffer.removeFirst(); // -Vertices: *7122 {
 
-    switch (param) {
-    // 0 == vertices
-    // 1 == PolygonVertexIndex
-    case 0:
+    if (type == "vertices")
         vertices = parseFbxArray<double>(readyBuffer, error);
-        break;
-    case 1:
+    if (type == "polygons")
         polygonVertexIndex = parseFbxArray<int>(readyBuffer,error);
-    default:
-        break;
-    }
+
     if (!error.isEmpty())
         return error;
     traceMessage (QString("v   Success parsed geometry mesh values;"));
@@ -29,4 +28,9 @@ QString IOfbx::FbxGeometryMesh::parse(const QStringList &S, const int param)
 bool IOfbx::FbxGeometryMesh::isEmpty() const
 {
     return vertices.length() == 0 && polygonVertexIndex.length() == 0;
+}
+
+bool IOfbx::FbxGeometryMesh::isComplete() const
+{
+    return !isEmpty() && hasNameAndID();
 }

@@ -1,9 +1,9 @@
 #include "iofbx.h"
 
 #include <QFile>
-#include "QTextStream"
-#include "QDebug"
-
+#include <QTextStream>
+#include <QDebug>
+#include "IOfbx/fbxmessages.h"
 
 namespace IOfbx {
 
@@ -27,16 +27,6 @@ const QVector<QPair<QStringList, ParseType>> fbxBlockSignatures = {
     {{"Pose", "PoseNode", "Matrix"}, ParseType::FbxObjectPoseNodeMatrix}
 };
 
-const QString errMessageIncorrectFilePath = "The path of readable file is incorrect : ";
-const QString errMessageFileEmpty       = "The file is empty : ";
-const QString errMessageMeshVert        = "x   Error in parsing a mesh vertices: ";
-const QString errMessageMeshPolygons    = "x   Error in parsing a mesh polygon idnexes: ";
-const QString errMessageJoint           = "x   Error in parsing a joint: ";
-const QString errMessagePoseNode        = "x   Error in parsing a posenode: ";
-const QString errMessageCluster         = "x   Error in parsing a subdeformer cluster: ";
-const QString errMessageConnection      = "x   Error in parsing connection: ";
-const QString errMessageOnlyMesh        = "x   File contains only mesh!";
-const QString errMessageNoRigs          = "x   File does not contain any rigs!";
 
 
 }
@@ -58,7 +48,7 @@ bool IOfbx::isStackContainsHeaders(const QStringList &tags, QVector<QString> &st
         return false;
 
     // check for last tags are completely equals
-    for (int i = stackHeaders.length() - tags.length(), j = 0; i < stackHeaders.length(); i++, j++)
+    for (int i = stackHeaders.length() - tags.length(), j = 0; i < stackHeaders.length(); ++i, ++j)
         if (stackHeaders[i] != tags[j])
             return false;
     return true;
@@ -83,15 +73,11 @@ IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString &path,  QString &er
     }
 
     // initialise a struct for save parsed data
-    FbxGeometryMesh fbxMesh;   // a readen date of mesh
+    QVector<FbxGeometryMesh> fbxMeshes;   // a readen date of mesh
     QVector<FbxModelJoint> fbxJoints;    // a joints readen
     QVector<FbxPoseNode> fbxPoseNodes;
     QVector<FbxSubDeformerCluster> fbxClusters;
     QVector<FbxConnection> fbxConnections;
-
-    fbxJoints.append(FbxModelJoint());
-    fbxPoseNodes.append(FbxPoseNode());
-    fbxClusters.append(FbxSubDeformerCluster());
 
     // read a file line by line
     int lineNumber = 0;
@@ -130,23 +116,19 @@ IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString &path,  QString &er
 
             QString err = selectParserForBuffer(nodeId, nodeName, nodeSubName,
                                                 lastParsingType, nodeBuffer,
-                                                fbxMesh, fbxJoints, fbxPoseNodes, fbxClusters, fbxConnections);
+                                                fbxMeshes, fbxJoints, fbxPoseNodes, fbxClusters, fbxConnections);
             if (!err.isEmpty()){
                 error += err;
                 return nullptr;
             }
-
             if (!nodeBuffer.isEmpty())
                 nodeBuffer.clear();
         }
 
         lastParsingType = detectedTypeHeader;
     }
-    // post makes
-    error = "";
-    fbxJoints.removeAt(fbxJoints.length() - 1);
-    fbxPoseNodes.removeAt(fbxPoseNodes.length() - 1);
-    fbxClusters.removeAt(fbxClusters.length() - 1);
+
+    error = QString();
     if (fbxClusters.length() > 0 && fbxClusters[0].isEmpty())
         fbxClusters.remove(0,1);
 
@@ -154,7 +136,7 @@ IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString &path,  QString &er
             && fbxPoseNodes.isEmpty()
             && fbxClusters.isEmpty()
             && fbxConnections.isEmpty()){
-        if (fbxMesh.hasNameAndID()){
+        if (!fbxMeshes.isEmpty() && fbxMeshes.first().hasNameAndID()){
             error = IOfbx::errMessageOnlyMesh;
             return nullptr;
         }else{
@@ -167,7 +149,7 @@ IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString &path,  QString &er
     traceMessage ( "!v   File was succesfully loaded : " + fileName);
     error = "";
 
-    return new FbxParsedContainer({fbxMesh}, fbxJoints, fbxPoseNodes, fbxClusters, fbxConnections);
+    return new FbxParsedContainer(fbxMeshes, fbxJoints, fbxPoseNodes, fbxClusters, fbxConnections);
 }
 
 
@@ -176,7 +158,7 @@ QString IOfbx::selectParserForBuffer(const QString &nodeId,
                                      const QString &nodeSubName,
                                      const ParseType &lastParsingType,
                                      const QStringList &nodeBuffer,
-                                     FbxGeometryMesh &fbxMesh,
+                                     QVector<FbxGeometryMesh> &fbxMeshes,
                                      QVector<FbxModelJoint> &fbxJoints,
                                      QVector<FbxPoseNode> &fbxPoseNodes,
                                      QVector<FbxSubDeformerCluster> &fbxClusters,
@@ -184,49 +166,57 @@ QString IOfbx::selectParserForBuffer(const QString &nodeId,
 {
     QString conLine;
     QStringList maybeConnection;
-
+    QStringList extendedBuffer;
     QString err = QString();
     switch (lastParsingType){
 
     case ParseType::FbxGeometryMeshVertices:
-        if (!fbxMesh.hasNameAndID())
-            fbxMesh.setNameAndID(nodeName, nodeId);
-        err = fbxMesh.parse(nodeBuffer, 0);
+        // first mesh, or making another mesh, when prevous if fully complete
+        if (fbxMeshes.isEmpty() || fbxMeshes.last().isComplete())
+            fbxMeshes << FbxGeometryMesh();
+        if (!fbxMeshes.last().hasNameAndID())
+            fbxMeshes.last().setNameAndID(nodeName, nodeId);
+        extendedBuffer = nodeBuffer;
+        extendedBuffer.insert(0, QString("vertices"));
+        err = fbxMeshes.last().parse(extendedBuffer);
         if (!err.isEmpty())
             return  IOfbx::errMessageMeshVert + err;
         break;
 
     case ParseType::FbxGeometryMeshPolygonIndexes:
-        err = fbxMesh.parse(nodeBuffer,1);
+        extendedBuffer = nodeBuffer;
+        extendedBuffer.insert(0, QString("polygons"));
+        err = fbxMeshes.last().parse(extendedBuffer);
         if (!err.isEmpty())
             return IOfbx::errMessageMeshPolygons + err;
+        // if mesh is complete than do nothing ^^
         break;
 
     case ParseType::FbxObjectModelLimbNodeProperty:
+        fbxJoints << FbxModelJoint();
         if (!fbxJoints.last().hasNameAndID())
             fbxJoints.last().setNameAndID(nodeName, nodeId);
-        err = fbxJoints.last().parse(nodeBuffer, 0);
+        err = fbxJoints.last().parse(nodeBuffer);
         fbxJoints.last().addSubName(nodeSubName);
         if (!err.isEmpty())
             return IOfbx::errMessageJoint + err;
-        fbxJoints.append(FbxModelJoint());
         break;
 
     case ParseType::FbxObjectPoseNodeID:
-        err = fbxPoseNodes.last().parse(nodeBuffer, 0);
+        fbxPoseNodes << FbxPoseNode();
+        err = fbxPoseNodes.last().parse(nodeBuffer);
         if (!err.isEmpty())
             return IOfbx::errMessagePoseNode + err;
-        fbxPoseNodes.append(FbxPoseNode());
         break;
 
     case ParseType::FbxObjectDeformerCluster:
+        fbxClusters << FbxSubDeformerCluster();
         if (!fbxClusters.last().hasNameAndID())
             fbxClusters.last().setNameAndID(nodeName, nodeId);
-        err = fbxClusters.last().parse(nodeBuffer, 0);
+        err = fbxClusters.last().parse(nodeBuffer);
 
         if (!err.isEmpty())
             return IOfbx::errMessageCluster + err;
-        fbxClusters.append(FbxSubDeformerCluster());
         break;
 
     case ParseType::FbxConnection:
@@ -237,7 +227,7 @@ QString IOfbx::selectParserForBuffer(const QString &nodeId,
                 maybeConnection << conLine;
             if (maybeConnection.length() == 2){
                 fbxConnections.append(FbxConnection());
-                err = fbxConnections.last().parse(maybeConnection, 0);
+                err = fbxConnections.last().parse(maybeConnection);
                 if (!err.isEmpty())
                     return IOfbx::errMessageConnection + err;
 
@@ -329,7 +319,7 @@ void IOfbx::findIdAndNameInLine(const QString line, QString &id, QString &name, 
     if (s.length() < 3)
         return;
 
-    for (int i = 1; i < 3; i++)
+    for (int i = 1; i < 3; ++i)
         s[s.length() - i] = s[s.length() - i].trimmed();    // trim all parts
 
     subName = s[s.length() - 1];

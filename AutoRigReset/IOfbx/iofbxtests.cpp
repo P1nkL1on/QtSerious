@@ -75,6 +75,14 @@ void IOfbxTests::testIncorrectMatrixCount09()
     QVERIFY(!loadAndReturnError("test7").isEmpty());
 }
 
+void IOfbxTests::testMultipleMeshDefinition10()
+{
+    QString err;
+    res = loadFromPath(makePathFromName("test8"), err);
+    QVERIFY(err.isEmpty());
+    QVERIFY(res->getMesh().length() == 3);
+}
+
 void IOfbxTests::testTheMostEasyExample06()
 {
     QString err;

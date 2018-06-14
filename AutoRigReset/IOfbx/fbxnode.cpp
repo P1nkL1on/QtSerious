@@ -1,7 +1,7 @@
 #include "fbxnode.h"
 #include <QDebug>
 
-void IOfbx::FbxNode::setNameAndID(const QString name, const QString ID)
+void IOfbx::FbxNode::setNameAndID(const QString &name, const QString &ID)
 {
     this->name = name;
     this->id = ID;
@@ -22,7 +22,7 @@ bool IOfbx::FbxNode::isEmpty() const
     return !hasNameAndID();
 }
 
-void IOfbx::traceMessage(const QString mess)
+void IOfbx::traceMessage(const QString &mess)
 {
     if (IOfbx::showWarningsAndErrors || mess.indexOf('!') == 0)
         qDebug() << mess;

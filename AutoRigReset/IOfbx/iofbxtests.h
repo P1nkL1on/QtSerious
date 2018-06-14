@@ -28,6 +28,7 @@ private slots:
     void testTooMuchTabs07();
     void testCorruptedNumbers08();
     void testIncorrectMatrixCount09();
+    void testMultipleMeshDefinition10();
 
     void testFinderUsuallCase01();
     void testFinderIdOnly02();
