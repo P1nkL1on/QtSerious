@@ -23,5 +23,4 @@ SOURCES += \
     $$PWD/fbxsubdeformercluster.cpp \
     $$PWD/fbxmodeljoint.cpp\
     $$PWD/fbxparsedcontainer.cpp
-
 }

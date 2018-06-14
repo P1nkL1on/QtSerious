@@ -27,9 +27,3 @@ void IOfbx::traceMessage(const QString mess)
     if (IOfbx::showWarningsAndErrors || mess.indexOf('!') == 0)
         qDebug() << mess;
 }
-
-
-void IOfbx::turnOnWarnings()
-{
-    showWarningsAndErrors = true;
-}

@@ -32,11 +32,6 @@ void MainWindow::on_actionLoad_Guad_triggered()
     loadRigGuardYelling();
 }
 
-void MainWindow::on_actionEnable_debug_info_triggered()
-{
-    IOfbx::turnOnWarnings ();
-    qDebug() << "Warning and erros tracing is ON;";
-}
 
 void MainWindow::loadRigByAdress(QString path)
 {

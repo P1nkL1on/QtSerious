@@ -9,9 +9,13 @@ namespace IOfbx{
 class FbxModelJoint : public FbxNode
 {
 public:
-    FbxModelJoint ();
+    FbxModelJoint() = default;
     void addSubName (const QString &subName);
     QString parse(QStringList S, const  int param) override;
+    const QVector<double> &getLocalTranslation() const;
+    const QVector<double> &getLocalRotation() const;
+    const QVector<double> &getLocalScaling() const;
+
 private:
     QString subName;
     QVector<double> localTranslation;

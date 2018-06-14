@@ -249,3 +249,28 @@ void IOfbx::findIdAndNameInLine(const QString line, QString &id, QString &name)
     }
     //
 }
+
+QVector<double> FbxModelJoint::getLocalTranslation() const
+{
+    return localTranslation;
+}
+
+QVector<double> FbxModelJoint::getLocalRotation() const
+{
+    return localRotation;
+}
+
+QVector<double> FbxModelJoint::getLocalScaling() const
+{
+    return localScaling;
+}
+
+void FbxModelJoint::setLocalScaling(const QVector<double> &value)
+{
+    localScaling = value;
+}
+
+QVector<double> FbxModelJoint::getLocalScaling() const
+{
+    return localScaling;
+}

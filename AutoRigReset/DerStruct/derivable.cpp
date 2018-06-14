@@ -1,6 +1,6 @@
 #include "derivable.h"
 
-namespace DerivableStructures{
+namespace DerStruct{
 double Derivable::getDerive() const
 {
     return derive;

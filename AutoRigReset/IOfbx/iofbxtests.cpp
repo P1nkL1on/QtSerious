@@ -9,6 +9,7 @@ QString IOfbxTests::loadAndReturnError(const QString &fileName)
     if (res != nullptr){
         delete res;
     }
+    qDebug() << "Message: " << err;
     return err;
 }
 

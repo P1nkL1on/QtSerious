@@ -18,7 +18,7 @@ enum class ParseType
 };
 
 ParseType pushHeader(const QString fromLine, QVector<QString> &stackHeaders);
-int indexOfHeaders (const QVector<QString> tags, QVector<QString> &stackHeaders);
+int indexOfHeaders (const QStringList &tags, QVector<QString> &stackHeaders);
 
 // the method of loading
 FbxParsedContainer *loadFromPath(const QString &path, QString &error);

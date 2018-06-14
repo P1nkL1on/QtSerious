@@ -43,6 +43,10 @@ class FbxModelJoint : public FbxNode
 {
 public:
     FbxModelJoint ();
+    const QVector<double> &getLocalTranslation() const;
+    const QVector<double> &getLocalRotation() const;
+    const QVector<double> &getLocalScaling() const;
+
 private:
     QVector<double> localTranslation;
     QVector<double> localRotation;

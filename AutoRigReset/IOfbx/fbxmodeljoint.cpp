@@ -21,16 +21,23 @@ QString IOfbx::FbxModelJoint::parse(QStringList S, const int param)
     return QString();
 }
 
+const QVector<double> &IOfbx::FbxModelJoint::getLocalScaling() const
+{
+    return localScaling;
+}
+
+const QVector<double> &IOfbx::FbxModelJoint::getLocalRotation() const
+{
+    return localRotation;
+}
+
+const QVector<double> &IOfbx::FbxModelJoint::getLocalTranslation() const
+{
+    return localTranslation;
+}
+
 void IOfbx::FbxModelJoint::addSubName(const QString &subName)
 {
     this->subName = subName;
-}
-
-
-IOfbx::FbxModelJoint::FbxModelJoint()
-{
-    localTranslation = QVector<double>();
-    localRotation = QVector<double>();
-    localScaling = QVector<double>();
 }
 

@@ -6,11 +6,8 @@
 
 namespace IOfbx{
 
+const bool showWarningsAndErrors = true;
 
-#warning Make it constant!
-static bool showWarningsAndErrors = false;
-
-void turnOnWarnings();
 void traceMessage(const QString mess);
 
 class FbxNode

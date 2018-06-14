@@ -2,7 +2,7 @@
 #define DERIVABLE_H
 
 
-namespace DerivableStructures{
+namespace DerStruct{
 
 class Derivable
 {
