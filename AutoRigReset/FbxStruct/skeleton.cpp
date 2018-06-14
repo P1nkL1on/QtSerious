@@ -7,21 +7,16 @@ using namespace IOfbx;
 
 Joint::Joint()
 {
-    localTransform = makeUnitMatrix<Derivable>();
-    globalTransform = makeUnitMatrix<Derivable>();
+    localTransform = makeUnitMatrix<float>();
+    globalTransform = makeUnitMatrix<float>();
 }
 
 Joint::Joint(const FbxModelJoint &parsedJoint)
 {
-    localTranslation = makeVector3fromQVector<Derivable>(parsedJoint.getLocalTranslation());
-    localRotation = makeVector3fromQVector<Derivable>(parsedJoint.getLocalRotation());
-    localScaling = makeVector3fromQVector<Derivable>(parsedJoint.getLocalScaling());
+    localTranslation = makeVector3fromQVector<float>(parsedJoint.getLocalTranslation());
+    localRotation = makeVector3fromQVector<float>(parsedJoint.getLocalRotation());
+    localScaling = makeVector3fromQVector<float>(parsedJoint.getLocalScaling());
 
-    localTransform = makeUnitMatrix<Derivable>();
-    globalTransform = makeUnitMatrix<Derivable>();
-}
-
-const Matrix4<Derivable> &Joint::getGlobalTransform() const
-{
-    return globalTransform;
+    localTransform = makeUnitMatrix<float>();
+    globalTransform = makeUnitMatrix<float>();
 }

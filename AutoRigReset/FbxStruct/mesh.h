@@ -1,8 +1,7 @@
-#ifndef MESH_H
-#define MESH_H
+#ifndef FBXSTRUCT_MESH_H
+#define FBXSTRUCT_MESH_H
 
 #include "fbxstruct.h"
-#include "iofbx.h"
 
 namespace FbxStruct{
 
@@ -20,4 +19,4 @@ private:
 
 }
 
-#endif // MESH_H
+#endif // FBXSTRUCT_MESH_H

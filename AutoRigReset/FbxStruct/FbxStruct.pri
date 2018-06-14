@@ -2,16 +2,18 @@
 
 CONFIG += FBXSTRUCT_PRI
 
-INCLUDEPATH += $$PWD
+INCLUDEPATH += $$PWD/../
 
 HEADERS += \
     $$PWD/fbxstruct.h \
     $$PWD/mesh.h\
-    $$PWD/skeleton.h
+    $$PWD/skeleton.h \
+    $$PWD/fbxconverter.h
 
 SOURCES += \
     $$PWD/fbxstruct.cpp \
     $$PWD/mesh.cpp \
-    $$PWD/skeleton.cpp
+    $$PWD/skeleton.cpp \
+    $$PWD/fbxconverter.cpp
 }
 

@@ -1,8 +1,9 @@
-#ifndef FBXSTRUCT_H
-#define FBXSTRUCT_H
+#ifndef FBXSTRUCT_FBXSTRUCT_H
+#define FBXSTRUCT_FBXSTRUCT_H
 #include "Eigen/core"
 #include "QVector"
 #include "DerStruct/derivable.h"
+#include "IOfbx/iofbx.h"
 
 using Eigen::Matrix;
 

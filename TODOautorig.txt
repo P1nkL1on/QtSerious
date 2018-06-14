@@ -15,3 +15,4 @@
 	+	10/ ghblevfnm cgjcj, hfpltkbnm gfhcbyu vtif gj yjdjve (,tp gtp gfhfvtnhf)
 	
 		11. maximum fields - float, methods - template
+		12. сделать конвертер отдельными функцияи в модуле ИО фбх, а не фбх 
