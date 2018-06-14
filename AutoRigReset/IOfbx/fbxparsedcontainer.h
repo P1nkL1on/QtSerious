@@ -20,7 +20,7 @@ public:
                        const QVector<FbxConnection> &connections);
     ~FbxParsedContainer();
 
-    const QVector<FbxGeometryMesh> &getMesh() const;
+    const QVector<FbxGeometryMesh> &getMeshes() const;
     const QVector<FbxModelJoint> &getJoints() const;
     const QVector<FbxPoseNode> &getPosenodes() const;
     const QVector<FbxSubDeformerCluster> &getClusters() const;

@@ -49,7 +49,7 @@ const QVector<IOfbx::FbxModelJoint> &IOfbx::FbxParsedContainer::getJoints() cons
     return joints;
 }
 
-const QVector<IOfbx::FbxGeometryMesh> &IOfbx::FbxParsedContainer::getMesh() const
+const QVector<IOfbx::FbxGeometryMesh> &IOfbx::FbxParsedContainer::getMeshes() const
 {
     return meshes;
 }
