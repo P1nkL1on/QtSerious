@@ -13,7 +13,8 @@ public:
 //    Joint(const Joint &other) = delete;
     Joint(const Df::Vector3<float> &localTranslation,
           const Df::Vector3<float> &localRotation,
-          const Df::Vector3<float> &localScaling);
+          const Df::Vector3<float> &localScaling,
+          const bool isMeshDepended);
     template <typename Numerical>
     const Df::Matrix4<Numerical> &calculateLocalTransformMatrix();
     template <typename Numerical>
@@ -21,7 +22,9 @@ public:
     void setPaterIndex(const int paterPtrInd);
     void addKidIndex (const int kidPtrInd);
     void setBindTransform(const Df::Matrix4<double> &value);
+    bool isMeshDependent() const;
 private:
+    bool meshDependent = false;
     int paterInd = -1;
     QVector<int> kidsInd;
     Df::Vector3<float> localTranslation;

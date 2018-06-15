@@ -34,12 +34,18 @@ QString IOfbx::FbxSubDeformerCluster::parse(const QStringList &buffer)
     if (!error.isEmpty())
         return "Error in parsing cluster: " + error;
 
-    traceMessage (QString("v   Success parsed subdeformer " + this->id));
+    isDeformer = name.indexOf("Deformer") == 0;
+    traceMessage (QString("v   Success parsed "+name+" " + this->id));
     return QString();
 }
 
 bool IOfbx::FbxSubDeformerCluster::isEmpty() const
 {
     return (indexes.length() == 0);
+}
+
+bool IOfbx::FbxSubDeformerCluster::isParentDeformder() const
+{
+    return isDeformer;
 }
 

@@ -7,7 +7,13 @@ using namespace Df;
 void IOfbx::FbxConverter::convertContainerToRig(const IOfbx::FbxParsedContainer *container)
 {
     QVector<Joint> fbxJoints;
+
+    QVector<QString> parsedMeshIds; // meant geometry
     QVector<QString> parsedJointIds;
+
+    for (const auto parsedMesh : container->getMeshes())
+        parsedMeshIds << parsedMesh.getId();
+
     for (const auto parsedJoint : container->getJoints()){
         fbxJoints << convertJoint(parsedJoint);
         parsedJointIds << parsedJoint.getId();
@@ -17,9 +23,10 @@ void IOfbx::FbxConverter::convertContainerToRig(const IOfbx::FbxParsedContainer 
         int jointIndex = parsedJointIds.indexOf(pose.getId());
         if (jointIndex >= 0){
             fbxJoints[jointIndex].setBindTransform(initialiseMatrix(pose.getTransformMatrixArray()));
-            traceMessage( QString("v   PoseNode connected to bone: #%1 (%2)")
+            traceMessage( QString("v   PoseNode connected to %3: #%1 (%2)")
                           .arg(jointIndex)
-                          .arg(parsedJointIds[jointIndex]));
+                          .arg(parsedJointIds[jointIndex])
+                          .arg((fbxJoints[jointIndex].isMeshDependent()) ? "mesh" : "bone"));
         }
     }
 
@@ -42,13 +49,19 @@ void IOfbx::FbxConverter::convertContainerToRig(const IOfbx::FbxParsedContainer 
     }
 
 
+#warning убрать потом из общео числа джойнтов все те, которые отвечают за меши
+#warning убрать из числа деформеров те, которые отвечают не за кластеры
+
     return;
 }
 
 Joint IOfbx::FbxConverter::convertJoint(const IOfbx::FbxModelJoint &parsedJoint)
 {
+    if (parsedJoint.isMeshDependent())
+        traceMessage(QString("o   Bone with ID %1 is mesh denedent;").arg(parsedJoint.getId()));
     return Joint(
                 makeVector3fromQVector<float>(parsedJoint.getLocalTranslation()),
                 makeVector3fromQVector<float>(parsedJoint.getLocalRotation()),
-                makeVector3fromQVector<float>(parsedJoint.getLocalScaling()));
+                makeVector3fromQVector<float>(parsedJoint.getLocalScaling()),
+                parsedJoint.isMeshDependent());
 }

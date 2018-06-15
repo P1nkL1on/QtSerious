@@ -129,8 +129,8 @@ IOfbx::FbxParsedContainer *IOfbx::loadFromPath(const QString &path,  QString &er
     }
 
     error = QString();
-    if (fbxClusters.length() > 0 && fbxClusters[0].isEmpty())
-        fbxClusters.remove(0,1);
+//    if (fbxClusters.length() > 0 && fbxClusters[0].isEmpty())
+//        fbxClusters.remove(0,1);
 
     if (fbxJoints.isEmpty()
             && fbxPoseNodes.isEmpty()

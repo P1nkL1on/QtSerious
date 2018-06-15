@@ -26,6 +26,11 @@ const QVector<double> &IOfbx::FbxModelJoint::getLocalScaling() const
     return localScaling;
 }
 
+bool IOfbx::FbxModelJoint::isMeshDependent() const
+{
+    return subName.indexOf("Mesh") >= 0;
+}
+
 const QVector<double> &IOfbx::FbxModelJoint::getLocalRotation() const
 {
     return localRotation;

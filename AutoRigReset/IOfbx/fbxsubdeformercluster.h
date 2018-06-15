@@ -12,8 +12,9 @@ public:
     FbxSubDeformerCluster() = default;
     QString parse(const QStringList &buffer) override;
     bool isEmpty() const override;
-
+    bool isParentDeformder () const;
 private:
+    bool isDeformer = false;
     QVector<int> indexes;
     QVector<double> weights;
     QVector<double> transformMatrix;

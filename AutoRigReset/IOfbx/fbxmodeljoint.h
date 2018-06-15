@@ -15,7 +15,7 @@ public:
     const QVector<double> &getLocalTranslation() const;
     const QVector<double> &getLocalRotation() const;
     const QVector<double> &getLocalScaling() const;
-
+    bool isMeshDependent () const;
 private:
     QString subName;
     QVector<double> localTranslation;
