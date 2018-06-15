@@ -15,7 +15,7 @@ public:
     static void convertContainerToRig(const FbxParsedContainer *container);
 private:
     static FbxStruct::Joint convertJoint(const FbxModelJoint &parsedJoint);
-    static FbxStruct::Cluster convertCluster(const FbxSubDeformerCluster &parsedJoint);
+    static FbxStruct::Cluster convertCluster(const FbxSubDeformerCluster &parsedCluster);
 };
 
 }

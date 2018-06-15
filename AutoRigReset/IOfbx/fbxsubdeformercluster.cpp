@@ -49,3 +49,23 @@ bool IOfbx::FbxSubDeformerCluster::isParentDeformder() const
     return isDeformer;
 }
 
+QVector<double> IOfbx::FbxSubDeformerCluster::getTransformLinkMatrix() const
+{
+    return transformLinkMatrix;
+}
+
+QVector<double> IOfbx::FbxSubDeformerCluster::getTransformMatrix() const
+{
+    return transformMatrix;
+}
+
+QVector<double> IOfbx::FbxSubDeformerCluster::getWeights() const
+{
+    return weights;
+}
+
+QVector<int> IOfbx::FbxSubDeformerCluster::getIndexes() const
+{
+    return indexes;
+}
+

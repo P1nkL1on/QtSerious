@@ -7,9 +7,11 @@ using namespace Df;
 void IOfbx::FbxConverter::convertContainerToRig(const IOfbx::FbxParsedContainer *container)
 {
     QVector<Joint> fbxJoints;
+    QVector<Cluster> fbxClusters;
 
     QVector<QString> parsedMeshIds; // meant geometry
     QVector<QString> parsedJointIds;
+    QVector<QString> parsedClustersIds;
 
     for (const auto parsedMesh : container->getMeshes())
         parsedMeshIds << parsedMesh.getId();
@@ -27,6 +29,13 @@ void IOfbx::FbxConverter::convertContainerToRig(const IOfbx::FbxParsedContainer 
                           .arg(jointIndex)
                           .arg(parsedJointIds[jointIndex])
                           .arg((fbxJoints[jointIndex].isMeshDependent()) ? "mesh" : "bone"));
+        }
+    }
+
+    for (const auto parsedCluster : container->getClusters()){
+        if (!parsedCluster.isParentDeformder()){
+            fbxClusters << convertCluster(parsedCluster);
+            parsedClustersIds << parsedCluster.getId();
         }
     }
 
@@ -64,4 +73,14 @@ Joint IOfbx::FbxConverter::convertJoint(const IOfbx::FbxModelJoint &parsedJoint)
                 makeVector3fromQVector<float>(parsedJoint.getLocalRotation()),
                 makeVector3fromQVector<float>(parsedJoint.getLocalScaling()),
                 parsedJoint.isMeshDependent());
+}
+
+Cluster IOfbx::FbxConverter::convertCluster(const IOfbx::FbxSubDeformerCluster &parsedCluster)
+{
+    if (parsedCluster.isEmpty())
+        traceMessage(QString("o   Csluter with Id %1 is empty. Is it a Deformer? elsewhere it is error;").arg(parsedJoint.getId()));
+    return Cluster(parsedCluster.getIndexes(),
+                   parsedCluster.getWeights(),
+                   initialiseMatrix<double>(parsedCluster.getTransformMatrix()),
+                   initialiseMatrix<double>(parsedCluster.getTransformLinkMatrix()));
 }

@@ -3,9 +3,9 @@
 using namespace FbxStruct;
 using namespace Df;
 
-Joint::Joint(const Df::Vector3<float> &localTranslation,
-             const Df::Vector3<float> &localRotation,
-             const Df::Vector3<float> &localScaling, const bool isMeshDepended):
+Joint::Joint(const Vector3<float> &localTranslation,
+             const Vector3<float> &localRotation,
+             const Vector3<float> &localScaling, const bool isMeshDepended):
     localTranslation(localTranslation),
     localRotation(localRotation),
     localScaling(localScaling),
