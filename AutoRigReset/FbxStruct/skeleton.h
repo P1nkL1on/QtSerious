@@ -10,7 +10,6 @@ class Joint
 {
 public:
     Joint() = default;
-//    Joint(const Joint &other) = delete;
     Joint(const Df::Vector3<float> &localTranslation,
           const Df::Vector3<float> &localRotation,
           const Df::Vector3<float> &localScaling,
@@ -31,7 +30,7 @@ private:
     QVector<int> clusterInds;
     Df::Vector3<float> localTranslation;
     Df::Vector3<float> localRotation;
-    Df::Vector3<float> localScaling = Df::makeUnitVector3<float>();
+    Df::Vector3<float> localScaling = Df::Vector3<float>::Constant(1);
     Df::Matrix4<double> localTransform = Df::Matrix4<double>::Identity();
     Df::Matrix4<double> globalTransform = Df::Matrix4<double>::Identity();
     Df::Matrix4<double> bindTransform = Df::Matrix4<double>::Identity();

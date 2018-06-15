@@ -10,7 +10,7 @@ class Cluster
 public:
     Cluster() = default;
     Cluster(const QVector<int> &vertIndexes,
-            const QVector<double> &weightes,
+            const QVector<double> &weights,
             const Df::Matrix4<double> &transformMatrix,
             const Df::Matrix4<double> &linkTransformMatrix);
     int getMeshIndex() const;
@@ -18,7 +18,7 @@ public:
 private:
     int meshIndex = -1;
     QVector<int> vertIndexes;
-    QVector<double> weightes;
+    QVector<double> weights;
     Df::Matrix4<double> transformMatrix = Df::Matrix4<double>::Identity();
     Df::Matrix4<double> linkTransformMatrix = Df::Matrix4<double>::Identity();
 

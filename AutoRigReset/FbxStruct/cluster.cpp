@@ -8,7 +8,7 @@ Cluster::Cluster(const QVector<int> &vertIndexes,
                  const Df::Matrix4<double> &transformMatrix,
                  const Df::Matrix4<double> &linkTransformMatrix):
     vertIndexes(vertIndexes),
-    weightes(weightes),
+    weights(weightes),
     transformMatrix(transformMatrix),
     linkTransformMatrix(linkTransformMatrix)
 {

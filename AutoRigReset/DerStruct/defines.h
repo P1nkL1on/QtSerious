@@ -36,6 +36,16 @@ Vector3<Scalar> makeVector3fromQVector (const QVector<double> &from){
     return v3;
 }
 
+
+template <typename Scalar>
+Vector3<Scalar> makeVector3fromDoubles (const double x,const double y,const double z){
+    Vector3<Scalar> v3;
+    v3(0,0) = Scalar(x);
+    v3(1,0) = Scalar(y);
+    v3(2,0) = Scalar(z);
+    return v3;
+}
+
 template <typename Scalar>
 Vector3<Scalar> makeUnitVector3 (){
     return Vector3<Scalar>(Scalar(1),Scalar(1),Scalar(1));

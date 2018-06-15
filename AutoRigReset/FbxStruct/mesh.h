@@ -5,14 +5,15 @@
 
 namespace FbxStruct{
 
-template <typename Scalar>
 class Mesh
 {
 public:
-    Mesh ();
-
+    Mesh () = default;
+    Mesh (const QVector<Df::Vector3<double>> &vertices,
+          const QVector<int> &polygonIndexes,
+          const QVector<int> &polygonStartIndexes);
 private:
-    QVector<Df::Vector3<Scalar>> vertices;
+    QVector<Df::Vector3<double>> vertices;
     QVector<int> polygonIndexes;
     QVector<int> polygonStartIndexes;
 };

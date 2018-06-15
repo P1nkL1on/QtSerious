@@ -8,6 +8,7 @@ void IOfbx::FbxConverter::convertContainerToRig(const IOfbx::FbxParsedContainer 
 {
     QVector<Joint> fbxJoints;
     QVector<Cluster> fbxClusters;
+    QVector<Mesh> fbxMeshes;
 
     QVector<QString> parsedMeshIds; // meant geometry
     QVector<QString> parsedJointIds;
@@ -17,6 +18,7 @@ void IOfbx::FbxConverter::convertContainerToRig(const IOfbx::FbxParsedContainer 
     QVector<QString> parsedDeformerAttendedToGeometryIds;
 
     for (const auto parsedMesh : container->getMeshes()){
+        fbxMeshes << convertMesh(parsedMesh);
         parsedMeshIds << parsedMesh.getId();
         parsedDeformerAttendedToGeometryIds << QString(); // id of attended deformer
     }
@@ -135,4 +137,30 @@ Cluster IOfbx::FbxConverter::convertCluster(const IOfbx::FbxSubDeformerCluster &
                    parsedCluster.getWeights(),
                    initialiseMatrix<double>(parsedCluster.getTransformMatrix()),
                    initialiseMatrix<double>(parsedCluster.getTransformLinkMatrix()));
+}
+
+Mesh IOfbx::FbxConverter::convertMesh(const IOfbx::FbxGeometryMesh &parsedMesh)
+{
+    QVector<double> verticeValues = parsedMesh.getVertices();
+    Q_ASSERT(verticeValues.length() % 3 == 0);
+
+    QVector<int> polygonIndexes;
+    QVector<int> polygonStarts;
+    QVector<Vector3<double>> vertices;
+
+    for (int vInd = 0; vInd < vertices.length() / 3; ++vInd)
+        vertices << makeVector3fromDoubles<double>(
+                verticeValues[vInd * 3],
+                verticeValues[vInd * 3 + 1],
+                verticeValues[vInd * 3 + 2]);
+
+    int stInd = 0;
+    for (const auto index : parsedMesh.getPolygonVertexIndex()){
+        ++stInd;
+        if (index < 0)
+            polygonStarts << stInd;
+        polygonIndexes << ((index < 0)? -index - 1 : index);
+    }
+
+    return Mesh(vertices, polygonIndexes, polygonStarts);
 }

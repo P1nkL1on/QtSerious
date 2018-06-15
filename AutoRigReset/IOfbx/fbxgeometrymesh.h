@@ -12,6 +12,8 @@ public:
     QString parse(const QStringList &buffer) override;
     bool isEmpty() const override;
     bool isComplete() const;
+    QVector<double> getVertices() const;
+    QVector<int> getPolygonVertexIndex() const;
 private:
     QVector<double> vertices;
     QVector<int> polygonVertexIndex;

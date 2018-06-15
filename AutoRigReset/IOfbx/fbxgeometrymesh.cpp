@@ -34,3 +34,13 @@ bool IOfbx::FbxGeometryMesh::isComplete() const
 {
     return !isEmpty() && hasNameAndID();
 }
+
+QVector<int> IOfbx::FbxGeometryMesh::getPolygonVertexIndex() const
+{
+    return polygonVertexIndex;
+}
+
+QVector<double> IOfbx::FbxGeometryMesh::getVertices() const
+{
+    return vertices;
+}

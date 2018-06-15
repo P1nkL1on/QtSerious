@@ -4,6 +4,7 @@
 #include "fbxparsedcontainer.h"
 #include "DerStruct/defines.h"
 #include "FbxStruct/skeleton.h"
+#include "FbxStruct/mesh.h"
 #include "FbxStruct/cluster.h"
 
 
@@ -16,6 +17,7 @@ public:
 private:
     static FbxStruct::Joint convertJoint(const FbxModelJoint &parsedJoint);
     static FbxStruct::Cluster convertCluster(const FbxSubDeformerCluster &parsedCluster);
+    static FbxStruct::Mesh convertMesh(const FbxGeometryMesh &parsedMesh);
 };
 
 }
