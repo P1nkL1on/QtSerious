@@ -24,3 +24,8 @@ void Joint::addKidIndex(const int kidPtrInd)
     if (kidPtrInd != -1)
         kidsInd << kidPtrInd;
 }
+
+void Joint::setBindTransform(const Df::Matrix4<double> &value)
+{
+    bindTransform = value;
+}

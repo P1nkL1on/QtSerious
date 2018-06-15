@@ -42,7 +42,7 @@ Vector3<Scalar> makeUnitVector3 (){
 }
 
 template <typename Scalar>
-Matrix4<Scalar> initialiseMatrix (QVector<T> array16){
+Matrix4<Scalar> initialiseMatrix (const QVector<Scalar> &array){
     Matrix4<Scalar> result;
     result << array[0], array[1], array[2], array[3],
             array[4], array[5], array[6], array[7],

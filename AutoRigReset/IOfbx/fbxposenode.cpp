@@ -18,7 +18,7 @@ QString IOfbx::FbxPoseNode::parse(const QStringList &buffer)
     return QString();
 }
 
-const QVector<double> &IOfbx::FbxPoseNode::getTransformMatrixArray()
+const QVector<double> &IOfbx::FbxPoseNode::getTransformMatrixArray() const
 {
     return transformMatrixArray;
 }

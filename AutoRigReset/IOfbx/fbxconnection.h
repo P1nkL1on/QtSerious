@@ -10,7 +10,10 @@ enum class ConnectionType
     None = -1,
     BoneToBone = 0,
     ModelToSubDeformer = 1,
-    Other = 2
+    SubDeformerToDeformer = 2,
+    DeformderToGeometry = 3,
+    GeometryToMesh = 4,
+    Other = 100
 };
 
 class FbxConnection : public FbxNode

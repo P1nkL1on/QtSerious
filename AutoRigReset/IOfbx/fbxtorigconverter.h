@@ -14,7 +14,7 @@ class FbxConverter
 public:
     static void convertContainerToRig(const FbxParsedContainer *container);
 private:
-    static void convertJoint(const FbxModelJoint &parsedJoint, FbxStruct::Joint &fbxJoint);
+    static FbxStruct::Joint convertJoint(const FbxModelJoint &parsedJoint);
 };
 
 }

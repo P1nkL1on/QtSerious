@@ -20,15 +20,16 @@ public:
     const Df::Matrix4<Numerical> &calculateGlobalTransformMatrix();
     void setPaterIndex(const int paterPtrInd);
     void addKidIndex (const int kidPtrInd);
+    void setBindTransform(const Df::Matrix4<double> &value);
 private:
     int paterInd = -1;
     QVector<int> kidsInd;
     Df::Vector3<float> localTranslation;
     Df::Vector3<float> localRotation;
     Df::Vector3<float> localScaling = Df::makeUnitVector3<float>();
-    Df::Matrix4<float> localTransform = Df::Matrix4<float>::Identity();
-    Df::Matrix4<float> globalTransform = Df::Matrix4<float>::Identity();
-    Df::Matrix4<float> bindTransform = Df::Matrix4<float>::Identity();
+    Df::Matrix4<double> localTransform = Df::Matrix4<double>::Identity();
+    Df::Matrix4<double> globalTransform = Df::Matrix4<double>::Identity();
+    Df::Matrix4<double> bindTransform = Df::Matrix4<double>::Identity();
 };
 
 class Skeleton

@@ -21,7 +21,20 @@ QString IOfbx::FbxConnection::parse(const QStringList &buffer)
             type = ConnectionType::BoneToBone;
         if (names[1].indexOf("SubDeformer::") >= 0)
             type = ConnectionType::ModelToSubDeformer;
+        return QString();
     }
+
+    if (names[0].indexOf("Model::") >= 0 && names[1].indexOf("Model::") >= 0)
+        type = ConnectionType::BoneToBone;
+    if (names[0].indexOf("Model::") >= 0 && names[1].indexOf("SubDeformer::") >= 0)
+        type = ConnectionType::ModelToSubDeformer;
+    if (names[0].indexOf("SubDeformer::") >= 0 && names[1].indexOf("Deformer::") >= 0)
+        type = ConnectionType::SubDeformerToDeformer;
+    if (names[0].indexOf("Deformer::") >= 0 && names[1].indexOf("Geometry::") >= 0)
+        type = ConnectionType::DeformderToGeometry;
+    if (names[0].indexOf("Geometry::") >= 0 && names[1].indexOf("Model::") >= 0)
+        type = ConnectionType::GeometryToMesh;
+
     return QString();
 }
 

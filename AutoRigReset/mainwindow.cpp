@@ -41,9 +41,11 @@ void MainWindow::loadRigByAdress(QString path)
     if (!err.isEmpty())
         qDebug() << err;
     else
+    {
         parsed->traceInfo();
+        FbxConverter::convertContainerToRig(parsed);
+    }
 
-    FbxConverter::convertContainerToRig(parsed);
 }
 
 void MainWindow::loadRigGuardYelling()

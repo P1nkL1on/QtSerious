@@ -9,14 +9,18 @@ void IOfbx::FbxConverter::convertContainerToRig(const IOfbx::FbxParsedContainer 
     QVector<Joint> fbxJoints;
     QVector<QString> parsedJointIds;
     for (const auto parsedJoint : container->getJoints()){
-        fbxJoints << Joint();
-        convertJoint(parsedJoint, fbxJoints.last());
+        fbxJoints << convertJoint(parsedJoint);
         parsedJointIds << parsedJoint.getId();
     }
 
     for (const auto pose : container->getPosenodes()){
         int jointIndex = parsedJointIds.indexOf(pose.getId());
-        if (jointIndex >= 0)
+        if (jointIndex >= 0){
+            fbxJoints[jointIndex].setBindTransform(initialiseMatrix(pose.getTransformMatrixArray()));
+            traceMessage( QString("v   PoseNode connected to bone: #%1 (%2)")
+                          .arg(jointIndex)
+                          .arg(parsedJointIds[jointIndex]));
+        }
     }
 
     for (const auto connect : container->getConnections()){
@@ -41,9 +45,9 @@ void IOfbx::FbxConverter::convertContainerToRig(const IOfbx::FbxParsedContainer 
     return;
 }
 
-void IOfbx::FbxConverter::convertJoint(const IOfbx::FbxModelJoint &parsedJoint, Joint &fbxJoint)
+Joint IOfbx::FbxConverter::convertJoint(const IOfbx::FbxModelJoint &parsedJoint)
 {
-    fbxJoint = Joint(
+    return Joint(
                 makeVector3fromQVector<float>(parsedJoint.getLocalTranslation()),
                 makeVector3fromQVector<float>(parsedJoint.getLocalRotation()),
                 makeVector3fromQVector<float>(parsedJoint.getLocalScaling()));
