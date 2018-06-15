@@ -12,6 +12,7 @@ void IOfbx::FbxConverter::convertContainerToRig(const IOfbx::FbxParsedContainer 
     QVector<QString> parsedMeshIds; // meant geometry
     QVector<QString> parsedJointIds;
     QVector<QString> parsedClustersIds;
+    QVector<QString> parsedClustersAttendedToDeformsIds;
     QVector<QString> parsedDeformerIds;
     QVector<QString> parsedDeformerAttendedToGeometryIds;
 
@@ -40,6 +41,7 @@ void IOfbx::FbxConverter::convertContainerToRig(const IOfbx::FbxParsedContainer 
         if (!parsedCluster.isParentDeformder()){
             fbxClusters << convertCluster(parsedCluster);
             parsedClustersIds << parsedCluster.getId();
+            parsedClustersAttendedToDeformsIds << QString();
         } else
             parsedDeformerIds << parsedCluster.getId();
     }
@@ -51,34 +53,44 @@ void IOfbx::FbxConverter::convertContainerToRig(const IOfbx::FbxParsedContainer 
         case ConnectionType::BoneToBone:
             leftIndex= parsedJointIds.indexOf(connect.getIdLeft());
             rightIndex = parsedJointIds.indexOf(connect.getIdRight());
-            if (leftIndex >= 0 && rightIndex >= 0){
-                traceMessage( QString("v   Bones connected: #%1 (%3)-> #%2 (%4)")
-                              .arg(leftIndex).arg(rightIndex)
-                              .arg(parsedJointIds[leftIndex])
-                              .arg(parsedJointIds[rightIndex]));
-                fbxJoints[leftIndex].setPaterIndex(rightIndex);
-                fbxJoints[rightIndex].addKidIndex(leftIndex);
-            }
+            if (leftIndex < 0 || rightIndex < 0)
+                break;
+            traceMessage( QString("v   Bones connected: #%1 (%3)-> #%2 (%4)")
+                          .arg(leftIndex).arg(rightIndex)
+                          .arg(parsedJointIds[leftIndex])
+                          .arg(parsedJointIds[rightIndex]));
+            fbxJoints[leftIndex].setPaterIndex(rightIndex);
+            fbxJoints[rightIndex].addKidIndex(leftIndex);
+            break;
+        case ConnectionType::ModelToSubDeformer:
+            // bone to cluster
+            leftIndex= parsedJointIds.indexOf(connect.getIdLeft());
+            rightIndex = parsedClustersIds.indexOf(connect.getIdRight());
+            if (leftIndex < 0 || rightIndex < 0)
+                break;
+            traceMessage( QString("v   Bone #%1 connected to Cluster #%2")
+                          .arg(leftIndex).arg(rightIndex));
+            fbxJoints[leftIndex].addClusterIndex(rightIndex);
             break;
         case ConnectionType::SubDeformerToDeformer:
             leftIndex = parsedClustersIds.indexOf(connect.getIdLeft());
             rightIndex = parsedDeformerIds.indexOf(connect.getIdRight()); // index of attended deformer
-            if (leftIndex >= 0 && rightIndex >= 0){
-                traceMessage( QString("v   SubDeformer (cluster) #%1 connected to Deformer #%2")
-                              .arg(leftIndex).arg(rightIndex));
-                parsedClustersIds[leftIndex]
-                        = parsedDeformerIds[rightIndex];
-            }
+            if (leftIndex < 0 || rightIndex < 0)
+                break;
+            traceMessage( QString("v   SubDeformer (cluster) #%1 connected to Deformer #%2")
+                          .arg(leftIndex).arg(rightIndex));
+            parsedClustersAttendedToDeformsIds[leftIndex]
+                    = parsedDeformerIds[rightIndex];
             break;
         case ConnectionType::DeformderToGeometry:
             leftIndex = parsedDeformerIds.indexOf(connect.getIdLeft()); // index of attended deformer
             rightIndex = parsedMeshIds.indexOf(connect.getIdRight());   // index of geoemtry-mesh
-            if (leftIndex >= 0 && rightIndex >= 0){
-                traceMessage( QString("v   Deformer #%1 connected to Geometry #%2")
-                              .arg(leftIndex).arg(rightIndex));
-                parsedDeformerAttendedToGeometryIds[rightIndex]
-                        = parsedDeformerIds[leftIndex];
-            }
+            if (leftIndex < 0 || rightIndex < 0)
+                break;
+            traceMessage( QString("v   Deformer #%1 connected to Geometry #%2")
+                          .arg(leftIndex).arg(rightIndex));
+            parsedDeformerAttendedToGeometryIds[rightIndex]
+                    = parsedDeformerIds[leftIndex];
             break;
         default:
             break;
@@ -87,12 +99,15 @@ void IOfbx::FbxConverter::convertContainerToRig(const IOfbx::FbxParsedContainer 
 
     // upto connect clusters with geoemtry:
     for (int clustIndex = 0; clustIndex < fbxClusters.length(); ++clustIndex){
-        int meshInd = parsedMeshIds.indexOf(parsedClustersIds[clustIndex]);
+        int meshInd = parsedDeformerAttendedToGeometryIds.indexOf(parsedClustersAttendedToDeformsIds[clustIndex]);
         if (meshInd >= 0){
             fbxClusters[clustIndex].setMeshIndex(meshInd);
-            traceMessage( QString("v   Cluster #%1 (bone #%2) connected to mesh #%3;")
-                          .arg(clustIndex).arg(fbxClusters[clustIndex].getJointIndex()).arg(fbxClusters[clustIndex].getMeshIndex()));
-        }
+            traceMessage( QString("v   Cluster #%1 connected to mesh #%2;")
+                          .arg(clustIndex).arg(fbxClusters[clustIndex].getMeshIndex()));
+        }else
+            traceMessage( QString("v   Cluster #%1, ID %2 was not connected to any mesh, it is useless;")
+                          .arg(clustIndex).arg(parsedClustersIds[clustIndex]));
+
     }
 
 #warning убрать потом из общео числа джойнтов все те, которые отвечают за меши

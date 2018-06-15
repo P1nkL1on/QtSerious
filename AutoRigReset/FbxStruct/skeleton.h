@@ -21,12 +21,14 @@ public:
     const Df::Matrix4<Numerical> &calculateGlobalTransformMatrix();
     void setPaterIndex(const int paterPtrInd);
     void addKidIndex (const int kidPtrInd);
+    void addClusterIndex (const int clusterPtrInd);
     void setBindTransform(const Df::Matrix4<double> &value);
     bool isMeshDependent() const;
 private:
     bool meshDependent = false;
     int paterInd = -1;
     QVector<int> kidsInd;
+    QVector<int> clusterInds;
     Df::Vector3<float> localTranslation;
     Df::Vector3<float> localRotation;
     Df::Vector3<float> localScaling = Df::makeUnitVector3<float>();

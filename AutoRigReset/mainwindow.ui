@@ -29,6 +29,7 @@
     </property>
     <addaction name="actionLoad_Rig"/>
     <addaction name="actionLoad_Guad"/>
+    <addaction name="actionLoad_Ivan_Sergeich"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
@@ -58,6 +59,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+G</string>
+   </property>
+  </action>
+  <action name="actionLoad_Ivan_Sergeich">
+   <property name="text">
+    <string>Load Ivan Sergeich</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
    </property>
   </action>
  </widget>

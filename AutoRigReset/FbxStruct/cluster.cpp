@@ -24,13 +24,3 @@ void Cluster::setMeshIndex(const int value)
 {
     meshIndex = value;
 }
-
-int Cluster::getJointIndex() const
-{
-    return jointIndex;
-}
-
-void Cluster::setJointIndex(const int value)
-{
-    jointIndex = value;
-}

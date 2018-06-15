@@ -33,6 +33,11 @@ void MainWindow::on_actionLoad_Guad_triggered()
     loadRigGuardYelling();
 }
 
+void MainWindow::on_actionLoad_Ivan_Sergeich_triggered()
+{
+    loadRigIvanSergeich();
+}
+
 
 void MainWindow::loadRigByAdress(QString path)
 {
@@ -50,7 +55,12 @@ void MainWindow::loadRigByAdress(QString path)
 
 void MainWindow::loadRigGuardYelling()
 {
-    loadRigByAdress("D:/QT-serious/Models/FBX/!guard yelling exported.FBX");
+    loadRigByAdress("../Models/FBX/!guard yelling exported.FBX");
+}
+
+void MainWindow::loadRigIvanSergeich()
+{
+    loadRigByAdress("../Models/FBX/!IvanSergeich0.FBX");
 }
 
 void MainWindow::runTests()

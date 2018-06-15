@@ -26,6 +26,11 @@ void Joint::addKidIndex(const int kidPtrInd)
         kidsInd << kidPtrInd;
 }
 
+void Joint::addClusterIndex(const int clusterPtrInd)
+{
+    clusterInds << clusterPtrInd;
+}
+
 void Joint::setBindTransform(const Df::Matrix4<double> &value)
 {
     bindTransform = value;
