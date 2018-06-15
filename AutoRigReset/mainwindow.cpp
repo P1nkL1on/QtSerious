@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include <QDebug>
 #include "IOfbx/iofbxtests.h"
+#include "IOfbx/fbxtorigconverter.h"
 
 using namespace IOfbx;
 
@@ -41,6 +42,8 @@ void MainWindow::loadRigByAdress(QString path)
         qDebug() << err;
     else
         parsed->traceInfo();
+
+    FbxConverter::convertContainerToRig(parsed);
 }
 
 void MainWindow::loadRigGuardYelling()

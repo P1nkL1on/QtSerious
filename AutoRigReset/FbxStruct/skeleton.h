@@ -2,31 +2,42 @@
 #define FBXSTRUCT_SKELETON_H
 
 
-#include "fbxstruct.h"
+#include "DerStruct/defines.h"
 
 namespace FbxStruct{
 
 class Joint
 {
 public:
-    Joint();
-    Joint(const IOfbx::FbxModelJoint &parsedJoint);
+    Joint() = default;
+//    Joint(const Joint &other) = delete;
+    Joint(const Df::Vector3<float> &localTranslation,
+          const Df::Vector3<float> &localRotation,
+          const Df::Vector3<float> &localScaling);
     template <typename Numerical>
-    const Matrix4<Numerical> &calculateLocalTransformMatrix();
+    const Df::Matrix4<Numerical> &calculateLocalTransformMatrix();
     template <typename Numerical>
-    const Matrix4<Numerical> &calculateGlobalTransformMatrix();
+    const Df::Matrix4<Numerical> &calculateGlobalTransformMatrix();
+    void setPaterIndex(const int paterPtrInd);
+    void addKidIndex (const int kidPtrInd);
 private:
-    Vector3<float> localTranslation;
-    Vector3<float> localRotation;
-    Vector3<float> localScaling;
-    Matrix4<float> localTransform;
-    Matrix4<float> globalTransform;
+    int paterInd = -1;
+    QVector<int> kidsInd;
+    Df::Vector3<float> localTranslation;
+    Df::Vector3<float> localRotation;
+    Df::Vector3<float> localScaling = Df::makeUnitVector3<float>();
+    Df::Matrix4<float> localTransform = Df::Matrix4<float>::Identity();
+    Df::Matrix4<float> globalTransform = Df::Matrix4<float>::Identity();
+    Df::Matrix4<float> bindTransform = Df::Matrix4<float>::Identity();
 };
 
 class Skeleton
 {
 public:
-    Skeleton();
+    Skeleton() = default;
+    Skeleton(const QVector<Joint> &joints, const QVector<int> &rootIndexes);
+    QVector<Joint> joints;
+    QVector<int> rootIndexes;
 };
 }
 

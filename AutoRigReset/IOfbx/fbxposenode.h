@@ -10,6 +10,7 @@ class FbxPoseNode : public FbxNode
 public:
     FbxPoseNode() = default;
     QString parse(const QStringList &buffer) override;
+    const QVector<double> &getTransformMatrixArray();
 private:
     QVector<double> transformMatrixArray;
 };

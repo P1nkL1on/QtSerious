@@ -6,7 +6,7 @@
 
 namespace IOfbx {
 
-const bool showWarningsAndErrors = false;
+const bool showWarningsAndErrors = true;
 
 void traceMessage(const QString &mess);
 
@@ -36,6 +36,7 @@ public:
     bool hasNameAndID() const;
     virtual void traceInfo() const;
     virtual bool isEmpty() const;
+    virtual QString getId() const;
 
 protected:
     QString id;

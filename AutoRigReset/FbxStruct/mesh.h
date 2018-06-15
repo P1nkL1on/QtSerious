@@ -1,7 +1,7 @@
 #ifndef FBXSTRUCT_MESH_H
 #define FBXSTRUCT_MESH_H
 
-#include "fbxstruct.h"
+#include "DerStruct/defines.h"
 
 namespace FbxStruct{
 
@@ -12,7 +12,7 @@ public:
     Mesh ();
 
 private:
-    QVector<Vector3<Scalar>> vertices;
+    QVector<Df::Vector3<Scalar>> vertices;
     QVector<int> polygonIndexes;
     QVector<int> polygonStartIndexes;
 };

@@ -5,15 +5,10 @@ CONFIG += FBXSTRUCT_PRI
 INCLUDEPATH += $$PWD/../
 
 HEADERS += \
-    $$PWD/fbxstruct.h \
     $$PWD/mesh.h\
-    $$PWD/skeleton.h \
-    $$PWD/fbxconverter.h
+    $$PWD/skeleton.h
 
 SOURCES += \
-    $$PWD/fbxstruct.cpp \
     $$PWD/mesh.cpp \
-    $$PWD/skeleton.cpp \
-    $$PWD/fbxconverter.cpp
+    $$PWD/skeleton.cpp
 }
-

@@ -1,5 +1,5 @@
-#ifndef DERIVABLE_H
-#define DERIVABLE_H
+#ifndef DERSTRUCT_DERIVABLE_H
+#define DERSTRUCT_DERIVABLE_H
 
 
 namespace DerStruct{
@@ -20,4 +20,4 @@ public:
 };
 }
 
-#endif // DERIVABLE_H
+#endif // DERSTRUCT_DERIVABLE_H

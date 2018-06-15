@@ -22,6 +22,11 @@ bool IOfbx::FbxNode::isEmpty() const
     return !hasNameAndID();
 }
 
+QString IOfbx::FbxNode::getId() const
+{
+    return id;
+}
+
 void IOfbx::traceMessage(const QString &mess)
 {
     if (IOfbx::showWarningsAndErrors || mess.indexOf('!') == 0)

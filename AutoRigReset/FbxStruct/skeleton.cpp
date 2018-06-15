@@ -1,22 +1,26 @@
 #include "skeleton.h"
 
 using namespace FbxStruct;
-using namespace DerStruct;
-using namespace IOfbx;
+using namespace Df;
 
-
-Joint::Joint()
+Joint::Joint(const Df::Vector3<float> &localTranslation,
+             const Df::Vector3<float> &localRotation,
+             const Df::Vector3<float> &localScaling):
+    localTranslation(localTranslation),
+    localRotation(localRotation),
+    localScaling(localScaling)
 {
-    localTransform = makeUnitMatrix<float>();
-    globalTransform = makeUnitMatrix<float>();
+
 }
 
-Joint::Joint(const FbxModelJoint &parsedJoint)
+void Joint::setPaterIndex(const int paterPtrInd)
 {
-    localTranslation = makeVector3fromQVector<float>(parsedJoint.getLocalTranslation());
-    localRotation = makeVector3fromQVector<float>(parsedJoint.getLocalRotation());
-    localScaling = makeVector3fromQVector<float>(parsedJoint.getLocalScaling());
+    Q_ASSERT(paterInd == -1);
+    paterInd = paterPtrInd;
+}
 
-    localTransform = makeUnitMatrix<float>();
-    globalTransform = makeUnitMatrix<float>();
+void Joint::addKidIndex(const int kidPtrInd)
+{
+    if (kidPtrInd != -1)
+        kidsInd << kidPtrInd;
 }

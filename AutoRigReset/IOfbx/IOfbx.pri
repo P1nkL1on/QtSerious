@@ -12,7 +12,9 @@ HEADERS += \
     $$PWD/fbxposenode.h \
     $$PWD/fbxsubdeformercluster.h \
     $$PWD/fbxmodeljoint.h\
-    $$PWD/fbxparsedcontainer.h
+    $$PWD/fbxparsedcontainer.h\
+    $$PWD/fbxmessages.h \
+    $$PWD/fbxtorigconverter.h
 
 SOURCES += \
     $$PWD/iofbx.cpp \    
@@ -22,8 +24,6 @@ SOURCES += \
     $$PWD/fbxposenode.cpp \
     $$PWD/fbxsubdeformercluster.cpp \
     $$PWD/fbxmodeljoint.cpp\
-    $$PWD/fbxparsedcontainer.cpp
+    $$PWD/fbxparsedcontainer.cpp\
+    $$PWD/fbxtorigconverter.cpp
 }
-
-HEADERS += \
-    $$PWD/fbxmessages.h
