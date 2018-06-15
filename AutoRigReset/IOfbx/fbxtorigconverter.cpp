@@ -143,6 +143,7 @@ void IOfbx::FbxConverter::convertContainerToRig(const IOfbx::FbxParsedContainer 
             now = now * fbxJoints[curJind].getBindTransform();
             curJind = fbxJoints[curJind].getPaterInd();
         }while (curJind >= 0);
+
         Vector3<double> fin = Df::kostilBoneDrawer(now);
         qp->drawPoint(xOffset + fin(0,0) * xScale, yOffset + fin(1,0) * yScale);
     }

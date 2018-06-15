@@ -2,7 +2,8 @@
 #define DERSTRUCT_DEFINES_H
 
 #include "Eigen/core"
-#include "QVector"
+#include <QVector>
+#include <QDebug>
 
 //using Eigen::Matrix;
 
@@ -62,11 +63,26 @@ Matrix4<Scalar> initialiseMatrix (const QVector<Scalar> &array){
 }
 
 template <typename Scalar>
+inline void traceMatrix (const Matrix4<Scalar> &mat){
+    qDebug() << "Matrix4x4 Derivable (type:Custom";
+    for (int i = 0; i < 4; i++){
+        QString lin = "";
+        for (int j = 0; j < 4; j++)
+            lin +=( (QString::number( mat(j,i)))).rightJustified(16, ' ') + " ";
+        qDebug() << lin;
+    }
+    qDebug() << ")";
+}
+
+template <typename Scalar>
 Vector3<Scalar> kostilBoneDrawer (const Matrix4<Scalar> &mat){
     Vector4<Scalar> v4(Scalar(0.0), Scalar(0.0), Scalar(0.0), Scalar(1.0));
 
-    v4 = mat * v4;
 
+    v4 = mat.transpose() * v4;
+
+    traceMatrix(mat);
+    qDebug() << v4(0,0)<< v4(1,0) << v4(2,0);
     return Vector3<Scalar>(v4(0,0), v4(1,0), v4(2,0));
 }
 
