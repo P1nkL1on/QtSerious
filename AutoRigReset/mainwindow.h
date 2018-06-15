@@ -28,6 +28,9 @@ private:
     void loadRigGuardYelling ();
     void loadRigIvanSergeich ();
     void runTests();
+
+protected:
+    void paintEvent(QPaintEvent *e);
 };
 
 #endif // MAINWINDOW_H

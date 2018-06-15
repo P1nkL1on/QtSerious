@@ -23,6 +23,9 @@ public:
     void addClusterIndex (const int clusterPtrInd);
     void setBindTransform(const Df::Matrix4<double> &value);
     bool isMeshDependent() const;
+    int getPaterInd() const;
+    QVector<int> getKidsInd() const;
+    Df::Matrix4<double> getBindTransform() const;
 private:
     bool meshDependent = false;
     int paterInd = -1;
@@ -40,7 +43,8 @@ class Skeleton
 {
 public:
     Skeleton() = default;
-    Skeleton(const QVector<Joint> &joints, const QVector<int> &rootIndexes);
+    Skeleton(const QVector<Joint> &joints);
+private:
     QVector<Joint> joints;
     QVector<int> rootIndexes;
 };

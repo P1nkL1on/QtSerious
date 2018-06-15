@@ -12,7 +12,7 @@ template <typename Scalar>
 using Vector3 = Eigen::Matrix<Scalar,3,1>;
 
 template <typename Scalar>
-using Vector4 = Eigen::Matrix<Scalar,3,1>;
+using Vector4 = Eigen::Matrix<Scalar,4,1>;
 
 template <typename Scalar>
 using Matrix4 = Eigen::Matrix<Scalar,4,4>;
@@ -59,6 +59,15 @@ Matrix4<Scalar> initialiseMatrix (const QVector<Scalar> &array){
             array[8], array[9], array[10], array[11],
             array[12], array[13], array[14], array[15];
     return result;
+}
+
+template <typename Scalar>
+Vector3<Scalar> kostilBoneDrawer (const Matrix4<Scalar> &mat){
+    Vector4<Scalar> v4(Scalar(0.0), Scalar(0.0), Scalar(0.0), Scalar(1.0));
+
+    v4 = mat * v4;
+
+    return Vector3<Scalar>(v4(0,0), v4(1,0), v4(2,0));
 }
 
 }

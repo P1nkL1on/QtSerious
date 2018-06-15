@@ -40,3 +40,26 @@ bool Joint::isMeshDependent() const
 {
     return meshDependent;
 }
+
+int Joint::getPaterInd() const
+{
+    return paterInd;
+}
+
+QVector<int> Joint::getKidsInd() const
+{
+    return kidsInd;
+}
+
+Df::Matrix4<double> Joint::getBindTransform() const
+{
+    return bindTransform;
+}
+
+Skeleton::Skeleton(const QVector<Joint> &joints):
+    joints(joints)
+{
+    for (int jInd = 0; jInd < joints.length(); ++jInd)
+        if (joints[jInd].getPaterInd() < 0)
+            rootIndexes << jInd;
+}
