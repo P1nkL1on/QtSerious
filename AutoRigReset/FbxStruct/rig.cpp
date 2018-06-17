@@ -47,13 +47,15 @@ void FbxStruct::Rig::repaint(QPainter *qp)
 {
     //    // ================= CAUSE FUCK DRAWING, thats why =================
     for (const auto mesh : meshes){
-        qp->setPen(QPen(FbxDrawing::getNextColor()));
+        qp->setPen(QPen(FbxDrawing::getNextColor(), 3));
         for (const auto v : mesh.getVertices() )
             qp->drawPoint(FbxDrawing::toPoint(v));
     }
 
     skeleton.calculateMatrixes();
-
+    qp->setPen(QPen(Qt::blue, 6));
+    for (const auto v3 : skeleton.jointTranslations)
+        qp->drawPoint(FbxDrawing::toPoint(Df::makeQVectorFromVector3<double>(v3)));
     //    qp->setPen(QPen(Qt::blue, 6));
     //    for (int i = 0; i < fbxJoints.length(); ++i){
     //        int curJind = i;

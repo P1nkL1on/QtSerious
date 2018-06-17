@@ -32,7 +32,7 @@ public:
     QVector<int> getKidsInd() const;
     Df::Matrix4<double> getBindTransform() const;
     Df::Matrix4<double> getLocalTransform() const;
-    void setGlobalTransform(const Df::Matrix4<double> &value);
+    Df::Matrix4<double> setGlobalTransform(const Df::Matrix4<double> &value);
 private:
     bool meshDependent = false;
     int paterInd = -1;

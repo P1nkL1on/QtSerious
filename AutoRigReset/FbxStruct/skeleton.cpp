@@ -13,16 +13,29 @@ Skeleton::Skeleton(const QVector<Joint> &joints):
 
 void Skeleton::calculateMatrixes()
 {
-    qDebug() << "Gooo";
+    jointTranslations.clear();
+    for (int i = 0; i < joints.length(); i++)
+        jointTranslations << Vector3<double>();
     for (const int rootInd : rootIndexes)
-        calculateMatrixe(rootInd);
+        calculateMatrix(rootInd);
 }
 
-void Skeleton::calculateMatrixe(const int currentJointIndex)
+Matrix4<double> Skeleton::getLocalMatrixByIndex(const int index)
+{
+    if (index < 0)
+        return Matrix4<double>::Identity();
+    return joints[index].getLocalTransform();
+}
+
+void Skeleton::calculateMatrix(const int currentJointIndex)
 {
     qDebug() << QString("Matrix for bone %1").arg(currentJointIndex);
 
-    joints[currentJointIndex].calculateLocalTransformMatrix();
+    jointTranslations[currentJointIndex] =
+            kostilBoneDrawer(
+                joints[currentJointIndex].setGlobalTransform(
+                    joints[currentJointIndex].calculateLocalTransformMatrix()
+                    * getLocalMatrixByIndex(joints[currentJointIndex].getPaterInd())));
     for (const int ind : joints[currentJointIndex].getKidsInd())
-        calculateMatrixe(ind);
+        calculateMatrix(ind);
 }

@@ -61,7 +61,9 @@ Df::Matrix4<double> Joint::getLocalTransform() const
     return localTransform;
 }
 
-void Joint::setGlobalTransform(const Df::Matrix4<double> &value)
+Df::Matrix4<double> Joint::setGlobalTransform(const Df::Matrix4<double> &value)
 {
     globalTransform = value;
+    traceMatrix(globalTransform);
+    return globalTransform;
 }

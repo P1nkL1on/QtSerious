@@ -13,10 +13,12 @@ public:
     Skeleton() = default;
     Skeleton(const QVector<Joint> &joints);
     void calculateMatrixes();
+    QVector<Df::Vector3<double>> jointTranslations;
 private:
     QVector<Joint> joints;
     QVector<int> rootIndexes;
-    void calculateMatrixe(const int currentJointIndex);
+    Df::Matrix4<double> getLocalMatrixByIndex (const int index);
+    void calculateMatrix(const int currentJointIndex);
 };
 }
 

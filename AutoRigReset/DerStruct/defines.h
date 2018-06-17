@@ -4,7 +4,7 @@
 #include "Eigen/core"
 #include <QVector>
 #include <QDebug>
-
+#include <QVector3D>
 //using Eigen::Matrix;
 
 namespace Df {
@@ -35,6 +35,13 @@ Vector3<Scalar> makeVector3fromQVector (const QVector<double> &from){
     for (int i = 0; i < 3; i++)
         v3(i,0) = Scalar(from[i]);
     return v3;
+}
+
+template <typename Scalar>
+QVector3D makeQVectorFromVector3 (const Vector3<double> &from){
+    return QVector3D(float(from(0,0)),
+                     float(from(1,0)),
+                     float(from(2,0)));
 }
 
 
@@ -76,8 +83,7 @@ inline void traceMatrix (const Matrix4<Scalar> &mat){
 
 template <typename Scalar>
 Vector3<Scalar> kostilBoneDrawer (const Matrix4<Scalar> &mat){
-    Vector4<Scalar> v4(Scalar(0.0), Scalar(0.0), Scalar(0.0), Scalar(1.0));
-
+    Vector4<Scalar> v4(Scalar(1.0), Scalar(1.0), Scalar(1.0), Scalar(1.0));
 
     v4 = mat.transpose() * v4;
 
