@@ -4,7 +4,7 @@
 using namespace FbxStruct;
 using namespace Df;
 
-void IOfbx::FbxConverter::convertContainerToRig(const IOfbx::FbxParsedContainer *container, QPainter *qp)
+Rig *IOfbx::FbxConverter::convertContainerToRig(const IOfbx::FbxParsedContainer *container)
 {
     QVector<Joint> fbxJoints;
     QVector<Cluster> fbxClusters;
@@ -111,48 +111,12 @@ void IOfbx::FbxConverter::convertContainerToRig(const IOfbx::FbxParsedContainer 
                           .arg(clustIndex).arg(parsedClustersIds[clustIndex]));
 
     }
-
 #warning убрать потом из общео числа джойнтов все те, которые отвечают за меши
 #warning убрать из числа деформеров те, которые отвечают не за кластеры
 
-
-    // ================= CAUSE FUCK DRAWING, thats why =================
-    const int xOffset = 700;
-    const int yOffset = 700;
-    const float totalScale = 3.0f;
-    const float xScale = 1 * totalScale;
-    const float yScale = -1 * totalScale;
-    const QVector<int> clv = {255,0,0,  0,255,0,  0,0,255,  255,255,0,
-                              0,255,255,  255,0,255, 122,122,0, 122,0,122,
-                              0,122,122, 200,50,0, 50,200,0, 50,0,200,
-                              200,0,50, 0,50,200, 0,200,50 };
-
-    int clrVar = 0;
-    for (const auto mesh : fbxMeshes){
-        clrVar = (clrVar + 1) % (clv.length() / 3) ;
-        qp->setPen(QPen(QColor::fromRgb(clv[clrVar * 3], clv[clrVar * 3 + 1], clv[clrVar * 3 + 2])));
-        for (const auto v : mesh.getVertices() )
-            qp->drawPoint(xOffset + v.x() * xScale, yOffset + v.y() * yScale);
-    }
-
-    qp->setPen(QPen(Qt::blue, 6));
-    for (int i = 0; i < fbxJoints.length(); ++i){
-        int curJind = i;
-        Matrix4<double> now = Matrix4<double>::Identity();
-        do{
-            now = now * fbxJoints[curJind].getBindTransform();
-            curJind = fbxJoints[curJind].getPaterInd();
-        }while (curJind >= 0);
-
-        Vector3<double> fin = Df::kostilBoneDrawer(now);
-        qp->drawPoint(xOffset + fin(0,0) * xScale, yOffset + fin(1,0) * yScale);
-    }
-
-
-
-    // =================================================================
+    Skeleton fbxSkeleton(fbxJoints);
     delete container;
-    return;
+    return new Rig(fbxSkeleton, fbxClusters, fbxMeshes);
 }
 
 Joint IOfbx::FbxConverter::convertJoint(const IOfbx::FbxModelJoint &parsedJoint)

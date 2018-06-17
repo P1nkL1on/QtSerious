@@ -74,7 +74,8 @@ void MainWindow::paintEvent(QPaintEvent *e)
 {
     if (!everDrawen && parsed != nullptr){
         QPainter qp(this);
-        FbxConverter::convertContainerToRig(parsed, &qp);
+        FbxStruct::Rig *r = FbxConverter::convertContainerToRig(parsed);
+        r->repaint(&qp);
         qp.end();
         everDrawen = true;
     }
