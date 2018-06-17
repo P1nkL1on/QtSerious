@@ -14,11 +14,12 @@ public:
           const Df::Vector3<float> &localScaling,
           const bool isMeshDepended);
     const Df::Matrix4<double> &calculateLocalTransformMatrix(){
-        localTransform = Df::Matrix4<double>::Identity();
-        localTransform = localTransform
-                * Df::scalingMatrix<double>(localScaling.cast<double>())
-                * Df::rotationMatrix<double>(localRotation.cast<double>())
-                * Df::translationMatrix<double>(localTranslation.cast<double>());
+//        localTransform = Df::Matrix4<double>::Identity();
+//        localTransform = localTransform
+//                * Df::scalingMatrix<double>(localScaling.cast<double>())
+//                * Df::rotationMatrix<double>(localRotation.cast<double>())
+//                * Df::translationMatrix<double>(localTranslation.cast<double>());
+        localTransform = getBindTransform();
         return localTransform;
     }
 //    template <typename Numerical>
