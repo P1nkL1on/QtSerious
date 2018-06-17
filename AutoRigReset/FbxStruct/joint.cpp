@@ -55,3 +55,13 @@ Df::Matrix4<double> Joint::getBindTransform() const
 {
     return bindTransform;
 }
+
+Df::Matrix4<double> Joint::getLocalTransform() const
+{
+    return localTransform;
+}
+
+void Joint::setGlobalTransform(const Df::Matrix4<double> &value)
+{
+    globalTransform = value;
+}

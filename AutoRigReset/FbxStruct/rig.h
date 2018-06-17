@@ -17,7 +17,7 @@ public:
     Rig(const Skeleton &skeleton,
         const QVector<Cluster> &clusters,
         const QVector<Mesh> &meshes);
-    void repaint (QPainter *qp) const;
+    void repaint (QPainter *qp);
 private:
     Skeleton skeleton;
     QVector<Cluster> clusters;

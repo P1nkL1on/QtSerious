@@ -43,7 +43,7 @@ FbxStruct::Rig::Rig(const FbxStruct::Skeleton &skeleton,
 
 }
 
-void FbxStruct::Rig::repaint(QPainter *qp) const
+void FbxStruct::Rig::repaint(QPainter *qp)
 {
     //    // ================= CAUSE FUCK DRAWING, thats why =================
     for (const auto mesh : meshes){

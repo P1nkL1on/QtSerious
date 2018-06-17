@@ -21,7 +21,8 @@ void Skeleton::calculateMatrixes()
 void Skeleton::calculateMatrixe(const int currentJointIndex)
 {
     qDebug() << QString("Matrix for bone %1").arg(currentJointIndex);
-    joints[currentJointIndex].calculateLocalTransformMatrix<double>();
+
+    joints[currentJointIndex].calculateLocalTransformMatrix();
     for (const int ind : joints[currentJointIndex].getKidsInd())
         calculateMatrixe(ind);
 }
