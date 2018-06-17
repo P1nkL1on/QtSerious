@@ -52,6 +52,8 @@ void FbxStruct::Rig::repaint(QPainter *qp) const
             qp->drawPoint(FbxDrawing::toPoint(v));
     }
 
+    skeleton.calculateMatrixes();
+
     //    qp->setPen(QPen(Qt::blue, 6));
     //    for (int i = 0; i < fbxJoints.length(); ++i){
     //        int curJind = i;

@@ -13,10 +13,9 @@ public:
           const Df::Vector3<float> &localRotation,
           const Df::Vector3<float> &localScaling,
           const bool isMeshDepended);
-    template <typename Numerical>
-    const Df::Matrix4<Numerical> &calculateLocalTransformMatrix();
-    template <typename Numerical>
-    const Df::Matrix4<Numerical> &calculateGlobalTransformMatrix();
+    const Df::Matrix4<double> &calculateLocalTransformMatrix();
+//    template <typename Numerical>
+//    const Df::Matrix4<Numerical> &calculateGlobalTransformMatrix();
     void setPaterIndex(const int paterPtrInd);
     void addKidIndex (const int kidPtrInd);
     void addClusterIndex (const int clusterPtrInd);
@@ -37,5 +36,15 @@ private:
     Df::Matrix4<double> globalTransform = Df::Matrix4<double>::Identity();
     Df::Matrix4<double> bindTransform = Df::Matrix4<double>::Identity();
 };
+
+const Df::Matrix4<double> &Joint::calculateLocalTransformMatrix()
+{
+    localTransform = Df::Matrix4<double>::Identity();
+    localTransform = localTransform
+            * Df::scalingMatrix<double>(localScaling)
+            * Df::rotationMatrix<double>(localRotation)
+            * Df::translationMatrix<double>(localTranslation);
+    return localTransform;
+}
 }
 #endif // JOINT_H

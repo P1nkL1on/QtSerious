@@ -86,5 +86,54 @@ Vector3<Scalar> kostilBoneDrawer (const Matrix4<Scalar> &mat){
     return Vector3<Scalar>(v4(0,0), v4(1,0), v4(2,0));
 }
 
+template <typename Scalar>
+inline Matrix4<Scalar> translationMatrix (const Vector3<Scalar> &translate){
+    Matrix4<Scalar> M = Matrix4<Scalar>::Identity();
+    M(3, 0) = translate(0,0);
+    M(3, 1) = translate(1,0);
+    M(3, 2) = translate(2,0);
+    return M;
+}
+
+template <typename Scalar>
+inline Matrix4<Scalar> rotationMatrixX (const Scalar &val){
+    Scalar angle = val / 180.0 * M_PI;
+    Matrix4<Scalar> M = Matrix4<Scalar>::Identity();
+    M(1,1) = cos(angle); M(2,1) = Scalar(-1)* sin(angle);
+    M(1,2) = sin(angle); M(2,2) = cos(angle);
+    return M;
+}
+template <typename Scalar>
+inline Matrix4<Scalar> rotationMatrixY (const Scalar &val){
+    Scalar angle = val / 180.0 * M_PI;
+    Matrix4<Scalar> M = Matrix4<Scalar>::Identity();
+    M(0,0) = cos(angle); M(1,0) = Scalar(-1)* sin(angle);
+    M(0,1) = sin(angle); M(1,1) = cos(angle);
+    return M;
+}
+template <typename Scalar>
+inline Matrix4<Scalar> rotationMatrixZ (const Scalar &val){
+    Scalar angle = val / 180.0 * M_PI;
+    Matrix4<Scalar> M = Matrix4<Scalar>::Identity();
+    M(0,0) = cos(angle); M(2,0) = sin(angle);
+    M(0,2) = Scalar(-1)* sin(angle); M(2,2) = cos(angle);
+    return M;
+}
+template <typename Scalar>
+inline Matrix4<Scalar> rotationMatrix (const Vector3<Scalar> &rotation){
+    return rotationMatrixZ(rotation(2,0))
+            * rotationMatrixY(rotation(1,0))
+            * rotationMatrixX(rotation(0,0));
+}
+
+template <typename Scalar>
+inline Matrix4<Scalar> scalingMatrix (const Vector3<Scalar> &scaling){
+    Matrix4<Scalar> M = Matrix4<Scalar>::Identity();
+    M(0, 0) = scaling(0,0);
+    M(1, 1) = scaling(1,0);
+    M(2, 2) = scaling(2,0);
+    return M;
+}
+
 }
 #endif // DERSTRUCT_DEFINES_H
