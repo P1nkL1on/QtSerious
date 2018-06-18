@@ -30,8 +30,16 @@
     <addaction name="actionLoad_Rig"/>
     <addaction name="actionLoad_Guad"/>
     <addaction name="actionLoad_Ivan_Sergeich"/>
+    <addaction name="actionLoad_Hand"/>
+   </widget>
+   <widget class="QMenu" name="menuTest">
+    <property name="title">
+     <string>Test</string>
+    </property>
+    <addaction name="actionTransformMesh"/>
    </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuTest"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -67,6 +75,22 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+I</string>
+   </property>
+  </action>
+  <action name="actionLoad_Hand">
+   <property name="text">
+    <string>Load Hand</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+H</string>
+   </property>
+  </action>
+  <action name="actionTransformMesh">
+   <property name="text">
+    <string>TransformMesh</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+T</string>
    </property>
   </action>
  </widget>

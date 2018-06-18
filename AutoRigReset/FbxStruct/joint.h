@@ -14,14 +14,14 @@ public:
           const Df::Vector3<float> &localScaling,
           const bool isMeshDepended,
           const QString name);
-    const Df::Matrix4<double> &calculateLocalTransformMatrix(){
-        localTransform = Df::Matrix4<double>::Identity();
-        localTransform = localTransform
-                //* Df::scalingMatrix<double>(localScaling.cast<double>())
-                //* Df::rotationMatrix<double>(localRotation.cast<double>())
-                * Df::translationMatrix<double>(localTranslation.cast<double>());
-        return localTransform;
-    }
+//    const Df::Matrix4<double> &calculateLocalTransformMatrix(){
+//        localTransform = Df::Matrix4<double>::Identity();
+//        localTransform = localTransform
+//                * Df::scalingMatrix<double>(localScaling.cast<double>())
+//                * Df::rotationMatrix<double>(localRotation.cast<double>())
+//                * Df::translationMatrix<double>(localTranslation.cast<double>());
+//        return localTransform;
+//    }
 
     void setPaterIndex(const int paterPtrInd);
     void addKidIndex (const int kidPtrInd);
@@ -33,8 +33,14 @@ public:
     Df::Matrix4<double> getLocalTransform() const;
     Df::Matrix4<double> getGlobalTransform() const;
     Df::Matrix4<double> setGlobalTransform(const Df::Matrix4<double> &value);
+    Df::Matrix4<double> setLocalTransform(const Df::Matrix4<double> &value);
     void setBindTransform(const Df::Matrix4<double> &value);
     QString getJointName() const;
+    Df::Vector3<float> getLocalTranslation() const;
+    Df::Vector3<float> getLocalRotation() const;
+    Df::Vector3<float> getLocalScaling() const;
+
+
 private:
     QString jointName;
     bool meshDependent = false;

@@ -16,7 +16,7 @@ public:
     QVector<QVector3D> getVertices () const;
     QVector<int> getPolygonIndexes() const;
     QVector<int> getPolygonStartIndexes() const;
-
+    void applyTransform (const Df::Matrix4<double> &mat);
 private:
     QVector<Df::Vector3<double>> vertices;
     QVector<int> polygonIndexes;

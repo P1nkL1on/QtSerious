@@ -20,7 +20,10 @@ public:
 private:
     QVector<Joint> joints;
     QVector<int> rootIndexes;
-    Df::Matrix4<double> getLocalMatrixByIndex (const int index);
+    Df::Matrix4<double> calculateLocalTransformByIndex (const int index);
+    Df::Matrix4<double> getLocalMatrixByIndex (const int index) const;
+    Df::Matrix4<double> getGlobalMatrixByIndex (const int index) const;
+    Df::Vector3<double> getInverseScale (const int index) const;
     void calculateMatrix(const int currentJointIndex, const int variant);
 };
 }

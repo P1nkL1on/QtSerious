@@ -18,6 +18,8 @@ public:
         const QVector<Cluster> &clusters,
         const QVector<Mesh> &meshes);
     void repaint(QPainter *qp);
+
+    void TestRotate ();
 private:
     Skeleton skeleton;
     QVector<Cluster> clusters;

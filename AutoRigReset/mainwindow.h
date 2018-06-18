@@ -22,6 +22,10 @@ private slots:
 
     void on_actionLoad_Ivan_Sergeich_triggered();
 
+    void on_actionLoad_Hand_triggered();
+
+    void on_actionTransformMesh_triggered();
+
 private:
     Ui::MainWindow *ui;
     void loadRigByAdress (QString path);

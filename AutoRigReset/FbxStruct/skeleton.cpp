@@ -25,6 +25,25 @@ QString Skeleton::getNameByIndex(const int index) const
     return joints[index].getJointName();
 }
 
+Matrix4<double> Skeleton::calculateLocalTransformByIndex(const int index)
+{
+
+    //    localTransform = Matrix4<double>::Identity();
+    //    localTransform = localTransform
+    //            * scalingMatrix<double>(localScaling.cast<double>())
+    //            * rotationMatrix<double>(localRotation.cast<double>())
+    //            * translationMatrix<double>(localTranslation.cast<double>());
+    //    return localTransform;
+    Matrix4<double> trans = Matrix4<double>::Identity();
+    trans = trans
+            * scalingMatrix<double>(joints[index].getLocalScaling().cast<double>())
+            * scalingMatrix<double>(getInverseScale(index))
+            * rotationMatrix<double>((joints[index].getLocalRotation().cast<double>()))
+            * translationMatrix<double>(joints[index].getLocalTranslation().cast<double>())
+            ;
+    return joints[index].setLocalTransform(trans);
+}
+
 QVector<int> Skeleton::getKidsByIndex(const int index) const
 {
     if (index < 0)
@@ -39,11 +58,28 @@ int Skeleton::getPaterByIndex(const int index) const
     return joints[index].getPaterInd();
 }
 
-Matrix4<double> Skeleton::getLocalMatrixByIndex(const int index)
+Matrix4<double> Skeleton::getLocalMatrixByIndex(const int index) const
 {
     if (index < 0)
         return Matrix4<double>::Identity();
     return joints[index].getLocalTransform();
+}
+
+Matrix4<double> Skeleton::getGlobalMatrixByIndex(const int index) const
+{
+    if (index < 0)
+        return Matrix4<double>::Identity();
+    return joints[index].getGlobalTransform();
+}
+
+Vector3<double> Skeleton::getInverseScale(const int index) const
+{
+    Vector3<double> res = Vector3<double>(1,1,1);
+    if (index < 0)
+        return res;
+    res = joints[index].getLocalScaling().cast<double>();
+    res = Vector3<double>(1.0 / res(0,0), 1.0 / res(1,0),1.0 / res(2,0));
+    return res;
 }
 
 void Skeleton::calculateMatrix(const int currentJointIndex, const int variant)
@@ -56,15 +92,14 @@ void Skeleton::calculateMatrix(const int currentJointIndex, const int variant)
                     joints[currentJointIndex].getBindTransform());
     // SELF CALCULATE
     if (variant == 1){
-        Matrix4<double> paterMat = getLocalMatrixByIndex(joints[currentJointIndex].getPaterInd());
-        Matrix4<double> selfMat = joints[currentJointIndex].calculateLocalTransformMatrix();
+        Matrix4<double> paterMat = getGlobalMatrixByIndex(joints[currentJointIndex].getPaterInd());
+        Matrix4<double> selfMat = calculateLocalTransformByIndex(currentJointIndex);//joints[currentJointIndex].calculateLocalTransformMatrix();
         Matrix4<double> finalMat = joints[currentJointIndex].setGlobalTransform(paterMat * selfMat);
-        traceMatrix(paterMat);
-        qDebug() << "*";
-        traceMatrix(selfMat);
-        qDebug() << "=";
-        traceMatrix(finalMat);
-
+//        traceMatrix(paterMat);
+//        qDebug() << "*";
+//        traceMatrix(selfMat);
+//        qDebug() << "=";
+//        traceMatrix(finalMat);
         jointTranslations[currentJointIndex] =
                 kostilBoneDrawer<double>(finalMat);
     }

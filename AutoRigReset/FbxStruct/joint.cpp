@@ -75,3 +75,29 @@ QString Joint::getJointName() const
 {
     return jointName;
 }
+
+Df::Vector3<float> Joint::getLocalTranslation() const
+{
+    return localTranslation;
+}
+
+Df::Vector3<float> Joint::getLocalRotation() const
+{
+    return {0,0,0};//localRotation;
+}
+
+Df::Vector3<float> Joint::getLocalScaling() const
+{
+    return localScaling;
+}
+
+Df::Matrix4<double> Joint::setLocalTransform(const Df::Matrix4<double> &value)
+{
+    localTransform = value;
+    return localTransform;
+}
+
+Df::Matrix4<double> Joint::getGlobalTransform() const
+{
+    return globalTransform;
+}
