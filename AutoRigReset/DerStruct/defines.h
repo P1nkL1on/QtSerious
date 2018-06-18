@@ -85,7 +85,7 @@ inline void traceMatrix (const Matrix4<Scalar> &mat){
     qDebug() << ")";
 }
 
-
+#warning FUCK THIS IS MISTAKE
 template <typename Scalar>
 inline Matrix4<Scalar> translationMatrix (const Vector3<Scalar> &translate){
     Matrix4<Scalar> M = Matrix4<Scalar>::Identity();
