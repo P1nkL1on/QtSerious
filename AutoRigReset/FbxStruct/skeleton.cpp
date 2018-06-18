@@ -1,5 +1,5 @@
 #include "skeleton.h"
-#include <math.h>
+//#include <math.h>
 
 using namespace FbxStruct;
 using namespace Df;
@@ -45,18 +45,10 @@ Matrix4<double> Skeleton::calculateLocalTransformByIndex(const int index)
     //            * scalingMatrix<double>(getInverseScale(index))
     //            * scalingMatrix<double>(joints[index].getLocalScaling().cast<double>())
     //            * trans;
-    if (getNameByIndex(index).indexOf("Head") >= 0)
-    {
-        int X = 10;
-    }
-    trans = rotationMatrix<double>((joints[index].getLocalRotation().cast<double>())) * trans;
     trans =  translationMatrix<double>(joints[index].getLocalTranslation().cast<double>()) * trans;
-    trans =  scalingMatrix<double>(getInverseScale(joints[index].getPaterInd())) * trans;
     trans =  scalingMatrix<double>(joints[index].getLocalScaling().cast<double>())* trans;
-
-    if (isnan (trans(0,0))){
-        int X= 10;
-    }
+    trans =  scalingMatrix<double>(getInverseScale(joints[index].getPaterInd())) * trans;
+    trans =  rotationMatrix<double>((joints[index].getLocalRotation().cast<double>())) * trans;
     return joints[index].setLocalTransform(trans);
 }
 
@@ -112,14 +104,15 @@ void Skeleton::calculateMatrix(const int currentJointIndex, const int variant)
                     joints[currentJointIndex].getBindTransform());
     // SELF CALCULATE
     if (variant == 1){
-        Matrix4<double> paterMat = getGlobalMatrixByIndex(joints[currentJointIndex].getPaterInd());
+        Matrix4<double> paterMat = getGlobalParentMatrixByIndex(joints[currentJointIndex].getPaterInd());
         Matrix4<double> selfMat = calculateLocalTransformByIndex(currentJointIndex);//joints[currentJointIndex].calculateLocalTransformMatrix();
         Matrix4<double> finalMat = joints[currentJointIndex].setGlobalTransform(paterMat * selfMat);
-        //        traceMatrix(paterMat);
-        //        qDebug() << "*";
-        //        traceMatrix(selfMat);
-        //        qDebug() << "=";
-        //        traceMatrix(finalMat);
+        qDebug() << getNameByIndex(currentJointIndex);
+        traceMatrix(paterMat);
+        qDebug() << "*";
+        traceMatrix(selfMat);
+        qDebug() << "=";
+        traceMatrix(finalMat);
         jointTranslations[currentJointIndex] =
                 kostilBoneDrawer<double>(finalMat);
     }

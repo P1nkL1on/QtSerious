@@ -20,7 +20,7 @@ private:
     QString subName;
     QVector<double> localTranslation;
     QVector<double> localRotation;
-    QVector<double> localScaling;
+    QVector<double> localScaling = {1.0,1.0,1.0};
 };
 
 }
