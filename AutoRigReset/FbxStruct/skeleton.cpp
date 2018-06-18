@@ -1,4 +1,5 @@
 #include "skeleton.h"
+#include <math.h>
 
 using namespace FbxStruct;
 using namespace Df;
@@ -18,6 +19,9 @@ void Skeleton::calculateMatrixes(const int variant)
         jointTranslations << Vector3<double>();
     for (const int rootInd : rootIndexes)
         calculateMatrix(rootInd, variant);
+
+    for (int i = 0; i < jointTranslations.length(); ++i)
+        qDebug() << i << getNameByIndex(i) << jointTranslations[i](0,0) << jointTranslations[i](1,0) << jointTranslations[i](2,0);
 }
 
 QString Skeleton::getNameByIndex(const int index) const
@@ -35,19 +39,31 @@ Matrix4<double> Skeleton::calculateLocalTransformByIndex(const int index)
     //            * translationMatrix<double>(localTranslation.cast<double>());
     //    return localTransform;
     Matrix4<double> trans = Matrix4<double>::Identity();
-    trans = trans
-            * rotationMatrix<double>((joints[index].getLocalRotation().cast<double>()))
-            * scalingMatrix<double>(joints[index].getLocalScaling().cast<double>())
-            * scalingMatrix<double>(getInverseScale(index))
-            * translationMatrix<double>(joints[index].getLocalTranslation().cast<double>())
-            ;
+    //    trans =
+    //            rotationMatrix<double>((joints[index].getLocalRotation().cast<double>()))
+    //            * translationMatrix<double>(joints[index].getLocalTranslation().cast<double>())
+    //            * scalingMatrix<double>(getInverseScale(index))
+    //            * scalingMatrix<double>(joints[index].getLocalScaling().cast<double>())
+    //            * trans;
+    if (getNameByIndex(index).indexOf("Head") >= 0)
+    {
+        int X = 10;
+    }
+    trans = rotationMatrix<double>((joints[index].getLocalRotation().cast<double>())) * trans;
+    trans =  translationMatrix<double>(joints[index].getLocalTranslation().cast<double>()) * trans;
+    trans =  scalingMatrix<double>(getInverseScale(joints[index].getPaterInd())) * trans;
+    trans =  scalingMatrix<double>(joints[index].getLocalScaling().cast<double>())* trans;
+
+    if (isnan (trans(0,0))){
+        int X= 10;
+    }
     return joints[index].setLocalTransform(trans);
 }
 
 QVector<int> Skeleton::getKidsByIndex(const int index) const
 {
     if (index < 0)
-        return {};
+        return QVector<int>();
     return joints[index].getKidsInd();
 }
 
@@ -74,11 +90,15 @@ Matrix4<double> Skeleton::getGlobalMatrixByIndex(const int index) const
 
 Vector3<double> Skeleton::getInverseScale(const int index) const
 {
-    Vector3<double> res = Vector3<double>(1,1,1);
+    Vector3<double> res = Df::makeUnitVector3<double>();
     if (index < 0)
         return res;
     res = joints[index].getLocalScaling().cast<double>();
-    res = Vector3<double>(1.0 / res(0,0), 1.0 / res(1,0),1.0 / res(2,0));
+
+    //res = Vector3<double>(1.0 / res(0,0), 1.0 / res(1,0),1.0 / res(2,0));
+    for (int i = 0; i < 3; ++i)
+
+        res(i,0) = 1.0 / res(i,0);
     return res;
 }
 
@@ -95,11 +115,11 @@ void Skeleton::calculateMatrix(const int currentJointIndex, const int variant)
         Matrix4<double> paterMat = getGlobalMatrixByIndex(joints[currentJointIndex].getPaterInd());
         Matrix4<double> selfMat = calculateLocalTransformByIndex(currentJointIndex);//joints[currentJointIndex].calculateLocalTransformMatrix();
         Matrix4<double> finalMat = joints[currentJointIndex].setGlobalTransform(paterMat * selfMat);
-//        traceMatrix(paterMat);
-//        qDebug() << "*";
-//        traceMatrix(selfMat);
-//        qDebug() << "=";
-//        traceMatrix(finalMat);
+        //        traceMatrix(paterMat);
+        //        qDebug() << "*";
+        //        traceMatrix(selfMat);
+        //        qDebug() << "=";
+        //        traceMatrix(finalMat);
         jointTranslations[currentJointIndex] =
                 kostilBoneDrawer<double>(finalMat);
     }

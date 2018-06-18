@@ -56,7 +56,11 @@ Vector3<Scalar> makeVector3fromDoubles (const double x,const double y,const doub
 
 template <typename Scalar>
 Vector3<Scalar> makeUnitVector3 (){
-    return Vector3<Scalar>(Scalar(1),Scalar(1),Scalar(1));
+    Vector3<Scalar> v3;
+    v3(0,0) = Scalar(1);
+    v3(1,0) = Scalar(1);
+    v3(2,0) = Scalar(1);
+    return v3;
 }
 
 template <typename Scalar>
@@ -87,8 +91,8 @@ Vector3<Scalar> kostilBoneDrawer (const Matrix4<Scalar> &mat){
 
     v4 = mat.transpose() * v4;
 
-    //traceMatrix(mat);
-    //qDebug() << v4(0,0)<< v4(1,0) << v4(2,0);
+    traceMatrix(mat);
+    qDebug() << v4(0,0)<< v4(1,0) << v4(2,0);
     return Vector3<Scalar>(v4(0,0), v4(1,0), v4(2,0));
 }
 
