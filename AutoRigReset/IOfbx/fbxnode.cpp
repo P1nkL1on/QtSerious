@@ -27,6 +27,11 @@ QString IOfbx::FbxNode::getId() const
     return id;
 }
 
+QString IOfbx::FbxNode::getName() const
+{
+    return name;
+}
+
 void IOfbx::traceMessage(const QString &mess)
 {
     if (IOfbx::showWarningsAndErrors || mess.indexOf('!') == 0)

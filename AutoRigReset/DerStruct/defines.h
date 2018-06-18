@@ -83,12 +83,12 @@ inline void traceMatrix (const Matrix4<Scalar> &mat){
 
 template <typename Scalar>
 Vector3<Scalar> kostilBoneDrawer (const Matrix4<Scalar> &mat){
-    Vector4<Scalar> v4(Scalar(1.0), Scalar(1.0), Scalar(1.0), Scalar(1.0));
+    Vector4<Scalar> v4(Scalar(0.0), Scalar(0.0), Scalar(0.0), Scalar(1.0));
 
     v4 = mat.transpose() * v4;
 
-    traceMatrix(mat);
-    qDebug() << v4(0,0)<< v4(1,0) << v4(2,0);
+    //traceMatrix(mat);
+    //qDebug() << v4(0,0)<< v4(1,0) << v4(2,0);
     return Vector3<Scalar>(v4(0,0), v4(1,0), v4(2,0));
 }
 

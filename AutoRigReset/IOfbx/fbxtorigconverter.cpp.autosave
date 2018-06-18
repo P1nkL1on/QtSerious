@@ -115,7 +115,6 @@ Rig *IOfbx::FbxConverter::convertContainerToRig(const IOfbx::FbxParsedContainer 
 #warning убрать из числа деформеров те, которые отвечают не за кластеры
 
     Skeleton fbxSkeleton(fbxJoints);
-    delete container;
     return new Rig(fbxSkeleton, fbxClusters, fbxMeshes);
 }
 

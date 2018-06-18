@@ -14,6 +14,8 @@ public:
     Skeleton(const QVector<Joint> &joints);
     void calculateMatrixes();
     QVector<Df::Vector3<double>> jointTranslations;
+    QVector<int> getKidsByIndex (const int index);
+    int getPaterByIndex (const int index);
 private:
     QVector<Joint> joints;
     QVector<int> rootIndexes;

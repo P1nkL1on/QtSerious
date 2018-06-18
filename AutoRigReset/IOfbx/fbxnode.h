@@ -37,6 +37,7 @@ public:
     virtual void traceInfo() const;
     virtual bool isEmpty() const;
     virtual QString getId() const;
+    virtual QString getName() const;
 
 protected:
     QString id;

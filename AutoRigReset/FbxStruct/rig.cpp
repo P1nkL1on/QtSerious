@@ -43,19 +43,31 @@ FbxStruct::Rig::Rig(const FbxStruct::Skeleton &skeleton,
 
 }
 
-void FbxStruct::Rig::repaint(QPainter *qp)
+QImage FbxStruct::Rig::repaint(QPainter *qp)
 {
     //    // ================= CAUSE FUCK DRAWING, thats why =================
     for (const auto mesh : meshes){
-        qp->setPen(QPen(FbxDrawing::getNextColor(), 3));
+        qp->setPen(QPen(FbxDrawing::getNextColor(), 2));
         for (const auto v : mesh.getVertices() )
             qp->drawPoint(FbxDrawing::toPoint(v));
     }
 
     skeleton.calculateMatrixes();
-    qp->setPen(QPen(Qt::blue, 6));
+    qp->setPen(QPen(Qt::black, 3));
+    QVector<QPoint> skeletonPoints;
     for (const auto v3 : skeleton.jointTranslations)
-        qp->drawPoint(FbxDrawing::toPoint(Df::makeQVectorFromVector3<double>(v3)));
+        skeletonPoints << (FbxDrawing::toPoint(Df::makeQVectorFromVector3<double>(v3)));
+
+    for (int jointIndex = 0; jointIndex < skeletonPoints.length(); ++jointIndex)
+    {
+        int paterIndex = skeleton.getPaterByIndex(jointIndex);
+        if (paterIndex >= 0)
+            qp->drawLine(skeletonPoints[paterIndex], skeletonPoints[jointIndex]);
+    }
+    qp->setPen(QPen(Qt::black, 6));
+    for (const auto p : skeletonPoints)
+        qp->drawPoint(p);
+
     //    qp->setPen(QPen(Qt::blue, 6));
     //    for (int i = 0; i < fbxJoints.length(); ++i){
     //        int curJind = i;

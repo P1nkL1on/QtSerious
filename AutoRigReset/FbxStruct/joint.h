@@ -12,14 +12,15 @@ public:
     Joint(const Df::Vector3<float> &localTranslation,
           const Df::Vector3<float> &localRotation,
           const Df::Vector3<float> &localScaling,
-          const bool isMeshDepended);
+          const bool isMeshDepended,
+          const QString name);
     const Df::Matrix4<double> &calculateLocalTransformMatrix(){
-//        localTransform = Df::Matrix4<double>::Identity();
-//        localTransform = localTransform
-//                * Df::scalingMatrix<double>(localScaling.cast<double>())
-//                * Df::rotationMatrix<double>(localRotation.cast<double>())
-//                * Df::translationMatrix<double>(localTranslation.cast<double>());
-        localTransform = getBindTransform();
+        localTransform = Df::Matrix4<double>::Identity();
+//        localTransform = getBindTransform();
+        localTransform = localTransform
+                * Df::scalingMatrix<double>(localScaling.cast<double>())
+                * Df::rotationMatrix<double>(localRotation.cast<double>())
+                * Df::translationMatrix<double>(localTranslation.cast<double>());
         return localTransform;
     }
 //    template <typename Numerical>
@@ -34,7 +35,9 @@ public:
     Df::Matrix4<double> getBindTransform() const;
     Df::Matrix4<double> getLocalTransform() const;
     Df::Matrix4<double> setGlobalTransform(const Df::Matrix4<double> &value);
+    QString getJointName() const;
 private:
+    QString jointName;
     bool meshDependent = false;
     int paterInd = -1;
     QVector<int> kidsInd;

@@ -5,11 +5,14 @@ using namespace Df;
 
 Joint::Joint(const Vector3<float> &localTranslation,
              const Vector3<float> &localRotation,
-             const Vector3<float> &localScaling, const bool isMeshDepended):
+             const Vector3<float> &localScaling,
+             const bool isMeshDepended,
+             const QString name):
     localTranslation(localTranslation),
     localRotation(localRotation),
     localScaling(localScaling),
-    meshDependent(isMeshDepended)
+    meshDependent(isMeshDepended),
+    jointName(name)
 {
 
 }
@@ -64,6 +67,11 @@ Df::Matrix4<double> Joint::getLocalTransform() const
 Df::Matrix4<double> Joint::setGlobalTransform(const Df::Matrix4<double> &value)
 {
     globalTransform = value;
-    traceMatrix(globalTransform);
+    //traceMatrix(globalTransform);
     return globalTransform;
+}
+
+QString Joint::getJointName() const
+{
+    return jointName;
 }

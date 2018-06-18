@@ -38,7 +38,6 @@ void MainWindow::on_actionLoad_Ivan_Sergeich_triggered()
     loadRigIvanSergeich();
 }
 
-bool everDrawen = false;
 
 void MainWindow::loadRigByAdress(QString path)
 {
@@ -49,7 +48,10 @@ void MainWindow::loadRigByAdress(QString path)
     else
     {
         parsed->traceInfo();
-        everDrawen = false;
+        FbxStruct::Rig *r = FbxConverter::convertContainerToRig(parsed);
+        delete parsed;
+        r->repaint(&qp);
+        delete r;
         this->repaint();
     }
 
@@ -72,11 +74,8 @@ void MainWindow::runTests()
 }
 void MainWindow::paintEvent(QPaintEvent *e)
 {
-    if (!everDrawen && parsed != nullptr){
+    if (parsed != nullptr){
         QPainter qp(this);
-        FbxStruct::Rig *r = FbxConverter::convertContainerToRig(parsed);
-        r->repaint(&qp);
         qp.end();
-        everDrawen = true;
     }
 }
