@@ -16,25 +16,24 @@ public:
           const QString name);
     const Df::Matrix4<double> &calculateLocalTransformMatrix(){
         localTransform = Df::Matrix4<double>::Identity();
-//        localTransform = getBindTransform();
         localTransform = localTransform
-                * Df::scalingMatrix<double>(localScaling.cast<double>())
-                * Df::rotationMatrix<double>(localRotation.cast<double>())
+                //* Df::scalingMatrix<double>(localScaling.cast<double>())
+                //* Df::rotationMatrix<double>(localRotation.cast<double>())
                 * Df::translationMatrix<double>(localTranslation.cast<double>());
         return localTransform;
     }
-//    template <typename Numerical>
-//    const Df::Matrix4<Numerical> &calculateGlobalTransformMatrix();
+
     void setPaterIndex(const int paterPtrInd);
     void addKidIndex (const int kidPtrInd);
     void addClusterIndex (const int clusterPtrInd);
-    void setBindTransform(const Df::Matrix4<double> &value);
     bool isMeshDependent() const;
     int getPaterInd() const;
     QVector<int> getKidsInd() const;
     Df::Matrix4<double> getBindTransform() const;
     Df::Matrix4<double> getLocalTransform() const;
+    Df::Matrix4<double> getGlobalTransform() const;
     Df::Matrix4<double> setGlobalTransform(const Df::Matrix4<double> &value);
+    void setBindTransform(const Df::Matrix4<double> &value);
     QString getJointName() const;
 private:
     QString jointName;

@@ -55,9 +55,19 @@ void Skeleton::calculateMatrix(const int currentJointIndex, const int variant)
                 kostilBoneDrawer<double>(
                     joints[currentJointIndex].getBindTransform());
     // SELF CALCULATE
-    if (variant == 1)
+    if (variant == 1){
+        Matrix4<double> paterMat = getLocalMatrixByIndex(joints[currentJointIndex].getPaterInd());
+        Matrix4<double> selfMat = joints[currentJointIndex].calculateLocalTransformMatrix();
+        Matrix4<double> finalMat = joints[currentJointIndex].setGlobalTransform(paterMat * selfMat);
+        traceMatrix(paterMat);
+        qDebug() << "*";
+        traceMatrix(selfMat);
+        qDebug() << "=";
+        traceMatrix(finalMat);
+
         jointTranslations[currentJointIndex] =
-                kostilBoneDrawer<double>(joints[currentJointIndex].calculateLocalTransformMatrix());
+                kostilBoneDrawer<double>(finalMat);
+    }
 
     for (const int ind : joints[currentJointIndex].getKidsInd())
         calculateMatrix(ind, variant);

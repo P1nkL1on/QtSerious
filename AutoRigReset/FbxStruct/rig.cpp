@@ -79,19 +79,6 @@ void FbxStruct::Rig::repaint(QPainter *qp)
         }
     }
 
-    //    qp->setPen(QPen(Qt::blue, 6));
-    //    for (int i = 0; i < fbxJoints.length(); ++i){
-    //        int curJind = i;
-    //        Matrix4<double> now = Matrix4<double>::Identity();
-    //        do{
-    //            now = now * fbxJoints[curJind].getBindTransform();
-    //            curJind = fbxJoints[curJind].getPaterInd();
-    //        }while (curJind >= 0);
-
-    //        Vector3<double> fin = Df::kostilBoneDrawer(now);
-    //        qp->drawPoint(xOffset + fin(0,0) * xScale, yOffset + fin(1,0) * yScale);
-    //    }
-
     //    // =================================================================
     return;
 }
