@@ -80,10 +80,10 @@ Df::Vector3<float> Joint::getLocalTranslation() const
 {
     return localTranslation;
 }
-
+int d = 0;
 Df::Vector3<float> Joint::getLocalRotation() const
 {
-    return {0,0,0};//localRotation;
+    return {0,(getJointName().indexOf("Fore") >= 0) ? ++d : 0,0};//localRotation;
 }
 
 Df::Vector3<float> Joint::getLocalScaling() const

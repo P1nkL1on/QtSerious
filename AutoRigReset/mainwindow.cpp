@@ -88,7 +88,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
 
 void MainWindow::on_actionTransformMesh_triggered()
 {
-    if (r != nullptr)
-        r->TestRotate();
+//    if (r != nullptr)
+//        r->TestRotate();
     this->repaint();
 }

@@ -36,9 +36,9 @@ Matrix4<double> Skeleton::calculateLocalTransformByIndex(const int index)
     //    return localTransform;
     Matrix4<double> trans = Matrix4<double>::Identity();
     trans = trans
+            * rotationMatrix<double>((joints[index].getLocalRotation().cast<double>()))
             * scalingMatrix<double>(joints[index].getLocalScaling().cast<double>())
             * scalingMatrix<double>(getInverseScale(index))
-            * rotationMatrix<double>((joints[index].getLocalRotation().cast<double>()))
             * translationMatrix<double>(joints[index].getLocalTranslation().cast<double>())
             ;
     return joints[index].setLocalTransform(trans);
