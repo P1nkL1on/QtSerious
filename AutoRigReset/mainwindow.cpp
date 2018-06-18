@@ -38,7 +38,7 @@ void MainWindow::on_actionLoad_Ivan_Sergeich_triggered()
     loadRigIvanSergeich();
 }
 
-
+FbxStruct::Rig *r = nullptr;
 void MainWindow::loadRigByAdress(QString path)
 {
     QString err = "";
@@ -48,10 +48,10 @@ void MainWindow::loadRigByAdress(QString path)
     else
     {
         parsed->traceInfo();
-        FbxStruct::Rig *r = FbxConverter::convertContainerToRig(parsed);
+        if (r != nullptr)
+            delete r;
+        r = FbxConverter::convertContainerToRig(parsed);
         delete parsed;
-        r->repaint(&qp);
-        delete r;
         this->repaint();
     }
 
@@ -74,8 +74,9 @@ void MainWindow::runTests()
 }
 void MainWindow::paintEvent(QPaintEvent *e)
 {
-    if (parsed != nullptr){
-        QPainter qp(this);
-        qp.end();
-    }
+    QPainter qp(this);
+    if (r != nullptr)
+        r->repaint(&qp);
+    qp.end();
+
 }

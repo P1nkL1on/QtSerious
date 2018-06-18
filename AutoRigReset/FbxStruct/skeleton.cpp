@@ -11,28 +11,28 @@ Skeleton::Skeleton(const QVector<Joint> &joints):
             rootIndexes << jInd;
 }
 
-void Skeleton::calculateMatrixes()
+void Skeleton::calculateMatrixes(const int variant)
 {
     jointTranslations.clear();
     for (int i = 0; i < joints.length(); ++i)
         jointTranslations << Vector3<double>();
     for (const int rootInd : rootIndexes)
-        calculateMatrix(rootInd);
-    for (int i = 0; i < jointTranslations.length(); ++i)
-        qDebug() << i << joints[i].getJointName() <<
-                    jointTranslations[i](0,0)<<
-                    jointTranslations[i](1,0)<<
-                    jointTranslations[i](2,0);
+        calculateMatrix(rootInd, variant);
 }
 
-QVector<int> Skeleton::getKidsByIndex(const int index)
+QString Skeleton::getNameByIndex(const int index) const
+{
+    return joints[index].getJointName();
+}
+
+QVector<int> Skeleton::getKidsByIndex(const int index) const
 {
     if (index < 0)
         return {};
     return joints[index].getKidsInd();
 }
 
-int Skeleton::getPaterByIndex(const int index)
+int Skeleton::getPaterByIndex(const int index) const
 {
     if (index < 0)
         return -1;
@@ -46,12 +46,19 @@ Matrix4<double> Skeleton::getLocalMatrixByIndex(const int index)
     return joints[index].getLocalTransform();
 }
 
-void Skeleton::calculateMatrix(const int currentJointIndex)
+void Skeleton::calculateMatrix(const int currentJointIndex, const int variant)
 {
     //qDebug() << QString("Matrix for bone %1").arg(currentJointIndex);
-    jointTranslations[currentJointIndex] =
-            kostilBoneDrawer<double>(
-                joints[currentJointIndex].getBindTransform());
+    // BIND MATRIX
+    if (variant == 0)
+        jointTranslations[currentJointIndex] =
+                kostilBoneDrawer<double>(
+                    joints[currentJointIndex].getBindTransform());
+    // SELF CALCULATE
+    if (variant == 1)
+        jointTranslations[currentJointIndex] =
+                kostilBoneDrawer<double>(joints[currentJointIndex].calculateLocalTransformMatrix());
+
     for (const int ind : joints[currentJointIndex].getKidsInd())
-        calculateMatrix(ind);
+        calculateMatrix(ind, variant);
 }

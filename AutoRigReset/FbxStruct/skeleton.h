@@ -12,15 +12,16 @@ class Skeleton
 public:
     Skeleton() = default;
     Skeleton(const QVector<Joint> &joints);
-    void calculateMatrixes();
+    void calculateMatrixes(const int variant);
     QVector<Df::Vector3<double>> jointTranslations;
-    QVector<int> getKidsByIndex (const int index);
-    int getPaterByIndex (const int index);
+    QVector<int> getKidsByIndex (const int index) const;
+    int getPaterByIndex (const int index) const;
+    QString getNameByIndex (const int index) const;
 private:
     QVector<Joint> joints;
     QVector<int> rootIndexes;
     Df::Matrix4<double> getLocalMatrixByIndex (const int index);
-    void calculateMatrix(const int currentJointIndex);
+    void calculateMatrix(const int currentJointIndex, const int variant);
 };
 }
 
