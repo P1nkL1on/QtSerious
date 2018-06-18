@@ -85,16 +85,6 @@ inline void traceMatrix (const Matrix4<Scalar> &mat){
     qDebug() << ")";
 }
 
-template <typename Scalar>
-Vector3<Scalar> kostilBoneDrawer (const Matrix4<Scalar> &mat){
-    Vector4<Scalar> v4(Scalar(0.0), Scalar(0.0), Scalar(0.0), Scalar(1.0));
-
-    v4 = mat.transpose() * v4;
-
-    traceMatrix(mat);
-    qDebug() << v4(0,0)<< v4(1,0) << v4(2,0);
-    return Vector3<Scalar>(v4(0,0), v4(1,0), v4(2,0));
-}
 
 template <typename Scalar>
 inline Matrix4<Scalar> translationMatrix (const Vector3<Scalar> &translate){
@@ -131,9 +121,11 @@ inline Matrix4<Scalar> rotationMatrixZ (const Scalar &val){
 }
 template <typename Scalar>
 inline Matrix4<Scalar> rotationMatrix (const Vector3<Scalar> &rotation){
-    return rotationMatrixZ(rotation(2,0))
-            * rotationMatrixY(rotation(1,0))
-            * rotationMatrixX(rotation(0,0));
+    //qDebug() << rotation(0,0) << rotation(1,0) << rotation(2,0)
+    return
+            rotationMatrixZ<Scalar>(rotation(2,0))
+            * rotationMatrixY<Scalar>(rotation(1,0))
+            * rotationMatrixX<Scalar>(rotation(0,0));
 }
 
 template <typename Scalar>
@@ -144,6 +136,34 @@ inline Matrix4<Scalar> scalingMatrix (const Vector3<Scalar> &scaling){
     M(2, 2) = scaling(2,0);
     return M;
 }
+template <typename Scalar>
+Vector4<Scalar> pushTo4(const Vector3<Scalar> &vec, const Scalar extra){
+    Vector4<Scalar> v4;
+    for (int i =  0; i < 3; ++i)
+        v4(i,0) = vec(i,0);
+    v4(3,0) = extra;
+    return v4;
+}
+template <typename Scalar>
+Vector3<Scalar> popFrom4(const Vector4<Scalar> &vec){
+    Vector3<Scalar> v3;
+    for (int i =  0; i < 3; ++i)
+        v3(i,0) = vec(i,0);
+    return v3;
+}
 
+template <typename Scalar>
+Vector3<Scalar> applyTransform(const Vector3<Scalar> &vec, const Matrix4<Scalar> &mat){
+    return popFrom4<Scalar>(mat * pushTo4<Scalar>(vec, 1.0) );
+}
+template <typename Scalar>
+Vector3<Scalar> applyTransformTransposed(const Vector3<Scalar> &vec, const Matrix4<Scalar> &mat){
+    return applyTransform<Scalar>(vec, mat.transpose());
+}
+
+template <typename Scalar>
+Vector3<Scalar> applyTransposeTransformToZeroVec(const Matrix4<Scalar> &mat){
+    return applyTransform<Scalar>(Vector3<Scalar>(), mat.transpose());
+}
 }
 #endif // DERSTRUCT_DEFINES_H

@@ -13,3 +13,9 @@ SOURCES += \
     $$PWD/defines.cpp
 
 }
+
+HEADERS += \
+    $$PWD/definetests.h
+
+SOURCES += \
+    $$PWD/definetests.cpp

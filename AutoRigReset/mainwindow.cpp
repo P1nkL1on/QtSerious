@@ -6,6 +6,7 @@
 #include <QDebug>
 #include "IOfbx/iofbxtests.h"
 #include "IOfbx/fbxtorigconverter.h"
+#include "DerStruct/definetests.h"
 
 using namespace IOfbx;
 
@@ -76,6 +77,8 @@ void MainWindow::runTests()
 {
     IOfbx::IOfbxTests fbxTests;
     QTest::qExec(&fbxTests);
+    Df::Tests::DefineTests geomTests;
+    QTest::qExec(&geomTests);
 }
 void MainWindow::paintEvent(QPaintEvent *e)
 {

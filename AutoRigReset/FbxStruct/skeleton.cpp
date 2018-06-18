@@ -38,19 +38,15 @@ Matrix4<double> Skeleton::calculateLocalTransformByIndex(const int index)
     //            * rotationMatrix<double>(localRotation.cast<double>())
     //            * translationMatrix<double>(localTranslation.cast<double>());
     //    return localTransform;
-    Matrix4<double> trans = Matrix4<double>::Identity();
-        trans =
-                rotationMatrix<double>((joints[index].getLocalRotation().cast<double>()))
-                * translationMatrix<double>(joints[index].getLocalTranslation().cast<double>())
-                * scalingMatrix<double>(getInverseScale(index))
-                * scalingMatrix<double>(joints[index].getLocalScaling().cast<double>())
-                * trans;
-//    trans =  translationMatrix<double>(joints[index].getLocalTranslation().cast<double>()) * trans;
+    const Matrix4<double> trans =
+            translationMatrix<double>(joints[index].getLocalTranslation().cast<double>())
 
-//    trans =  scalingMatrix<double>(joints[index].getLocalScaling().cast<double>())* trans;
-//    trans =  scalingMatrix<double>(getInverseScale(joints[index].getPaterInd())) * trans;
+            //translationMatrix<double>(Df::applyTransformTransposed<double>(joints[index].getLocalTranslation().cast<double>(),
+            //                                                       rotationMatrix<double>((joints[index].getLocalRotation().cast<double>()))));
 
-//    trans =  rotationMatrix<double>((joints[index].getLocalRotation().cast<double>())) * trans;
+            * rotationMatrix<double>((joints[index].getLocalRotation().cast<double>()))
+            * scalingMatrix<double>(getInverseScale(joints[index].getPaterInd()))
+            * scalingMatrix<double>(joints[index].getLocalScaling().cast<double>());
     return joints[index].setLocalTransform(trans);
 }
 
@@ -102,21 +98,21 @@ void Skeleton::calculateMatrix(const int currentJointIndex, const int variant)
     // BIND MATRIX
     if (variant == 0)
         jointTranslations[currentJointIndex] =
-                kostilBoneDrawer<double>(
+                applyTransposeTransformToZeroVec(
                     joints[currentJointIndex].getBindTransform());
     // SELF CALCULATE
     if (variant == 1){
         Matrix4<double> paterMat = getGlobalMatrixByIndex(joints[currentJointIndex].getPaterInd());
         Matrix4<double> selfMat = calculateLocalTransformByIndex(currentJointIndex);//joints[currentJointIndex].calculateLocalTransformMatrix();
-        Matrix4<double> finalMat = joints[currentJointIndex].setGlobalTransform(paterMat * selfMat);
+        Matrix4<double> finalMat = joints[currentJointIndex].setGlobalTransform(selfMat * paterMat);
         qDebug() << getNameByIndex(currentJointIndex);
-        traceMatrix(paterMat);
-        qDebug() << "*";
-        traceMatrix(selfMat);
-        qDebug() << "=";
-        traceMatrix(finalMat);
+//        traceMatrix(paterMat);
+//        qDebug() << "*";
+//        traceMatrix(selfMat);
+//        qDebug() << "=";
+//        traceMatrix(finalMat);
         jointTranslations[currentJointIndex] =
-                kostilBoneDrawer<double>(finalMat);
+                applyTransposeTransformToZeroVec<double>(finalMat);
     }
 
     for (const int ind : joints[currentJointIndex].getKidsInd())
