@@ -66,7 +66,8 @@ Df::Vector3<double> JointTransform::getLocalTranslation() const
 
 Df::Vector3<double> JointTransform::getLocalRotation() const
 {
-    return localRotation;
+    return Df::makeVector3fromDoubles<double>(0,0,0);
+//    return -localRotation;
 }
 
 Df::Vector3<double> JointTransform::getLocalScaling() const

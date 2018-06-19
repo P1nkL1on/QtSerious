@@ -138,10 +138,12 @@ Matrix4<double> Skeleton::computeLocalMatrix(
         const JointTransform &jointTrans,
         const Vector3<double> &paterInverseScale) const
 {
+    qDebug() << "Called local";
     return translationMatrix<double>(jointTrans.getLocalTranslation())
             //* scalingMatrix<double>(paterInverseScale)
             * scalingMatrix<double>(jointTrans.getLocalScaling())
-            * rotationMatrix<double>(jointTrans.getLocalTranslation());
+            * rotationMatrix<double>(jointTrans.getLocalRotation())
+            ;
 }
 
 bool Skeleton::computeGlobalMatrix(const QVector<Joint> &ierarch,
@@ -149,7 +151,7 @@ bool Skeleton::computeGlobalMatrix(const QVector<Joint> &ierarch,
                                    QVector<Matrix4<double> > &globalMatrices,
                                    const int currentJointIndex) const
 {
-    qDebug() << "Global calculator called for index " + currentJointIndex;
+    qDebug() << "Global calculator called for index " + QString::number(currentJointIndex);
     const int currentParentIndex = ierarch[currentJointIndex].getPaterInd();
     Matrix4<double> paterMat = (currentParentIndex < 0) ? Matrix4<double>::Identity() : globalMatrices[currentParentIndex];
     Matrix4<double> selfMat = localMatrices[currentJointIndex];
@@ -170,7 +172,7 @@ QVector<Vector3<double> > Skeleton::computeJointPositions() const
     QVector<Matrix4<double>> globalTransforms
             = computeGlobalMatrices(
                 joints,
-                computeLocalMatrices(jointTransforms, {}));
+                computeLocalMatrices(jointTransforms, inverseParentScales));
     QVector<Vector3<double> > res;
     for (const auto mat : globalTransforms)
         res << applyTransformToZeroVec<double>(mat);
