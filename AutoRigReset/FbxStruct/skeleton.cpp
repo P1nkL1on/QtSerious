@@ -8,20 +8,20 @@ Skeleton::Skeleton(const QVector<Joint> &joints):
     joints(joints)
 {
     for (int jInd = 0; jInd < joints.length(); ++jInd)
-        if (joints[jInd].getPaterInd() < 0)
+        if (!joints[jInd].isMeshDependent() && joints[jInd].getPaterInd() < 0)
             rootIndexes << jInd;
 }
 
-void Skeleton::calculateMatrixes(const int variant)
+void Skeleton::calculateMatrixes()
 {
     jointTranslations.clear();
     for (int i = 0; i < joints.length(); ++i)
         jointTranslations << Vector3<double>();
     for (const int rootInd : rootIndexes)
-        calculateMatrix(rootInd, variant);
-
-    //for (int i = 0; i < jointTranslations.length(); ++i)
-    //    qDebug() << i << getNameByIndex(i) << jointTranslations[i](0,0) << jointTranslations[i](1,0) << jointTranslations[i](2,0);
+        calculateMatrix(rootInd);
+    // info for each bone
+    for (int i = 0; i < jointTranslations.length(); ++i)
+        qDebug() << i << getNameByIndex(i) << jointTranslations[i](0,0) << jointTranslations[i](1,0) << jointTranslations[i](2,0);
 }
 
 QString Skeleton::getNameByIndex(const int index) const
@@ -87,29 +87,20 @@ Vector3<double> Skeleton::getInverseScale(const int index) const
     return res;
 }
 
-void Skeleton::calculateMatrix(const int currentJointIndex, const int variant)
+void Skeleton::calculateMatrix(const int currentJointIndex)
 {
     //qDebug() << QString("Matrix for bone %1").arg(currentJointIndex);
-    // BIND MATRIX
-    if (variant == 0)
-        jointTranslations[currentJointIndex] =
-                applyTransformToZeroVec(
-                    joints[currentJointIndex].getBindTransform());
-    // SELF CALCULATE
-    if (variant == 1){
-        Matrix4<double> paterMat = getGlobalMatrixByIndex(joints[currentJointIndex].getPaterInd());
-        Matrix4<double> selfMat = calculateLocalTransformByIndex(currentJointIndex);//joints[currentJointIndex].calculateLocalTransformMatrix();
-        Matrix4<double> finalMat = joints[currentJointIndex].setGlobalTransform(paterMat * selfMat);
-        //qDebug() << getNameByIndex(currentJointIndex);
-//        traceMatrix(paterMat);
-//        qDebug() << "*";
-//        traceMatrix(selfMat);
-//        qDebug() << "=";
-//        traceMatrix(finalMat);
-        jointTranslations[currentJointIndex] =
-                applyTransformToZeroVec<double>(finalMat);
-    }
-
+    // BIND MATRIX GETTER ONLY
+    //    if (variant == 0)
+    //        jointTranslations[currentJointIndex] =
+    //                applyTransformToZeroVec(
+    //                    joints[currentJointIndex].getBindTransform());
+    Matrix4<double> paterMat = getGlobalMatrixByIndex(joints[currentJointIndex].getPaterInd());
+    Matrix4<double> selfMat = calculateLocalTransformByIndex(currentJointIndex);
+    Matrix4<double> finalMat = joints[currentJointIndex].setGlobalTransform(paterMat * selfMat);
+    // calculate final global point
+    jointTranslations[currentJointIndex] =
+            applyTransformToZeroVec<double>(finalMat);
     for (const int ind : joints[currentJointIndex].getKidsInd())
-        calculateMatrix(ind, variant);
+        calculateMatrix(ind);
 }

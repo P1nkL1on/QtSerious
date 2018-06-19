@@ -12,7 +12,7 @@ class Skeleton
 public:
     Skeleton() = default;
     Skeleton(const QVector<Joint> &joints);
-    void calculateMatrixes(const int variant);
+    void calculateMatrixes();
     QVector<Df::Vector3<double>> jointTranslations;
     QVector<int> getKidsByIndex (const int index) const;
     int getPaterByIndex (const int index) const;
@@ -24,7 +24,7 @@ private:
     Df::Matrix4<double> getLocalMatrixByIndex (const int index) const;
     Df::Matrix4<double> getGlobalMatrixByIndex (const int index) const;
     Df::Vector3<double> getInverseScale (const int index) const;
-    void calculateMatrix(const int currentJointIndex, const int variant);
+    void calculateMatrix(const int currentJointIndex);
 };
 }
 
