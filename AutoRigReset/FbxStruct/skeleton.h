@@ -16,7 +16,6 @@ namespace FbxStruct{
 //    QVector<Df::Vector3<double>> jointTranslations;
 //    QVector<int> getKidsByIndex (const int index) const;
 //    int getPaterByIndex (const int index) const;
-//    QString getNameByIndex (const int index) const;
 //private:
 //    QVector<Joint> joints;
 //    QVector<int> rootIndexes;
@@ -41,10 +40,16 @@ public:
     Skeleton(const QVector<Joint> &joints,
              const QVector<JointTransform> &jointTransforms,
              const QVector<Df::Matrix4<double>> &bindMatrices);
-    QVector<Df::Matrix4<double>> computeLocalMatrices() const;
+    QVector<Df::Matrix4<double>> computeLocalMatrices(
+            const QVector<JointTransform> &jointTrans,
+            const QVector<Df::Vector3<double>> &paterInverseScales) const;
     QVector<Df::Matrix4<double>> computeGlobalMatrices(
             const QVector<Joint> &ierarch,
             const QVector<Df::Matrix4<double>> &localMatrices) const;
+    QVector<Df::Vector3<double>> computeJointPositions() const;
+
+    int getPaterByIndex (const int index) const;
+    QString getNameByIndex (const int index) const;
 private:
     QVector<Joint> joints;
     QVector<JointTransform> jointTransforms;
@@ -55,7 +60,7 @@ private:
     bool computeGlobalMatrix(
             const QVector<Joint> &ierarch,
             const QVector<Df::Matrix4<double>> &localMatrices,
-            QVector<Df::Matrix4<double>> &galobalMatrices,
+            QVector<Df::Matrix4<double>> &globalMatrices,
             const int currentJointIndex) const;
 };
 

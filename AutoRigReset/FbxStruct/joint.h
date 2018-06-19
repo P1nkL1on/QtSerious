@@ -43,6 +43,7 @@ public:
     Df::Vector3<double> getLocalTranslation() const;
     Df::Vector3<double> getLocalRotation() const;
     Df::Vector3<double> getLocalScaling() const;
+    Df::Vector3<double> getInverseScaling() const;
 private:
     Df::Vector3<double> localTranslation;
     Df::Vector3<double> localRotation;
