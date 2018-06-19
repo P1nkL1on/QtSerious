@@ -40,13 +40,10 @@ Matrix4<double> Skeleton::calculateLocalTransformByIndex(const int index)
     //    return localTransform;
     const Matrix4<double> trans =
             translationMatrix<double>(joints[index].getLocalTranslation().cast<double>())
-
-            //translationMatrix<double>(Df::applyTransformTransposed<double>(joints[index].getLocalTranslation().cast<double>(),
-            //                                                       rotationMatrix<double>((joints[index].getLocalRotation().cast<double>()))));
-
+            //* scalingMatrix<double>(getInverseScale(joints[index].getPaterInd()))
+            * scalingMatrix<double>(joints[index].getLocalScaling().cast<double>())
             * rotationMatrix<double>((joints[index].getLocalRotation().cast<double>()))
-            * scalingMatrix<double>(getInverseScale(joints[index].getPaterInd()))
-            * scalingMatrix<double>(joints[index].getLocalScaling().cast<double>());
+            ;
     return joints[index].setLocalTransform(trans);
 }
 
@@ -85,9 +82,7 @@ Vector3<double> Skeleton::getInverseScale(const int index) const
         return res;
     res = joints[index].getLocalScaling().cast<double>();
 
-    //res = Vector3<double>(1.0 / res(0,0), 1.0 / res(1,0),1.0 / res(2,0));
     for (int i = 0; i < 3; ++i)
-
         res(i,0) = 1.0 / res(i,0);
     return res;
 }
@@ -105,7 +100,7 @@ void Skeleton::calculateMatrix(const int currentJointIndex, const int variant)
         Matrix4<double> paterMat = getGlobalMatrixByIndex(joints[currentJointIndex].getPaterInd());
         Matrix4<double> selfMat = calculateLocalTransformByIndex(currentJointIndex);//joints[currentJointIndex].calculateLocalTransformMatrix();
         Matrix4<double> finalMat = joints[currentJointIndex].setGlobalTransform(paterMat * selfMat);
-        qDebug() << getNameByIndex(currentJointIndex);
+        //qDebug() << getNameByIndex(currentJointIndex);
 //        traceMatrix(paterMat);
 //        qDebug() << "*";
 //        traceMatrix(selfMat);

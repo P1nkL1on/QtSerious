@@ -85,6 +85,6 @@ void FbxStruct::Rig::repaint(QPainter *qp)
 
 void FbxStruct::Rig::TestRotate()
 {
-    meshes[0].applyTransform(Df::translationMatrix<double>({1, .5, 0}));
+    meshes[0].applyTransform(Df::translationMatrix<double>(Df::makeVector3fromDoubles<double>(10.0, 5.0, 0.0)));
     qDebug() << "moved";
 }

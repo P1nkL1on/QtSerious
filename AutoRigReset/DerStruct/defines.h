@@ -156,10 +156,6 @@ template <typename Scalar>
 Vector3<Scalar> applyTransform(const Vector3<Scalar> &vec, const Matrix4<Scalar> &mat){
     return popFrom4<Scalar>(mat * pushTo4<Scalar>(vec, 1.0) );
 }
-template <typename Scalar>
-Vector3<Scalar> applyTransformTransposed(const Vector3<Scalar> &vec, const Matrix4<Scalar> &mat){
-    return applyTransform<Scalar>(vec, mat.transpose());
-}
 
 template <typename Scalar>
 Vector3<Scalar> applyTransformToZeroVec(const Matrix4<Scalar> &mat){
