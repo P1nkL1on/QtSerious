@@ -20,8 +20,8 @@ void Skeleton::calculateMatrixes(const int variant)
     for (const int rootInd : rootIndexes)
         calculateMatrix(rootInd, variant);
 
-    for (int i = 0; i < jointTranslations.length(); ++i)
-        qDebug() << i << getNameByIndex(i) << jointTranslations[i](0,0) << jointTranslations[i](1,0) << jointTranslations[i](2,0);
+    //for (int i = 0; i < jointTranslations.length(); ++i)
+    //    qDebug() << i << getNameByIndex(i) << jointTranslations[i](0,0) << jointTranslations[i](1,0) << jointTranslations[i](2,0);
 }
 
 QString Skeleton::getNameByIndex(const int index) const

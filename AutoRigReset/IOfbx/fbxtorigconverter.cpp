@@ -94,6 +94,21 @@ Rig *IOfbx::FbxConverter::convertContainerToRig(const IOfbx::FbxParsedContainer 
             parsedDeformerAttendedToGeometryIds[rightIndex]
                     = parsedDeformerIds[leftIndex];
             break;
+
+        case ConnectionType::GeometryToMesh:
+            leftIndex = parsedMeshIds.indexOf(connect.getIdLeft());
+            rightIndex = parsedJointIds.indexOf(connect.getIdRight());
+            if (leftIndex < 0 || rightIndex < 0)
+                break;
+            if (!fbxJoints[rightIndex].isMeshDependent())
+                qDebug() << QString("o   Warning: joint with id %1 is using for"
+                                    " geometry modifinyng, but he is not supposed to do this;")
+                                    .arg(connect.getIdRight());
+            // transform a mesh as shown
+            fbxMeshes[leftIndex].applyTransform(fbxJoints[rightIndex].getBindTransform());
+            traceMessage( QString("v   Mesh transformer with bindpose (joint #%1) applied transform to geometry (mesh #%2)")
+                          .arg(rightIndex).arg(leftIndex));
+            break;
         default:
             break;
         }
@@ -113,6 +128,12 @@ Rig *IOfbx::FbxConverter::convertContainerToRig(const IOfbx::FbxParsedContainer 
     }
 #warning убрать потом из общео числа джойнтов все те, которые отвечают за меши
 #warning убрать из числа деформеров те, которые отвечают не за кластеры
+
+    // we should apply all mesh joints
+    for (const auto j : fbxJoints)
+        if (j.isMeshDependent()){
+
+        }
 
     Skeleton fbxSkeleton(fbxJoints);
     return new Rig(fbxSkeleton, fbxClusters, fbxMeshes);
