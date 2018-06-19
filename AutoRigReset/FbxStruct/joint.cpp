@@ -84,10 +84,10 @@ Df::Vector3<float> Joint::getLocalTranslation() const
 int d = 0;
 Df::Vector3<float> Joint::getLocalRotation() const
 {
-    int scaling = (getJointName().indexOf("Arm") >= 0) ? ++d : 0;
-    //return {0,0,0};
+    //int scaling = (getJointName().indexOf("Arm") >= 0) ? ++d : 0;
+    //return {0, scaling, 0};
     //return localRotation;
-    return {0, 0, 2};
+    return makeVector3fromDoubles<float>(0.0, 0.0, 0.0);
 }
 
 Df::Vector3<float> Joint::getLocalScaling() const
@@ -109,3 +109,8 @@ Df::Matrix4<double> Joint::getGlobalTransform() const
 {
     return globalTransform;
 }
+
+
+//Matrix4d computeLocalMatrix(/*some stuff like translation, rotation, etc*/)
+//void computeLocalMatrices(/*Some information about all translations, rotations, etc*/, QVector<Matrix4d> &outLocalMatrices)
+//QVector<Matrix4d> computeLocalMatrices(/*Some information about all translations, rotations, etc*/)
