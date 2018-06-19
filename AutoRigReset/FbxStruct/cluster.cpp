@@ -3,11 +3,11 @@
 using namespace FbxStruct;
 using namespace Df;
 
-Cluster::Cluster(const QVector<int> &vertIndexes,
+Cluster::Cluster(const QVector<int> &vertIndices,
                  const QVector<double> &weightes,
                  const Df::Matrix4<double> &transformMatrix,
                  const Df::Matrix4<double> &linkTransformMatrix):
-    vertIndexes(vertIndexes),
+    vertIndices(vertIndices),
     weights(weightes),
     transformMatrix(transformMatrix),
     linkTransformMatrix(linkTransformMatrix)

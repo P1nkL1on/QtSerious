@@ -19,17 +19,13 @@ public:
     int getPaterInd() const;
     QVector<int> getKidsInd() const;
     QString getJointName() const;
-
-
+    QVector<int> getClusterInds() const;
 private:
     QString jointName;
     bool meshDependent = false;
     int paterInd = -1;
     QVector<int> kidsInd;
     QVector<int> clusterInds;
-//    Df::Matrix4<double> localTransform = Df::Matrix4<double>::Identity();
-//    Df::Matrix4<double> globalTransform = Df::Matrix4<double>::Identity();
-//    Df::Matrix4<double> bindTransform = Df::Matrix4<double>::Identity();
 };
 
 class JointTransform

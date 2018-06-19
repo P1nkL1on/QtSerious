@@ -40,28 +40,27 @@ public:
     Skeleton(const QVector<Joint> &joints,
              const QVector<JointTransform> &jointTransforms,
              const QVector<Df::Matrix4<double>> &bindMatrices);
-    QVector<Df::Matrix4<double>> computeLocalMatrices(
+    static QVector<Df::Matrix4<double>> computeLocalMatrices(
             const QVector<JointTransform> &jointTrans,
-            const QVector<Df::Vector3<double>> &paterInverseScales) const;
-    QVector<Df::Matrix4<double>> computeGlobalMatrices(
-            const QVector<Joint> &ierarch,
-            const QVector<Df::Matrix4<double>> &localMatrices) const;
+            const QVector<Df::Vector3<double>> &paterInverseScales);
+    static QVector<Df::Matrix4<double>> computeGlobalMatrices(const QVector<Joint> &joints,
+            const QVector<Df::Matrix4<double>> &localMatrices);
     QVector<Df::Vector3<double>> computeJointPositions() const;
 
     int getPaterByIndex (const int index) const;
     QString getNameByIndex (const int index) const;
+    QVector<int> getClustersByJointIndex (const int index) const;
 private:
     QVector<Joint> joints;
     QVector<JointTransform> jointTransforms;
     QVector<Df::Matrix4<double>> bindMatrices;
-    Df::Matrix4<double> computeLocalMatrix(
+    static Df::Matrix4<double> computeLocalMatrix(
             const JointTransform &jointTrans,
-            const Df::Vector3<double> &paterInverseScale) const;
-    bool computeGlobalMatrix(
-            const QVector<Joint> &ierarch,
+            const Df::Vector3<double> &paterInverseScale);
+    static bool computeGlobalMatrix(const QVector<Joint> &joints,
             const QVector<Df::Matrix4<double>> &localMatrices,
             QVector<Df::Matrix4<double>> &globalMatrices,
-            const int currentJointIndex) const;
+            const int currentJointIndex);
 };
 
 }

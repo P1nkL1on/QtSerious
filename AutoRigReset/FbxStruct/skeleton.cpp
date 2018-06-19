@@ -108,57 +108,55 @@ Skeleton::Skeleton(
 
 QVector<Matrix4<double> > Skeleton::computeLocalMatrices(
         const QVector<JointTransform> &jointTrans,
-        const QVector<Vector3<double> > &paterInverseScales) const
+        const QVector<Vector3<double> > &paterInverseScales)
 {
     Q_ASSERT (jointTrans.length() == paterInverseScales.length());
-    QVector<Matrix4<double>> res;
+    QVector<Matrix4<double>> res(jointTrans.length());
     for (int ind = 0; ind < jointTrans.length(); ++ind)
-        res << computeLocalMatrix(jointTrans[ind], paterInverseScales[ind]);
+        res[ind] = computeLocalMatrix(jointTrans[ind], paterInverseScales[ind]);
     return res;
 }
 
 QVector<Matrix4<double> > Skeleton::computeGlobalMatrices(
-        const QVector<Joint> &ierarch,
-        const QVector<Matrix4<double>> &localMatrices) const
+        const QVector<Joint> &joints,
+        const QVector<Matrix4<double>> &localMatrices)
 {
-    QVector<int> rootIndexes;
-    for (int jInd = 0; jInd < ierarch.length(); ++jInd)
-        if (!ierarch[jInd].isMeshDependent() && ierarch[jInd].getPaterInd() < 0)
-            rootIndexes << jInd;
+    using namespace Eigen;
+    QVector<int> rootIndices;
+    for (int jInd = 0; jInd < joints.length(); ++jInd)
+        if (!joints[jInd].isMeshDependent() && joints[jInd].getPaterInd() < 0)
+            rootIndices << jInd;
     // now for each root go recursive
-    QVector<Matrix4<double>> globalMatrices;
-    for (const auto m : localMatrices)
-        globalMatrices << Matrix4<double>::Identity();
-    for (const int ind : rootIndexes)
-        computeGlobalMatrix(ierarch, localMatrices, globalMatrices, ind);
+    QVector<Matrix4<double>> globalMatrices(localMatrices.size(), Matrix4d::Identity());
+    for (const int ind : rootIndices)
+        computeGlobalMatrix(joints, localMatrices, globalMatrices, ind);
     return globalMatrices;
 }
 
 Matrix4<double> Skeleton::computeLocalMatrix(
         const JointTransform &jointTrans,
-        const Vector3<double> &paterInverseScale) const
+        const Vector3<double> &paterInverseScale)
 {
-    qDebug() << "Called local";
     return translationMatrix<double>(jointTrans.getLocalTranslation())
             //* scalingMatrix<double>(paterInverseScale)
             * scalingMatrix<double>(jointTrans.getLocalScaling())
-            * rotationMatrix<double>(jointTrans.getLocalRotation())
-            ;
+            * rotationMatrix<double>(jointTrans.getLocalRotation());
 }
 
-bool Skeleton::computeGlobalMatrix(const QVector<Joint> &ierarch,
+bool Skeleton::computeGlobalMatrix(const QVector<Joint> &joints,
                                    const QVector<Matrix4<double>> &localMatrices,
                                    QVector<Matrix4<double> > &globalMatrices,
-                                   const int currentJointIndex) const
+                                   const int currentJointIndex)
 {
+    using namespace Eigen;
     qDebug() << "Global calculator called for index " + QString::number(currentJointIndex);
-    const int currentParentIndex = ierarch[currentJointIndex].getPaterInd();
-    Matrix4<double> paterMat = (currentParentIndex < 0) ? Matrix4<double>::Identity() : globalMatrices[currentParentIndex];
-    Matrix4<double> selfMat = localMatrices[currentJointIndex];
+    const int currentParentIndex = joints[currentJointIndex].getPaterInd();
+    const Matrix4<double> paterMat = (currentParentIndex < 0) ? Matrix4d::Identity() : globalMatrices[currentParentIndex];
+    const Matrix4<double> selfMat  = localMatrices[currentJointIndex];
     globalMatrices[currentJointIndex] = paterMat * selfMat;
 
-    for (const int ind : ierarch[currentJointIndex].getKidsInd())
-        computeGlobalMatrix(ierarch, localMatrices, globalMatrices, ind);
+    for (const int ind : joints[currentJointIndex].getKidsInd())
+        computeGlobalMatrix(joints, localMatrices, globalMatrices, ind);
     return true;
 }
 
@@ -178,6 +176,7 @@ QVector<Vector3<double> > Skeleton::computeJointPositions() const
         res << applyTransformToZeroVec<double>(mat);
     return res;
 }
+
 int Skeleton::getPaterByIndex(const int index) const
 {
     if (index < 0)
@@ -188,4 +187,9 @@ int Skeleton::getPaterByIndex(const int index) const
 QString Skeleton::getNameByIndex(const int index) const
 {
     return joints[index].getJointName();
+}
+
+QVector<int> Skeleton::getClustersByJointIndex(const int index) const
+{
+    return joints[index].getClusterInds();
 }

@@ -160,7 +160,7 @@ Cluster IOfbx::FbxConverter::convertCluster(const IOfbx::FbxSubDeformerCluster &
 {
     if (parsedCluster.isEmpty())
         traceMessage(QString("o   Csluter with Id %1 is empty. Is it a Deformer? elsewhere it is strange;").arg(parsedCluster.getId()));
-    return Cluster(parsedCluster.getIndexes(),
+    return Cluster(parsedCluster.getIndices(),
                    parsedCluster.getWeights(),
                    initialiseMatrix<double>(parsedCluster.getTransformMatrix()),
                    initialiseMatrix<double>(parsedCluster.getTransformLinkMatrix()));
@@ -171,7 +171,7 @@ Mesh IOfbx::FbxConverter::convertMesh(const IOfbx::FbxGeometryMesh &parsedMesh)
     QVector<double> verticeValues = parsedMesh.getVertices();
     Q_ASSERT(verticeValues.length() % 3 == 0);
 
-    QVector<int> polygonIndexes;
+    QVector<int> polygonIndices;
     QVector<int> polygonStarts;
     QVector<Vector3<double>> vertices;
 
@@ -186,8 +186,8 @@ Mesh IOfbx::FbxConverter::convertMesh(const IOfbx::FbxGeometryMesh &parsedMesh)
         ++stInd;
         if (index < 0)
             polygonStarts << stInd;
-        polygonIndexes << ((index < 0)? -index - 1 : index);
+        polygonIndices << ((index < 0)? -index - 1 : index);
     }
 
-    return Mesh(vertices, polygonIndexes, polygonStarts);
+    return Mesh(vertices, polygonIndices, polygonStarts);
 }

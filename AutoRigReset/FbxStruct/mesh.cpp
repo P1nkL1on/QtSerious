@@ -2,11 +2,11 @@
 
 
 FbxStruct::Mesh::Mesh(const QVector<Df::Vector3<double> > &vertices,
-                      const QVector<int> &polygonIndexes,
-                      const QVector<int> &polygonStartIndexes) :
+                      const QVector<int> &polygonIndices,
+                      const QVector<int> &polygonStartIndices) :
     vertices(vertices),
-    polygonIndexes(polygonIndexes),
-    polygonStartIndexes(polygonStartIndexes)
+    polygonIndices(polygonIndices),
+    polygonStartIndices(polygonStartIndices)
 {
 
 }
@@ -19,9 +19,9 @@ QVector<QVector3D> FbxStruct::Mesh::getVertices() const
     return res;
 }
 
-QVector<int> FbxStruct::Mesh::getPolygonStartIndexes() const
+QVector<int> FbxStruct::Mesh::getPolygonStartIndices() const
 {
-    return polygonStartIndexes;
+    return polygonStartIndices;
 }
 
 void FbxStruct::Mesh::applyTransform(const Df::Matrix4<double> &mat)
@@ -30,7 +30,7 @@ void FbxStruct::Mesh::applyTransform(const Df::Matrix4<double> &mat)
         vertices[v] = Df::applyTransform<double>(vertices[v], mat);
 }
 
-QVector<int> FbxStruct::Mesh::getPolygonIndexes() const
+QVector<int> FbxStruct::Mesh::getPolygonIndices() const
 {
-    return polygonIndexes;
+    return polygonIndices;
 }

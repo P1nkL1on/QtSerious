@@ -64,6 +64,9 @@ void FbxStruct::Rig::repaint(QPainter *qp)
         int paterIndex = skeleton.getPaterByIndex(jointIndex);
         if (paterIndex >= 0)
             qp->drawLine(skeletonPoints[paterIndex], skeletonPoints[jointIndex]);
+//        for (const auto vInd : clusters[skeleton.getClustersByJointIndex(jointIndex)]){
+//
+//        }
     }
     qp->setPen(QPen(Qt::blue, 6));
     int boneIndex = 0;

@@ -13,14 +13,14 @@ public:
     QString parse(const QStringList &buffer) override;
     bool isEmpty() const override;
     bool isParentDeformder () const;
-    QVector<int> getIndexes() const;
+    QVector<int> getIndices() const;
     QVector<double> getWeights() const;
     QVector<double> getTransformMatrix() const;
     QVector<double> getTransformLinkMatrix() const;
 
 private:
     bool isDeformer = false;
-    QVector<int> indexes;
+    QVector<int> indices;
     QVector<double> weights;
     QVector<double> transformMatrix;
     QVector<double> transformLinkMatrix;

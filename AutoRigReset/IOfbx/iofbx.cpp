@@ -9,7 +9,7 @@ namespace IOfbx {
 
 const QVector<QString> parseBlockNames = {
     "Geometry Mesh Vertices",
-    "Geometry Mesh Polygon Indexes",
+    "Geometry Mesh Polygon Indices",
     "Object Model Limb Node info",
     "Object Pose Node Id",
     "Object Pose Node Bind Matrix",
@@ -21,7 +21,7 @@ const QVector<QString> parseBlockNames = {
 const QVector<QPair<QStringList, ParseType>> fbxBlockSignatures = {
     {{"Connections"}, ParseType::FbxConnection},
     {{"Geometry", "Vertices"}, ParseType::FbxGeometryMeshVertices},
-    {{"Geometry", "PolygonVertexIndex"}, ParseType::FbxGeometryMeshPolygonIndexes},
+    {{"Geometry", "PolygonVertexIndex"}, ParseType::FbxGeometryMeshPolygonIndices},
     {{"Model", "Properties70"}, ParseType::FbxObjectModelLimbNodeProperty},
     {{"Pose","PoseNode"}, ParseType::FbxObjectPoseNodeID},
     {{"Pose", "PoseNode", "Matrix"}, ParseType::FbxObjectPoseNodeMatrix}
@@ -183,7 +183,7 @@ QString IOfbx::selectParserForBuffer(const QString &nodeId,
             return  IOfbx::errMessageMeshVert + err;
         break;
 
-    case ParseType::FbxGeometryMeshPolygonIndexes:
+    case ParseType::FbxGeometryMeshPolygonIndices:
         extendedBuffer = nodeBuffer;
         extendedBuffer.insert(0, QString("polygons"));
         err = fbxMeshes.last().parse(extendedBuffer);

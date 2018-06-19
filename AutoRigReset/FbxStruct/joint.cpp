@@ -48,6 +48,11 @@ QString Joint::getJointName() const
     return jointName;
 }
 
+QVector<int> Joint::getClusterInds() const
+{
+    return clusterInds;
+}
+
 
 JointTransform::JointTransform(const Df::Vector3<double> &localTranslation,
                                const Df::Vector3<double> &localRotation,
@@ -64,6 +69,7 @@ Df::Vector3<double> JointTransform::getLocalTranslation() const
     return localTranslation;
 }
 
+int d = 0;
 Df::Vector3<double> JointTransform::getLocalRotation() const
 {
     return Df::makeVector3fromDoubles<double>(0,0,0);

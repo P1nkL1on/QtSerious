@@ -6,9 +6,9 @@ QString IOfbx::FbxSubDeformerCluster::parse(const QStringList &buffer)
     for (int i = 0; i < buffer.length(); ++i){
         // retrieving of inds
         if (buffer[i].indexOf("Indexes:") >= 0){
-            indexes = parseFbxArray<int>(QStringList(buffer[i + 1]), error);
+            indices = parseFbxArray<int>(QStringList(buffer[i + 1]), error);
             if (!error.isEmpty())
-                error = "Error in parsing point indexes values, error in line: " + buffer[i] + "; " + error;
+                error = "Error in parsing point indices values, error in line: " + buffer[i] + "; " + error;
         }
         if (buffer[i].indexOf("Weights:") >= 0
             || buffer[i].indexOf("Transform:") >= 0
@@ -41,7 +41,7 @@ QString IOfbx::FbxSubDeformerCluster::parse(const QStringList &buffer)
 
 bool IOfbx::FbxSubDeformerCluster::isEmpty() const
 {
-    return (indexes.length() == 0);
+    return (indices.length() == 0);
 }
 
 bool IOfbx::FbxSubDeformerCluster::isParentDeformder() const
@@ -64,8 +64,8 @@ QVector<double> IOfbx::FbxSubDeformerCluster::getWeights() const
     return weights;
 }
 
-QVector<int> IOfbx::FbxSubDeformerCluster::getIndexes() const
+QVector<int> IOfbx::FbxSubDeformerCluster::getIndices() const
 {
-    return indexes;
+    return indices;
 }
 

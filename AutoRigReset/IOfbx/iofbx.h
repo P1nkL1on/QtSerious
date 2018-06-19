@@ -9,7 +9,7 @@ enum class ParseType
 {
     None = -1,
     FbxGeometryMeshVertices = 0,
-    FbxGeometryMeshPolygonIndexes = 1,
+    FbxGeometryMeshPolygonIndices = 1,
     FbxObjectModelLimbNodeProperty = 2,
     FbxObjectPoseNodeID = 3,
     FbxObjectPoseNodeMatrix = 4,
