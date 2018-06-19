@@ -89,9 +89,9 @@ inline void traceMatrix (const Matrix4<Scalar> &mat){
 template <typename Scalar>
 inline Matrix4<Scalar> translationMatrix (const Vector3<Scalar> &translate){
     Matrix4<Scalar> M = Matrix4<Scalar>::Identity();
-    M(3, 0) = translate(0,0);
-    M(3, 1) = translate(1,0);
-    M(3, 2) = translate(2,0);
+    M(0, 3) = translate(0,0);
+    M(1, 3) = translate(1,0);
+    M(2, 3) = translate(2,0);
     return M;
 }
 
@@ -162,8 +162,8 @@ Vector3<Scalar> applyTransformTransposed(const Vector3<Scalar> &vec, const Matri
 }
 
 template <typename Scalar>
-Vector3<Scalar> applyTransposeTransformToZeroVec(const Matrix4<Scalar> &mat){
-    return applyTransform<Scalar>(Vector3<Scalar>(), mat.transpose());
+Vector3<Scalar> applyTransformToZeroVec(const Matrix4<Scalar> &mat){
+    return applyTransform<Scalar>(Vector3<Scalar>(), mat/*.transpose()*/);
 }
 }
 #endif // DERSTRUCT_DEFINES_H

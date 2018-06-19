@@ -27,7 +27,7 @@ void Tests::DefineTests::testDefineVec301()
 void Tests::DefineTests::testTranslateVec02()
 {
     Vector3<double> f = makeVector3fromDoubles<double>(10, 0, -1);
-    f = applyTransformTransposed(f, translationMatrix(makeVector3fromDoubles<double>(5,6,7)));
+    f = applyTransform(f, translationMatrix(makeVector3fromDoubles<double>(5,6,7)));
     QCOMPARE(f(0,0), 15.0);
     QCOMPARE(f(1,0), 6.0);
     QCOMPARE(f(2,0), 6.0);
@@ -37,18 +37,18 @@ void Tests::DefineTests::testRotationX03()
 {
     Vector3<double> f = makeVector3fromDoubles<double>(10, 0, -1);
     f = makeVector3fromDoubles<double>(10, 0, -1);
-    f = applyTransformTransposed(f, rotationMatrixX<double>(90));
+    f = applyTransform(f, rotationMatrixX<double>(90));
     QVERIFY(isZero(f(2,0)));
     QVERIFY(isNear(f(0,0), 10.0));
-    QVERIFY(isNear(f(1,0), 1.0));
+    QVERIFY(isNear(f(1,0), -1.0));
 }
 
 void Tests::DefineTests::testRotationX04()
 {
     Vector3<double> f = makeVector3fromDoubles<double>(10, 0, -1);
     f = makeVector3fromDoubles<double>(10, 0, -1);
-    f = applyTransformTransposed(f, rotationMatrix<double>(makeVector3fromDoubles<double>(90,0,0)));
+    f = applyTransform(f, rotationMatrix<double>(makeVector3fromDoubles<double>(90,0,0)));
     QVERIFY(isZero(f(2,0)));
     QVERIFY(isNear(f(0,0), 10.0));
-    QVERIFY(isNear(f(1,0), 1.0));
+    QVERIFY(isNear(f(1,0), -1.0));
 }

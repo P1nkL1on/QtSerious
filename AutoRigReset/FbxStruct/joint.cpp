@@ -84,15 +84,16 @@ Df::Vector3<float> Joint::getLocalTranslation() const
 int d = 0;
 Df::Vector3<float> Joint::getLocalRotation() const
 {
+    //return {0,0,0};
     //return localRotation;
-    return {0,(getJointName().indexOf("Fore") >= 0) ? ++d : 0,0};//localRotation;
+    return {/*(getJointName().indexOf("Spine1") >= 0) ? d * (-.5) : */0,(getJointName().indexOf("Fore") >= 0) ? ++d : 0,0};
 }
 
 Df::Vector3<float> Joint::getLocalScaling() const
 {
-//    for (int i = 0; i < 3; ++i)
-//        if (localScaling(i,0) < .0001 && localScaling(i,0) > .0001)
-//            return Df::makeUnitVector3<float>();
+    //    for (int i = 0; i < 3; ++i)
+    //        if (localScaling(i,0) < .0001 && localScaling(i,0) > .0001)
+    //            return Df::makeUnitVector3<float>();
 
     return localScaling;
 }

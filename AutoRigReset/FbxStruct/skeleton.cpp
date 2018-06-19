@@ -98,13 +98,13 @@ void Skeleton::calculateMatrix(const int currentJointIndex, const int variant)
     // BIND MATRIX
     if (variant == 0)
         jointTranslations[currentJointIndex] =
-                applyTransposeTransformToZeroVec(
+                applyTransformToZeroVec(
                     joints[currentJointIndex].getBindTransform());
     // SELF CALCULATE
     if (variant == 1){
         Matrix4<double> paterMat = getGlobalMatrixByIndex(joints[currentJointIndex].getPaterInd());
         Matrix4<double> selfMat = calculateLocalTransformByIndex(currentJointIndex);//joints[currentJointIndex].calculateLocalTransformMatrix();
-        Matrix4<double> finalMat = joints[currentJointIndex].setGlobalTransform(selfMat * paterMat);
+        Matrix4<double> finalMat = joints[currentJointIndex].setGlobalTransform(paterMat * selfMat);
         qDebug() << getNameByIndex(currentJointIndex);
 //        traceMatrix(paterMat);
 //        qDebug() << "*";
@@ -112,7 +112,7 @@ void Skeleton::calculateMatrix(const int currentJointIndex, const int variant)
 //        qDebug() << "=";
 //        traceMatrix(finalMat);
         jointTranslations[currentJointIndex] =
-                applyTransposeTransformToZeroVec<double>(finalMat);
+                applyTransformToZeroVec<double>(finalMat);
     }
 
     for (const int ind : joints[currentJointIndex].getKidsInd())
