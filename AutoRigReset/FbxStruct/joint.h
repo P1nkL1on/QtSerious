@@ -16,6 +16,7 @@ public:
     void addKidIndex (const int kidPtrInd);
     void addClusterIndex (const int clusterPtrInd);
     bool isMeshDependent() const;
+
     int getPaterInd() const;
     QVector<int> getKidsInd() const;
     QString getJointName() const;
@@ -40,6 +41,7 @@ public:
     Df::Vector3<double> getLocalRotation() const;
     Df::Vector3<double> getLocalScaling() const;
     Df::Vector3<double> getInverseScaling() const;
+    void setRotation (const double x, const double y, const double z);
 private:
     Df::Vector3<double> localTranslation;
     Df::Vector3<double> localRotation;

@@ -15,6 +15,7 @@ public:
             const Df::Matrix4<double> &linkTransformMatrix);
     int getMeshIndex() const;
     void setMeshIndex(const int value);
+    QVector<int> getVertIndices() const;
 private:
     int meshIndex = -1;
     QVector<int> vertIndices;

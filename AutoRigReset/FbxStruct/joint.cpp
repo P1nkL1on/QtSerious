@@ -58,10 +58,9 @@ JointTransform::JointTransform(const Df::Vector3<double> &localTranslation,
                                const Df::Vector3<double> &localRotation,
                                const Df::Vector3<double> &localScaling):
     localTranslation(localTranslation),
-    localRotation(localRotation),
+    localRotation(Df::makeVector3fromDoubles<double>(0,0,0)),
     localScaling(localScaling)
 {
-
 }
 
 Df::Vector3<double> JointTransform::getLocalTranslation() const
@@ -72,8 +71,8 @@ Df::Vector3<double> JointTransform::getLocalTranslation() const
 int d = 0;
 Df::Vector3<double> JointTransform::getLocalRotation() const
 {
-    return Df::makeVector3fromDoubles<double>(0,0,0);
-//    return -localRotation;
+//    return Df::makeVector3fromDoubles<double>(0,0,0);
+    return localRotation;
 }
 
 Df::Vector3<double> JointTransform::getLocalScaling() const
@@ -87,4 +86,11 @@ Df::Vector3<double> JointTransform::getInverseScaling() const
     for (int i = 0; i < 3; ++i)
         res(i,0) = 1.0 / res(i,0);
     return res;
+}
+
+void JointTransform::setRotation(const double x, const double y, const double z)
+{
+    localRotation(0,0) = x;
+    localRotation(1,0) = y;
+    localRotation(2,0) = z;
 }

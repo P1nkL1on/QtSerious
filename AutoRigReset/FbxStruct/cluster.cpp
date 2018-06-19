@@ -24,3 +24,8 @@ void Cluster::setMeshIndex(const int value)
 {
     meshIndex = value;
 }
+
+QVector<int> Cluster::getVertIndices() const
+{
+    return vertIndices;
+}
