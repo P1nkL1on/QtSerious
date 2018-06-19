@@ -36,17 +36,17 @@ class JointTransform
 {
 public:
     JointTransform() = default;
-    JointTransform(const Df::Vector3<float> &localTranslation,
-                   const Df::Vector3<float> &localRotation,
-                   const Df::Vector3<float> &localScaling);
+    JointTransform(const Df::Vector3<double> &localTranslation,
+                   const Df::Vector3<double> &localRotation,
+                   const Df::Vector3<double> &localScaling);
 
-    Df::Vector3<float> getLocalTranslation() const;
-    Df::Vector3<float> getLocalRotation() const;
-    Df::Vector3<float> getLocalScaling() const;
+    Df::Vector3<double> getLocalTranslation() const;
+    Df::Vector3<double> getLocalRotation() const;
+    Df::Vector3<double> getLocalScaling() const;
 private:
-    Df::Vector3<float> localTranslation;
-    Df::Vector3<float> localRotation;
-    Df::Vector3<float> localScaling = Df::Vector3<float>::Constant(1);
+    Df::Vector3<double> localTranslation;
+    Df::Vector3<double> localRotation;
+    Df::Vector3<double> localScaling = Df::Vector3<double>::Constant(double(1));
 };
 
 }

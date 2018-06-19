@@ -42,12 +42,21 @@ public:
              const QVector<JointTransform> &jointTransforms,
              const QVector<Df::Matrix4<double>> &bindMatrices);
     QVector<Df::Matrix4<double>> computeLocalMatrices() const;
-    QVector<Df::Matrix4<double>> computeGlobalMatrices() const;
+    QVector<Df::Matrix4<double>> computeGlobalMatrices(
+            const QVector<Joint> &ierarch,
+            const QVector<Df::Matrix4<double>> &localMatrices) const;
 private:
     QVector<Joint> joints;
     QVector<JointTransform> jointTransforms;
     QVector<Df::Matrix4<double>> bindMatrices;
-    Df::Matrix4<double> computeLocalMatrix() const;
+    Df::Matrix4<double> computeLocalMatrix(
+            const JointTransform &jointTrans,
+            const Df::Vector3<double> &paterInverseScale) const;
+    bool computeGlobalMatrix(
+            const QVector<Joint> &ierarch,
+            const QVector<Df::Matrix4<double>> &localMatrices,
+            QVector<Df::Matrix4<double>> &galobalMatrices,
+            const int currentJointIndex) const;
 };
 
 }

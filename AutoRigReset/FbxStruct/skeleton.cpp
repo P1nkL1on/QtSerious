@@ -114,3 +114,46 @@ Skeleton::Skeleton(
 {
 
 }
+
+QVector<Matrix4<double> > Skeleton::computeGlobalMatrices(
+        const QVector<Joint> &ierarch,
+        const QVector<Matrix4<double>> &localMatrices) const
+{
+    QVector<int> rootIndexes;
+    for (int jInd = 0; jInd < ierarch.length(); ++jInd)
+        if (!ierarch[jInd].isMeshDependent() && ierarch[jInd].getPaterInd() < 0)
+            rootIndexes << jInd;
+    // now for each root go recursive
+    QVector<Matrix4<double>> globalMatrices;
+    for (const auto m : localMatrices)
+        globalMatrices << Matrix4<double>::Identity();
+    for (const int ind : rootIndexes)
+        ;
+}
+
+Matrix4<double> Skeleton::computeLocalMatrix(
+        const JointTransform &jointTrans,
+        const Vector3<double> &paterInverseScale) const
+{
+    return translationMatrix<double>(jointTrans.getLocalTranslation())
+            //* scalingMatrix<double>(paterInverseScale)
+            * scalingMatrix<double>(jointTrans.getLocalScaling())
+            * rotationMatrix<double>(jointTrans.getLocalTranslation());
+}
+
+bool Skeleton::computeGlobalMatrix(const QVector<Joint> &ierarch,
+        const QVector<Matrix4<double>> &localMatrices,
+        QVector<Matrix4<double> > &globalMatrices,
+        const int currentJointIndex) const
+{
+    const int currentParentIndex = ierarch[currentJointIndex].getPaterInd();
+    Matrix4<double> paterMat = (currentParentIndex < 0) ? Matrix4<double>::Identity() : globalMatrices[currentParentIndex];
+    Matrix4<double> selfMat = localMatrices[currentJointIndex];
+    Matrix4<double> finalMat = ierarch[currentJointIndex].setGlobalTransform(paterMat * selfMat);
+    // calculate final global point
+    jointTranslations[currentJointIndex] =
+            applyTransformToZeroVec<double>(finalMat);
+    for (const int ind : ierarch[currentJointIndex].getKidsInd())
+        calculateMatrix(ind);
+    return true;
+}

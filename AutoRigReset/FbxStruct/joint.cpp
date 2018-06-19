@@ -49,10 +49,9 @@ QString Joint::getJointName() const
 }
 
 
-JointTransform::JointTransform(
-        const Df::Vector3<float> &localTranslation,
-        const Df::Vector3<float> &localRotation,
-        const Df::Vector3<float> &localScaling):
+JointTransform::JointTransform(const Df::Vector3<double> &localTranslation,
+        const Df::Vector3<double> &localRotation,
+        const Df::Vector3<double> &localScaling):
     localTranslation(localTranslation),
     localRotation(localRotation),
     localScaling(localScaling)
@@ -60,17 +59,17 @@ JointTransform::JointTransform(
 
 }
 
-Df::Vector3<float> JointTransform::getLocalTranslation() const
+Df::Vector3<double> JointTransform::getLocalTranslation() const
 {
     return localTranslation;
 }
 
-Df::Vector3<float> JointTransform::getLocalRotation() const
+Df::Vector3<double> JointTransform::getLocalRotation() const
 {
     return localRotation;
 }
 
-Df::Vector3<float> JointTransform::getLocalScaling() const
+Df::Vector3<double> JointTransform::getLocalScaling() const
 {
     return localScaling;
 }
