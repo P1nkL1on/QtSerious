@@ -12,7 +12,7 @@ class FbxConverter
 public:
     static FbxStruct::Rig *convertContainerToRig(const FbxParsedContainer *container);
 private:
-    static FbxStruct::Joint convertJoint(const FbxModelJoint &parsedJoint);
+    static void convertJoint(const FbxModelJoint &parsedJoint, FbxStruct::Joint &joint, FbxStruct::JointTransform &transform);
     static FbxStruct::Cluster convertCluster(const FbxSubDeformerCluster &parsedCluster);
     static FbxStruct::Mesh convertMesh(const FbxGeometryMesh &parsedMesh);
 };

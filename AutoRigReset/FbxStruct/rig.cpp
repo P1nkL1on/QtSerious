@@ -52,30 +52,30 @@ void FbxStruct::Rig::repaint(QPainter *qp)
             qp->drawPoint(FbxDrawing::toPoint(v));
     }
 
-    skeleton.calculateMatrixes();
+//    skeleton.calculateMatrixes();
 
-    qp->setPen(QPen(Qt::blue, 3));
-    QVector<QPoint> skeletonPoints;
-    for (const auto v3 : skeleton.jointTranslations)
-        skeletonPoints << (FbxDrawing::toPoint(Df::makeQVectorFromVector3<double>(v3)));
+//    qp->setPen(QPen(Qt::blue, 3));
+//    QVector<QPoint> skeletonPoints;
+//    for (const auto v3 : skeleton.jointTranslations)
+//        skeletonPoints << (FbxDrawing::toPoint(Df::makeQVectorFromVector3<double>(v3)));
 
-    for (int jointIndex = 0; jointIndex < skeletonPoints.length(); ++jointIndex)
-    {
-        int paterIndex = skeleton.getPaterByIndex(jointIndex);
-        if (paterIndex >= 0)
-            qp->drawLine(skeletonPoints[paterIndex], skeletonPoints[jointIndex]);
-    }
-    qp->setPen(QPen(Qt::blue, 6));
-    int boneIndex = 0;
-    for (const auto p : skeletonPoints)
-        qp->drawPoint(p);
+//    for (int jointIndex = 0; jointIndex < skeletonPoints.length(); ++jointIndex)
+//    {
+//        int paterIndex = skeleton.getPaterByIndex(jointIndex);
+//        if (paterIndex >= 0)
+//            qp->drawLine(skeletonPoints[paterIndex], skeletonPoints[jointIndex]);
+//    }
+//    qp->setPen(QPen(Qt::blue, 6));
+//    int boneIndex = 0;
+//    for (const auto p : skeletonPoints)
+//        qp->drawPoint(p);
 
-    qp->setPen(QPen(Qt::black, 1));
-    for (int boneIndex =0; boneIndex < skeletonPoints.length(); ++boneIndex){
-        QPoint tp(1150, 80 + boneIndex * 12);
-        qp->drawText(tp, skeleton.getNameByIndex(boneIndex));
-        qp->drawLine(tp, skeletonPoints[boneIndex]);
-    }
+//    qp->setPen(QPen(Qt::black, 1));
+//    for (int boneIndex =0; boneIndex < skeletonPoints.length(); ++boneIndex){
+//        QPoint tp(1150, 80 + boneIndex * 12);
+//        qp->drawText(tp, skeleton.getNameByIndex(boneIndex));
+//        qp->drawLine(tp, skeletonPoints[boneIndex]);
+//    }
 
 
     //    // =================================================================

@@ -7,6 +7,8 @@ using namespace Df;
 Rig *IOfbx::FbxConverter::convertContainerToRig(const IOfbx::FbxParsedContainer *container)
 {
     QVector<Joint> fbxJoints;
+    QVector<JointTransform> fbxJointTransforms;
+    QVector<Df::Matrix4<double>> fbxJointBinds;
     QVector<Cluster> fbxClusters;
     QVector<Mesh> fbxMeshes;
 
@@ -24,14 +26,21 @@ Rig *IOfbx::FbxConverter::convertContainerToRig(const IOfbx::FbxParsedContainer 
     }
 
     for (const auto parsedJoint : container->getJoints()){
-        fbxJoints << convertJoint(parsedJoint);
+        //fbxJoints << convertJoint(parsedJoint);
+        Joint newJoint;
+        JointTransform newJointTransform;
+        convertJoint(parsedJoint, newJoint, newJointTransform);
+        fbxJoints << newJoint;
+        fbxJointTransforms<< newJointTransform;
+        fbxJointBinds << Df::Matrix4<double>::Identity();
         parsedJointIds << parsedJoint.getId();
     }
 
     for (const auto pose : container->getPosenodes()){
         int jointIndex = parsedJointIds.indexOf(pose.getId());
         if (jointIndex >= 0){
-            fbxJoints[jointIndex].setBindTransform(initialiseMatrix(pose.getTransformMatrixArray()));
+            //fbxJoints[jointIndex].setBindTransform();
+            fbxJointBinds << initialiseMatrix(pose.getTransformMatrixArray());
             traceMessage( QString("v   PoseNode connected to %3: #%1 (%2)")
                           .arg(jointIndex)
                           .arg(parsedJointIds[jointIndex])
@@ -103,9 +112,9 @@ Rig *IOfbx::FbxConverter::convertContainerToRig(const IOfbx::FbxParsedContainer 
             if (!fbxJoints[rightIndex].isMeshDependent())
                 qDebug() << QString("o   Warning: joint with id %1 is using for"
                                     " geometry modifinyng, but he is not supposed to do this;")
-                                    .arg(connect.getIdRight());
+                            .arg(connect.getIdRight());
             // transform a mesh as shown
-            fbxMeshes[leftIndex].applyTransform(fbxJoints[rightIndex].getBindTransform());
+            fbxMeshes[leftIndex].applyTransform(fbxJointBinds[rightIndex]);
             traceMessage( QString("v   Mesh transformer with bindpose (joint #%1) applied transform to geometry (mesh #%2)")
                           .arg(rightIndex).arg(leftIndex));
             break;
@@ -126,29 +135,25 @@ Rig *IOfbx::FbxConverter::convertContainerToRig(const IOfbx::FbxParsedContainer 
                           .arg(clustIndex).arg(parsedClustersIds[clustIndex]));
 
     }
-#warning убрать потом из общео числа джойнтов все те, которые отвечают за меши
 #warning убрать из числа деформеров те, которые отвечают не за кластеры
 
-    // we should apply all mesh joints
-    for (const auto j : fbxJoints)
-        if (j.isMeshDependent()){
-
-        }
-
-    Skeleton fbxSkeleton(fbxJoints);
+    Skeleton fbxSkeleton(fbxJoints, fbxJointTransforms, fbxJointBinds);
     return new Rig(fbxSkeleton, fbxClusters, fbxMeshes);
 }
 
-Joint IOfbx::FbxConverter::convertJoint(const IOfbx::FbxModelJoint &parsedJoint)
+void IOfbx::FbxConverter::convertJoint(const IOfbx::FbxModelJoint &parsedJoint,
+                                       Joint &joint,
+                                       JointTransform &transform)
 {
     if (parsedJoint.isMeshDependent())
         traceMessage(QString("o   Bone with ID %1 is mesh denedent;").arg(parsedJoint.getId()));
-    return Joint(
+    joint = Joint(parsedJoint.isMeshDependent(),
+                  parsedJoint.getName());
+    transform = JointTransform(
                 makeVector3fromQVector<float>(parsedJoint.getLocalTranslation()),
                 makeVector3fromQVector<float>(parsedJoint.getLocalRotation()),
-                makeVector3fromQVector<float>(parsedJoint.getLocalScaling()),
-                parsedJoint.isMeshDependent(),
-                parsedJoint.getName());
+                makeVector3fromQVector<float>(parsedJoint.getLocalScaling()));
+    return;
 }
 
 Cluster IOfbx::FbxConverter::convertCluster(const IOfbx::FbxSubDeformerCluster &parsedCluster)

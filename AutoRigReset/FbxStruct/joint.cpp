@@ -3,14 +3,8 @@
 using namespace FbxStruct;
 using namespace Df;
 
-Joint::Joint(const Vector3<float> &localTranslation,
-             const Vector3<float> &localRotation,
-             const Vector3<float> &localScaling,
-             const bool isMeshDepended,
+Joint::Joint(const bool isMeshDepended,
              const QString name):
-    localTranslation(localTranslation),
-    localRotation(localRotation),
-    localScaling(localScaling),
     meshDependent(isMeshDepended),
     jointName(name)
 {
@@ -34,11 +28,6 @@ void Joint::addClusterIndex(const int clusterPtrInd)
     clusterInds << clusterPtrInd;
 }
 
-void Joint::setBindTransform(const Df::Matrix4<double> &value)
-{
-    bindTransform = value;
-}
-
 bool Joint::isMeshDependent() const
 {
     return meshDependent;
@@ -54,63 +43,34 @@ QVector<int> Joint::getKidsInd() const
     return kidsInd;
 }
 
-Df::Matrix4<double> Joint::getBindTransform() const
-{
-    return bindTransform;
-}
-
-Df::Matrix4<double> Joint::getLocalTransform() const
-{
-    return localTransform;
-}
-
-Df::Matrix4<double> Joint::setGlobalTransform(const Df::Matrix4<double> &value)
-{
-    globalTransform = value;
-    //traceMatrix(globalTransform);
-    return globalTransform;
-}
-
 QString Joint::getJointName() const
 {
     return jointName;
 }
 
-Df::Vector3<float> Joint::getLocalTranslation() const
+
+JointTransform::JointTransform(
+        const Df::Vector3<float> &localTranslation,
+        const Df::Vector3<float> &localRotation,
+        const Df::Vector3<float> &localScaling):
+    localTranslation(localTranslation),
+    localRotation(localRotation),
+    localScaling(localScaling)
+{
+
+}
+
+Df::Vector3<float> JointTransform::getLocalTranslation() const
 {
     return localTranslation;
 }
 
-int d = 0;
-Df::Vector3<float> Joint::getLocalRotation() const
+Df::Vector3<float> JointTransform::getLocalRotation() const
 {
-    //int scaling = (getJointName().indexOf("Arm") >= 0) ? ++d : 0;
-    //return {0, scaling, 0};
-    //return localRotation;
-    return makeVector3fromDoubles<float>(0.0, 0.0, 0.0);
+    return localRotation;
 }
 
-Df::Vector3<float> Joint::getLocalScaling() const
+Df::Vector3<float> JointTransform::getLocalScaling() const
 {
-    //    for (int i = 0; i < 3; ++i)
-    //        if (localScaling(i,0) < .0001 && localScaling(i,0) > .0001)
-    //            return Df::makeUnitVector3<float>();
-
     return localScaling;
 }
-
-Df::Matrix4<double> Joint::setLocalTransform(const Df::Matrix4<double> &value)
-{
-    localTransform = value;
-    return localTransform;
-}
-
-Df::Matrix4<double> Joint::getGlobalTransform() const
-{
-    return globalTransform;
-}
-
-
-//Matrix4d computeLocalMatrix(/*some stuff like translation, rotation, etc*/)
-//void computeLocalMatrices(/*Some information about all translations, rotations, etc*/, QVector<Matrix4d> &outLocalMatrices)
-//QVector<Matrix4d> computeLocalMatrices(/*Some information about all translations, rotations, etc*/)
